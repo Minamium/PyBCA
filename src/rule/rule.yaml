@@ -1,0 +1,1232 @@
+- id: 1014
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+- id: 1114
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+- id: 1012
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+- id: 1112
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy -1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+- id: 1015
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy -1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy -1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+- id: 1115
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy -1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy -1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+- id: 1013
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy -1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy -1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+- id: 1113
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy -1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy -1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+- id: 0
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+- id: 1
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: Vacant
+- id: 2
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+- id: 3
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: Vacant
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: Vacant
+- id: 4
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+- id: 5
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 6
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+- id: 7
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+- id: 8
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 9
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+- id: 10
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+- id: 11
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+- id: 12
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+- id: 13
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+- id: 14
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 15
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+- id: 16
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+- id: 17
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+- id: 18
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 19
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
