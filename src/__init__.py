@@ -13,11 +13,9 @@ from .lib import (
     load_special_events_from_file,
     convert_events_to_array_coordinates,
     get_event_names_from_file,
-    numpy_to_cell_space_yaml
+    numpy_to_cell_space_yaml,
+    update_cellspace
 )
-
-# cudaBCA.pyから主要な関数をインポート
-from .cudaBCA import update_cellspace
 
 __all__ = [
     'load_cell_space_yaml_to_numpy',
