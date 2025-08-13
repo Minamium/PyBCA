@@ -1,3 +1,5 @@
+# GUI, CLIツール共通のライブラリを作成
+
 import yaml
 import numpy as np
 from typing import List, Dict, Any
