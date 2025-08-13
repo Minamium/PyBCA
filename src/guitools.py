@@ -15,7 +15,7 @@ import numpy as np
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files
+from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
 
 # ========= 配列 -> QImage（高速LUT） =========
 
@@ -140,7 +140,14 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._rule_viewer = None
         
         # セル空間オフセット情報
-        self._cellspace_offset = (0, 0)  # (min_x, min_y)
+        self._offset_x = 0
+        self._offset_y = 0
+        
+        # 特殊イベント管理
+        self._loaded_events: List[tuple] = []  # 読み込み済み特殊イベント
+        self._event_array: np.ndarray = None   # 配列座標系変換済みイベント
+        self._event_names: List[str] = []      # イベント名リスト
+        self._events_visible = False           # イベント表示フラグ
 
         # Scene / View / PixmapItem
         self._scene = QtWidgets.QGraphicsScene(self)
@@ -161,6 +168,9 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         pen.setCosmetic(True)
         self._grid_item.setPen(pen)
         self._scene.addItem(self._grid_item)
+        
+        # イベントオーバーレイレイヤ
+        self._event_overlay_items = []  # イベント表示用のQGraphicsItemリスト
         self._grid_visible = True
 
         # マウス追従（座標・値）
@@ -192,7 +202,8 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             try:
                 cellspace, min_x, min_y = extract_cellspace_and_offset(arr)
                 self._arr = cellspace
-                self._cellspace_offset = (min_x, min_y)
+                self._offset_x = min_x
+                self._offset_y = min_y
                 status_msg = f"Loaded: size={cellspace.shape}, offset=({min_x},{min_y})"
             except:
                 # オフセット抽出に失敗した場合は通常の配列として扱う
@@ -225,6 +236,12 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             self._view.centerOn(scene_rect.center())
         
         self._rebuild_grid()
+        
+        # セル空間が新しく読み込まれた場合、既存イベントの座標変換を更新
+        if self._loaded_events and self._arr is not None:
+            self._event_array = convert_events_to_array_coordinates(
+                self._loaded_events, self._offset_x, self._offset_y)
+            self._update_event_overlay()
 
     # ---- UI building ----
     def _build_menu(self) -> None:
@@ -261,6 +278,19 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         m_rule.addSeparator()
         a_clear_rules = m_rule.addAction("Clear All Rules")
         a_clear_rules.triggered.connect(self._action_clear_rules)
+        
+        # Event
+        m_event = menubar.addMenu("&Event")
+        a_load_event = m_event.addAction("Load Special Events...")
+        a_load_event.triggered.connect(self._action_load_special_events)
+        m_event.addSeparator()
+        self._act_show_events = m_event.addAction("Show Events")
+        self._act_show_events.setCheckable(True)
+        self._act_show_events.setChecked(False)
+        self._act_show_events.triggered.connect(self._toggle_events_visibility)
+        m_event.addSeparator()
+        a_clear_events = m_event.addAction("Clear Events")
+        a_clear_events.triggered.connect(self._action_clear_events)
 
     # ---- actions ----
     def _action_open_yaml(self) -> None:
@@ -466,6 +496,130 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             self._rule_viewer.show()
             
             self._status.showMessage(f"Showing {len(self._loaded_rule_ids)} loaded rules")
+
+    def _action_load_special_events(self) -> None:
+        """特殊イベントファイルを読み込む"""
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Load Special Events", filter="Python Files (*.py)")
+        if not path:
+            return
+        
+        try:
+            # 特殊イベントを読み込み
+            events = load_special_events_from_file(path)
+            event_names = get_event_names_from_file(path)
+            
+            # セル空間が読み込まれている場合のみ座標変換
+            if self._arr is not None:
+                event_array = convert_events_to_array_coordinates(
+                    events, self._offset_x, self._offset_y)
+                self._event_array = event_array
+            else:
+                self._event_array = None
+            
+            self._loaded_events = events
+            self._event_names = event_names
+            
+            # イベントオーバーレイを更新
+            self._update_event_overlay()
+            
+            self._status.showMessage(
+                f"Loaded {len(events)} special events from {path}")
+            
+            QtWidgets.QMessageBox.information(
+                self, "Events Loaded", 
+                f"Successfully loaded {len(events)} special events.\n"
+                f"Use 'Event → Show Events' to display them on the cell space."
+            )
+            
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to load special events:\n{str(e)}")
+
+    def _toggle_events_visibility(self, checked: bool) -> None:
+        """特殊イベントの表示/非表示を切り替え"""
+        self._events_visible = checked
+        self._update_event_overlay()
+        
+        if checked and self._loaded_events:
+            self._status.showMessage(f"Showing {len(self._loaded_events)} special events")
+        else:
+            self._status.showMessage("Events hidden")
+
+    def _action_clear_events(self) -> None:
+        """読み込み済み特殊イベントをクリア"""
+        self._loaded_events = []
+        self._event_array = None
+        self._event_names = []
+        self._events_visible = False
+        self._act_show_events.setChecked(False)
+        
+        # イベントオーバーレイをクリア
+        self._update_event_overlay()
+        
+        self._status.showMessage("Special events cleared")
+
+    def _update_event_overlay(self) -> None:
+        """特殊イベントのオーバーレイ表示を更新"""
+        # 既存のイベント表示アイテムをクリア
+        for item in self._event_overlay_items:
+            self._scene.removeItem(item)
+        self._event_overlay_items.clear()
+        
+        # イベント表示が無効、またはデータがない場合は何もしない
+        if not self._events_visible or not self._loaded_events or self._event_array is None:
+            return
+        
+        # セル空間が読み込まれていない場合は何もしない
+        if self._arr is None:
+            return
+        
+        # 各イベントを描画
+        for i, event in enumerate(self._loaded_events):
+            name, ref_coord, ref_state, write_coord, write_state = event
+            
+            # 配列座標系での座標を取得
+            ref_array_x = self._event_array[i, 0]
+            ref_array_y = self._event_array[i, 1]
+            write_array_x = self._event_array[i, 3]
+            write_array_y = self._event_array[i, 4]
+            
+            # 配列境界チェック
+            h, w = self._arr.shape
+            if not (0 <= ref_array_x < w and 0 <= ref_array_y < h):
+                continue  # 参照座標が範囲外の場合はスキップ
+            if not (0 <= write_array_x < w and 0 <= write_array_y < h):
+                continue  # 書込座標が範囲外の場合はスキップ
+            
+            # 参照位置にマーカーを描画（青い円）
+            ref_marker = QtWidgets.QGraphicsEllipseItem(
+                ref_array_x - 0.3, ref_array_y - 0.3, 0.6, 0.6)
+            ref_marker.setBrush(QtGui.QBrush(QtGui.QColor(0, 100, 255, 180)))  # 半透明青
+            ref_marker.setPen(QtGui.QPen(QtGui.QColor(0, 50, 200), 0.1))
+            self._scene.addItem(ref_marker)
+            self._event_overlay_items.append(ref_marker)
+            
+            # 書込位置にマーカーを描画（赤い四角）
+            write_marker = QtWidgets.QGraphicsRectItem(
+                write_array_x - 0.3, write_array_y - 0.3, 0.6, 0.6)
+            write_marker.setBrush(QtGui.QBrush(QtGui.QColor(255, 50, 50, 180)))  # 半透明赤
+            write_marker.setPen(QtGui.QPen(QtGui.QColor(200, 0, 0), 0.1))
+            self._scene.addItem(write_marker)
+            self._event_overlay_items.append(write_marker)
+            
+            # 参照位置から書込位置への矢印を描画
+            if ref_array_x != write_array_x or ref_array_y != write_array_y:
+                arrow_line = QtWidgets.QGraphicsLineItem(
+                    ref_array_x, ref_array_y, write_array_x, write_array_y)
+                arrow_pen = QtGui.QPen(QtGui.QColor(100, 100, 100, 150), 0.05)
+                arrow_pen.setCosmetic(True)
+                arrow_line.setPen(arrow_pen)
+                self._scene.addItem(arrow_line)
+                self._event_overlay_items.append(arrow_line)
+            
+            # イベント名をツールチップとして設定
+            ref_marker.setToolTip(f"Event: {name}\nRef: {ref_coord} (state {ref_state})")
+            write_marker.setToolTip(f"Event: {name}\nWrite: {write_coord} (state {write_state})")
 
     def _toggle_grid(self, checked: bool) -> None:
         self._grid_visible = checked
