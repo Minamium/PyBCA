@@ -6,7 +6,7 @@ import yaml
 
 
 # yamlセル空間ファイルをnumpy配列に変換する
-def load_cell_space_yaml_to_numpy(path: str, progress_callback=None) -> np.ndarray:
+def load_cell_space_yaml_to_numpy(path: str, progress_callback=None, include_offset=True) -> np.ndarray:
     """
     セル空間YAML（形式: [{'coord':{'x':..,'y':..}, 'value':..}, ...]）を
     最小外接矩形で切り出した 2D NumPy 配列に変換して返す。
@@ -75,24 +75,111 @@ def load_cell_space_yaml_to_numpy(path: str, progress_callback=None) -> np.ndarr
     if progress_callback:
         progress_callback(90, 100)  # 配列初期化開始
     
-    arr = np.zeros((H, W), dtype=np.int8)
-    
-    if progress_callback:
-        progress_callback(93, 100)  # 配列初期化完了
-    
-    xs_a = np.asarray(xs) + off_x
-    ys_a = np.asarray(ys) + off_y
-    vs_a = np.asarray(vs, dtype=np.int8)
-    
-    if progress_callback:
-        progress_callback(97, 100)  # 配列代入開始
-    
-    arr[ys_a, xs_a] = vs_a
+    if include_offset:
+        # オフセット情報を埋め込んだ配列を作成 (H+1, W+2)
+        # セル空間はint8、オフセット情報はint16で保存
+        arr = np.zeros((H + 1, W + 2), dtype=np.int16)
+        
+        if progress_callback:
+            progress_callback(93, 100)  # 配列初期化完了
+        
+        # セル空間データを配置
+        xs_a = np.asarray(xs) + off_x
+        ys_a = np.asarray(ys) + off_y
+        vs_a = np.asarray(vs, dtype=np.int8)
+        arr[ys_a, xs_a] = vs_a
+        
+        # オフセット情報を埋め込み (元座標系のmin値を保存)
+        arr[H, 0] = min_x  # 元座標系のmin_x
+        arr[H, 1] = min_y  # 元座標系のmin_y
+        
+        if progress_callback:
+            progress_callback(97, 100)  # 配列代入完了
+    else:
+        # 従来通りのセル空間のみ
+        arr = np.zeros((H, W), dtype=np.int8)
+        
+        if progress_callback:
+            progress_callback(93, 100)  # 配列初期化完了
+        
+        xs_a = np.asarray(xs) + off_x
+        ys_a = np.asarray(ys) + off_y
+        vs_a = np.asarray(vs, dtype=np.int8)
+        arr[ys_a, xs_a] = vs_a
+        
+        if progress_callback:
+            progress_callback(97, 100)  # 配列代入完了
     
     if progress_callback:
         progress_callback(100, 100)  # 完了
     
     return arr
+
+def extract_cellspace_and_offset(arr_with_offset: np.ndarray) -> Tuple[np.ndarray, int, int]:
+    """
+    オフセット情報付きNumPy配列からセル空間とオフセット情報を分離
+    
+    Args:
+        arr_with_offset: オフセット情報付き配列 (H+1, W+2)
+    
+    Returns:
+        (cellspace, min_x, min_y)
+        cellspace: セル空間データ (H, W) int8型
+        min_x, min_y: 元座標系の最小値
+    """
+    if arr_with_offset.ndim != 2 or arr_with_offset.shape[1] < 2:
+        raise ValueError("Invalid array format for offset extraction")
+    
+    H_plus_1, W_plus_2 = arr_with_offset.shape
+    H, W = H_plus_1 - 1, W_plus_2 - 2
+    
+    # セル空間データを抽出してint8に変換
+    cellspace = arr_with_offset[:H, :W].astype(np.int8)
+    
+    # オフセット情報を抽出
+    min_x = int(arr_with_offset[H, 0])
+    min_y = int(arr_with_offset[H, 1])
+    
+    return cellspace, min_x, min_y
+
+def has_offset_info(arr: np.ndarray) -> bool:
+    """
+    配列にオフセット情報が含まれているかチェック
+    
+    Args:
+        arr: チェック対象の配列
+    
+    Returns:
+        bool: オフセット情報が含まれている場合True
+    """
+    return arr.ndim == 2 and arr.shape[1] >= 2 and arr.shape[0] >= 1
+
+def convert_event_coordinates(events: List[tuple], min_x: int, min_y: int) -> List[tuple]:
+    """
+    特殊イベントの座標を元座標系から配列座標系に変換
+    
+    Args:
+        events: イベントリスト [(name, ref_coord, ref_state, write_coord, write_state), ...]
+        min_x, min_y: 元座標系の最小値
+    
+    Returns:
+        変換後のイベントリスト
+    """
+    converted_events = []
+    for event in events:
+        name, ref_coord, ref_state, write_coord, write_state = event
+        
+        # 座標を配列インデックスに変換
+        ref_x, ref_y = ref_coord
+        write_x, write_y = write_coord
+        
+        ref_array_coord = (ref_x - min_x, ref_y - min_y)
+        write_array_coord = (write_x - min_x, write_y - min_y)
+        
+        converted_event = (name, ref_array_coord, ref_state, write_array_coord, write_state)
+        converted_events.append(converted_event)
+    
+    return converted_events
 
 # numpy配列のセル空間をyamlファイルに変換する
 def numpy_to_cell_space_yaml(arr: np.ndarray, path: str) -> None:
@@ -243,3 +330,58 @@ def load_transition_rules_yaml(path: str) -> List[TransitionRule]:
         ))
 
     return rules
+
+def load_multiple_transition_rules_to_numpy(rule_file_paths: List[str]) -> np.ndarray:
+    """
+    複数の遷移規則ファイルを読み込み、統合されたnumpy配列として返す
+    
+    Args:
+        rule_file_paths: 遷移規則YAMLファイルのパスリスト
+    
+    Returns:
+        統合された遷移規則配列 (N, 2, 3, 3) 形状
+        N: 規則数, 2: [prev_pattern, next_pattern], 3x3: パターンサイズ
+    """
+    import os
+    all_rules = []
+    
+    # 複数ファイルから規則を読み込み
+    for rule_path in rule_file_paths:
+        if os.path.exists(rule_path):
+            rules = load_transition_rules_yaml(rule_path)
+            all_rules.extend(rules)
+        else:
+            raise FileNotFoundError(f"遷移規則ファイルが見つかりません: {rule_path}")
+    
+    if not all_rules:
+        raise ValueError("遷移規則が読み込まれませんでした")
+    
+    # numpy配列に変換
+    num_rules = len(all_rules)
+    rule_array = np.zeros((num_rules, 2, 3, 3), dtype=np.int8)
+    
+    for i, rule in enumerate(all_rules):
+        rule_array[i, 0] = rule.prev_pattern  # 前状態パターン
+        rule_array[i, 1] = rule.next_pattern  # 後状態パターン
+    
+    return rule_array
+
+def get_rule_ids_from_files(rule_file_paths: List[str]) -> List[int]:
+    """
+    複数の遷移規則ファイルからrule_idのリストを取得
+    
+    Args:
+        rule_file_paths: 遷移規則YAMLファイルのパスリスト
+    
+    Returns:
+        rule_idのリスト
+    """
+    import os
+    all_rules = []
+    
+    for rule_path in rule_file_paths:
+        if os.path.exists(rule_path):
+            rules = load_transition_rules_yaml(rule_path)
+            all_rules.extend(rules)
+    
+    return [rule.rule_id for rule in all_rules]

@@ -15,7 +15,7 @@ import numpy as np
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule
+from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files
 
 # ========= 配列 -> QImage（高速LUT） =========
 
@@ -133,9 +133,14 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._grid_visible = True
         self._status = None
         
-        # 遷移規則管理
-        self._loaded_rules: List[TransitionRule] = []
+        # 遷移規則管理 - numpy配列形式で統一
+        self._loaded_rule_files: List[str] = []  # 読み込み済みファイルパス
+        self._loaded_rule_array: np.ndarray = None  # (N, 2, 3, 3) 形状の統合配列
+        self._loaded_rule_ids: List[int] = []  # 対応するrule_id
         self._rule_viewer = None
+        
+        # セル空間オフセット情報
+        self._cellspace_offset = (0, 0)  # (min_x, min_y)
 
         # Scene / View / PixmapItem
         self._scene = QtWidgets.QGraphicsScene(self)
@@ -175,8 +180,29 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
 
     # ---- public API ----
     def set_array(self, arr: np.ndarray) -> None:
-        self._arr = arr
-        qimg = array_to_qimage(arr, self._palette)
+        """配列をセットして表示を更新"""
+        if arr is None:
+            self._arr = None
+            self._pix.setPixmap(QtGui.QPixmap())
+            self._status.showMessage("No data")
+            return
+
+        # オフセット情報付きの場合は分離
+        if has_offset_info(arr) and arr.shape[0] > 1 and arr.shape[1] > 2:
+            try:
+                cellspace, min_x, min_y = extract_cellspace_and_offset(arr)
+                self._arr = cellspace
+                self._cellspace_offset = (min_x, min_y)
+                status_msg = f"Loaded: size={cellspace.shape}, offset=({min_x},{min_y})"
+            except:
+                # オフセット抽出に失敗した場合は通常の配列として扱う
+                self._arr = arr
+                status_msg = f"Loaded: size={arr.shape}"
+        else:
+            self._arr = arr
+            status_msg = f"Loaded: size={arr.shape}"
+
+        qimg = array_to_qimage(self._arr)
         self._pix.setPixmap(QtGui.QPixmap.fromImage(qimg))
         self._view.setSceneRect(self._pix.boundingRect())
         
@@ -284,31 +310,58 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         finally:
             progress.close()
     
+    def load_rules_from_file(self):
+        """遷移規則ファイルを読み込み"""
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Load Transition Rules", "", "YAML files (*.yaml *.yml)"
+        )
+        if path:
+            try:
+                # 新しい統合関数を使用
+                self._loaded_rule_files = [path]
+                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([path])
+                self._loaded_rule_ids = get_rule_ids_from_files([path])
+                
+                print(f"Loaded {len(self._loaded_rule_ids)} rules from {path}")
+                print(f"Rule array shape: {self._loaded_rule_array.shape}")
+                
+                # ルールビューア用に一時的にTransitionRuleリストを作成
+                temp_rules = load_transition_rules_yaml(path)
+                self._rule_viewer = RuleViewerWindow(temp_rules)
+                self._rule_viewer.show()
+                
+                self._status.showMessage(f"Loaded {len(self._loaded_rule_ids)} transition rules from {path}")
+                
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(self, "Error", f"Failed to load rules: {str(e)}")
+                print(f"Error loading rules: {e}")
+
     def _action_open_rule_yaml(self) -> None:
         """規則ファイルを読み込んで既存の規則を置き換え"""
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, "Open Rule YAML", filter="YAML Files (*.yaml *.yml)")
-        if not path:
-            return
-        
-        try:
-            rules = load_transition_rules_yaml(path)
-            if not rules:
-                QtWidgets.QMessageBox.warning(
-                    self, "Warning", "No transition rules found in the file")
-                return
-            
-            # 既存の規則を置き換え
-            self._loaded_rules = rules
-            
-            # 規則ビューアウィンドウを開く
-            self._rule_viewer = RuleViewerWindow(self._loaded_rules)
-            self._rule_viewer.show()
-            self._status.showMessage(f"Loaded {len(rules)} rules from {path}")
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(
-                self, "Error", f"Failed to load rule YAML file:\n{str(e)}")
-    
+            self, "Load Transition Rules", "", "YAML files (*.yaml *.yml)"
+        )
+        if path:
+            try:
+                # 新しい統合関数を使用
+                self._loaded_rule_files = [path]
+                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([path])
+                self._loaded_rule_ids = get_rule_ids_from_files([path])
+                
+                print(f"Loaded {len(self._loaded_rule_ids)} rules from {path}")
+                print(f"Rule array shape: {self._loaded_rule_array.shape}")
+                
+                # ルールビューア用に一時的にTransitionRuleリストを作成
+                temp_rules = load_transition_rules_yaml(path)
+                self._rule_viewer = RuleViewerWindow(temp_rules)
+                self._rule_viewer.show()
+                
+                self._status.showMessage(f"Loaded {len(self._loaded_rule_ids)} transition rules from {path}")
+                
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(self, "Error", f"Failed to load rules: {str(e)}")
+                print(f"Error loading rules: {e}")
+
     def _action_add_rule_file(self) -> None:
         """規則ファイルを追加読み込み"""
         path, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -317,53 +370,54 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             return
         
         try:
-            new_rules = load_transition_rules_yaml(path)
-            if not new_rules:
-                QtWidgets.QMessageBox.warning(
-                    self, "Warning", "No transition rules found in the file")
-                return
-            
-            # 既存の規則に追加（重複IDチェック）
-            existing_ids = {rule.rule_id for rule in self._loaded_rules}
-            added_count = 0
-            
-            for rule in new_rules:
-                if rule.rule_id not in existing_ids:
-                    self._loaded_rules.append(rule)
-                    existing_ids.add(rule.rule_id)
-                    added_count += 1
-            
-            if added_count == 0:
-                QtWidgets.QMessageBox.information(
-                    self, "Info", "All rules from this file were already loaded (duplicate IDs)")
-            else:
-                self._status.showMessage(f"Added {added_count} new rules (total: {len(self._loaded_rules)})")
+            # 既存のファイルリストに追加
+            if path not in self._loaded_rule_files:
+                self._loaded_rule_files.append(path)
                 
-                # 規則ビューアが開いている場合は更新
-                if self._rule_viewer and not self._rule_viewer.isHidden():
+                # 全ファイルから統合配列を再生成
+                self._loaded_rule_array = load_multiple_transition_rules_to_numpy(self._loaded_rule_files)
+                self._loaded_rule_ids = get_rule_ids_from_files(self._loaded_rule_files)
+                
+                print(f"Added rule file: {path}")
+                print(f"Total rule array shape: {self._loaded_rule_array.shape}")
+                
+                # ルールビューア用に一時的にTransitionRuleリストを作成
+                all_temp_rules = []
+                for file_path in self._loaded_rule_files:
+                    temp_rules = load_transition_rules_yaml(file_path)
+                    all_temp_rules.extend(temp_rules)
+                
+                # 規則ビューアウィンドウを更新
+                if self._rule_viewer:
                     self._rule_viewer.close()
-                    self._rule_viewer = RuleViewerWindow(self._loaded_rules)
-                    self._rule_viewer.show()
-                    
+                self._rule_viewer = RuleViewerWindow(all_temp_rules)
+                self._rule_viewer.show()
+                
+                self._status.showMessage(f"Added rule file (total: {len(self._loaded_rule_ids)} rules from {len(self._loaded_rule_files)} files)")
+            else:
+                QtWidgets.QMessageBox.information(
+                    self, "Info", "This rule file is already loaded")
         except Exception as e:
             QtWidgets.QMessageBox.critical(
-                self, "Error", f"Failed to add rule YAML file:\n{str(e)}")
+                self, "Error", f"Failed to load rule YAML file:\n{str(e)}")
     
     def _action_clear_rules(self) -> None:
         """読み込んだ規則をすべてクリア"""
-        if not self._loaded_rules:
+        if not self._loaded_rule_files:
             QtWidgets.QMessageBox.information(
                 self, "Info", "No rules are currently loaded")
             return
         
         reply = QtWidgets.QMessageBox.question(
             self, "Clear Rules", 
-            f"Clear all {len(self._loaded_rules)} loaded rules?",
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-            QtWidgets.QMessageBox.No)
-        
-        if reply == QtWidgets.QMessageBox.Yes:
-            self._loaded_rules.clear()
+            f"Clear all {len(self._loaded_rule_ids)} loaded rules from {len(self._loaded_rule_files)} files?",
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+            QtWidgets.QMessageBox.StandardButton.No
+        )
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+            self._loaded_rule_files.clear()
+            self._loaded_rule_array = None
+            self._loaded_rule_ids.clear()
             if self._rule_viewer:
                 self._rule_viewer.close()
                 self._rule_viewer = None
@@ -388,27 +442,30 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 self, "Error", f"Failed to save YAML file:\n{str(e)}")
 
     def _action_show_rule_pattern(self) -> None:
-        """読み込み済みの規則を表示、または案内メッセージ"""
-        if not self._loaded_rules:
+        """読み込んだ規則パターンを表示"""
+        if not self._loaded_rule_files:
             QtWidgets.QMessageBox.information(
-                self, "Rule Viewer", 
-                "まだ規則が読み込まれていません。\n\n"
-                "規則を表示するには以下の方法を使用してください：\n\n"
-                "• File → Open Rule YAML... で規則ファイルを選択\n"
-                "• Rule → Add Rule File... で追加読み込み\n\n"
-                "規則ファイルは prev（前状態）→ next（後状態）の\n"
-                "遷移パターンを並べて表示します。")
-        else:
-            # 読み込み済みの規則を表示
-            if self._rule_viewer and not self._rule_viewer.isHidden():
-                # 既に開いている場合は前面に持ってくる
-                self._rule_viewer.raise_()
-                self._rule_viewer.activateWindow()
-            else:
-                # 新しく規則ビューアを開く
-                self._rule_viewer = RuleViewerWindow(self._loaded_rules)
-                self._rule_viewer.show()
-            self._status.showMessage(f"Showing {len(self._loaded_rules)} loaded rules")
+                self, "Info", 
+                "No transition rules loaded.\n"
+                "Use 'Rule → Load Rule File' to load transition rules first."
+            )
+            return
+        
+        # 規則ビューアウィンドウを表示
+        if self._rule_viewer is None or self._rule_viewer.isHidden():
+            # ルールビューア用に一時的にTransitionRuleリストを作成
+            all_temp_rules = []
+            for file_path in self._loaded_rule_files:
+                temp_rules = load_transition_rules_yaml(file_path)
+                all_temp_rules.extend(temp_rules)
+            
+            # 新しいビューアを作成
+            if self._rule_viewer:
+                self._rule_viewer.close()
+            self._rule_viewer = RuleViewerWindow(all_temp_rules)
+            self._rule_viewer.show()
+            
+            self._status.showMessage(f"Showing {len(self._loaded_rule_ids)} loaded rules")
 
     def _toggle_grid(self, checked: bool) -> None:
         self._grid_visible = checked
