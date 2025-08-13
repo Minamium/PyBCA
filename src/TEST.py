@@ -33,62 +33,6 @@ except ImportError:
         get_event_names_from_file
     )
 
-###################################
-# セル空間を任意回数更新する関数を定義する
-# GUIツール、CLIツールどちらもで、同じtorchを使ったセル空間更新関数を呼び出す
-# 引数: すべての遷移規則配列(id別適用確率付き), セル空間, 進めるステップ数, 特殊イベントを定義した配列
-# 戻り値: 更新後のセル空間, 各特殊イベントの発生した時の更新回数を記録した配列
-###################################
-def update_cellspace(
-    rules_with_prob: tuple[np.ndarray, np.ndarray],  # (rule_array, probability_array) from load_multiple_transition_rules_with_probability
-    cellspace: np.ndarray,            # セル空間配列 (H, W) int8
-    step_count: int,                  # 進めるステップ数
-    event_array: np.ndarray = None,   # 特殊イベント配列 (M, 6) int32, optional
-    global_prob: float = 0.5,         # グローバル確率 (0.0-1.0)
-    seed: int = None,                 # 乱数シード (再現性用)
-    device: str = "cuda"              # 計算デバイス ("cuda" or "cpu")
-) -> tuple[np.ndarray, dict]:
-    """
-    ブラウン運動セルオートマトンのステップ更新
-    
-    Args:
-        rules_with_prob: load_multiple_transition_rules_with_probability()の戻り値
-                        (rule_array, probability_array)のタプル
-                        - rule_array: 遷移規則パターン配列 (N, 2, 3, 3)
-                        - probability_array: 各規則の適用確率 (N,)
-        cellspace: 現在のセル空間状態 (H, W)
-        step_count: 実行するステップ数
-        event_array: 特殊イベント定義 (M, 6) [ref_x, ref_y, ref_state, write_x, write_y, write_state]
-        global_prob: ステップ全体の実行確率 (デフォルト0.5)
-        seed: 乱数シード (Noneの場合は非決定的)
-        device: 計算デバイス
-    
-    Returns:
-        tuple: (updated_cellspace, event_log)
-        - updated_cellspace: 更新後のセル空間 (H, W) int8
-        - event_log: イベント発生記録（プロット用に最適化）
-          {
-              "event_step_lists": {
-                  "event_name_1": [50, 100, 110, 205, ...],  # イベント発生ステップ番号のリスト
-                  "event_name_2": [75, 150, 180, ...],
-                  ...
-              },
-              "rule_application_counts": {
-                  rule_id: total_count,  # 各規則の総適用回数
-                  ...
-              },
-              "simulation_stats": {
-                  "total_steps": int,           # 総ステップ数
-                  "skipped_steps": int,         # グローバル確率でスキップされたステップ数
-                  "active_steps": int,          # 実際に規則適用を試行したステップ数
-                  "total_rule_applications": int # 全規則の総適用回数
-              }
-          }
-    """
-    pass
-
-###################################
-
 
 
 # デバッグ用関数
