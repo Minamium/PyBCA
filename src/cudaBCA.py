@@ -12,7 +12,10 @@ try:
         get_rule_ids_from_files,
         extract_cellspace_and_offset, 
         has_offset_info,
-        convert_event_coordinates
+        convert_event_coordinates,
+        load_special_events_from_file,
+        convert_events_to_array_coordinates,
+        get_event_names_from_file
     )
 except ImportError:
     # 直接実行される場合
@@ -22,7 +25,10 @@ except ImportError:
         get_rule_ids_from_files,
         extract_cellspace_and_offset, 
         has_offset_info,
-        convert_event_coordinates
+        convert_event_coordinates,
+        load_special_events_from_file,
+        convert_events_to_array_coordinates,
+        get_event_names_from_file
     )
 
 ###################################
@@ -106,6 +112,40 @@ def test_load_cellspace_and_rules(rule_paths: List[str], cellspace_path: str):
                 print(f"{prev_lines[j]}            →            {next_lines[j]}")
             else:
                 print(f"{prev_lines[j]}                         {next_lines[j]}")
+    
+    # 特殊イベント読み込みテスト
+    print(f"\n4. 特殊イベント読み込みテスト")
+    event_file_path = "../SampleCP/BCA-IP_event.py"
+    try:
+        events = load_special_events_from_file(event_file_path)
+        event_names = get_event_names_from_file(event_file_path)
+        
+        print(f"   読み込み成功: {len(events)}個のイベント")
+        print(f"   ファイル: {event_file_path}")
+        
+        # セル空間のオフセット情報を使用してイベント座標を変換
+        if 'cellspace' in locals() and 'min_x' in locals() and 'min_y' in locals():
+            event_array = convert_events_to_array_coordinates(events, min_x, min_y)
+            print(f"   変換後配列形状: {event_array.shape}")
+            print(f"   配列座標系に変換完了")
+            
+            # 最初の3個のイベントを表示
+            for i in range(min(3, len(events))):
+                name = event_names[i]
+                orig_event = events[i]
+                array_coords = event_array[i]
+                
+                print(f"   イベント{i+1}: {name}")
+                print(f"     元座標: 参照{orig_event[1]}(状態{orig_event[2]}) → 書込{orig_event[3]}(状態{orig_event[4]})")
+                print(f"     配列座標: 参照({array_coords[0]},{array_coords[1]})(状態{array_coords[2]}) → 書込({array_coords[3]},{array_coords[4]})(状態{array_coords[5]})")
+            
+            if len(events) > 3:
+                print(f"   ... (他{len(events)-3}個)")
+        else:
+            print(f"   警告: セル空間オフセット情報がないため座標変換をスキップ")
+            
+    except Exception as e:
+        print(f"   エラー: {str(e)}")
     
     print(f"\n=== テスト完了 ===")
     return cellspace if 'cellspace' in locals() else None, rule_array
