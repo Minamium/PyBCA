@@ -197,6 +197,7 @@ class TransitionRule:
     rule_id: int
     prev_pattern: np.ndarray  # 前状態パターン
     next_pattern: np.ndarray  # 後状態パターン
+    probability: float = 1.0  # 遷移確率（デフォルト1.0=確定的遷移）
 
 def load_transition_rules_yaml(path: str) -> List[TransitionRule]:
     """
@@ -298,17 +299,24 @@ def load_transition_rules_yaml(path: str) -> List[TransitionRule]:
         prev_arr = _pattern_to_array(prev_list)
         next_arr = _pattern_to_array(next_list)
         
+        # 確率の読み込み（オプション）
+        probability = rule_item.get("probability", 1.0)
+        if not isinstance(probability, (int, float)):
+            probability = 1.0
+        probability = max(0.0, min(1.0, float(probability)))  # 0.0-1.0の範囲に制限
+        
         rules.append(TransitionRule(
             rule_id=rule_id,
             prev_pattern=prev_arr,
-            next_pattern=next_arr
+            next_pattern=next_arr,
+            probability=probability
         ))
 
     return rules
 
 def load_multiple_transition_rules_to_numpy(rule_file_paths: List[str]) -> np.ndarray:
     """
-    複数の遷移規則ファイルを読み込み、統合されたnumpy配列として返す
+    複数の遷移規則ファイルを読み込み、統合されたnumpy配列として返す（確率情報なし）
     
     Args:
         rule_file_paths: 遷移規則YAMLファイルのパスリスト
@@ -340,6 +348,44 @@ def load_multiple_transition_rules_to_numpy(rule_file_paths: List[str]) -> np.nd
         rule_array[i, 1] = rule.next_pattern  # 後状態パターン
     
     return rule_array
+
+def load_multiple_transition_rules_with_probability(rule_file_paths: List[str]) -> tuple[np.ndarray, np.ndarray]:
+    """
+    複数の遷移規則ファイルを読み込み、パターン配列と確率配列を返す
+    
+    Args:
+        rule_file_paths: 遷移規則YAMLファイルのパスリスト
+    
+    Returns:
+        tuple: (rule_array, probability_array)
+        - rule_array: 遷移規則配列 (N, 2, 3, 3) 形状
+        - probability_array: 確率配列 (N,) 形状
+    """
+    import os
+    all_rules = []
+    
+    # 複数ファイルから規則を読み込み
+    for rule_path in rule_file_paths:
+        if os.path.exists(rule_path):
+            rules = load_transition_rules_yaml(rule_path)
+            all_rules.extend(rules)
+        else:
+            raise FileNotFoundError(f"遷移規則ファイルが見つかりません: {rule_path}")
+    
+    if not all_rules:
+        raise ValueError("遷移規則が読み込まれませんでした")
+    
+    # numpy配列に変換
+    num_rules = len(all_rules)
+    rule_array = np.zeros((num_rules, 2, 3, 3), dtype=np.int8)
+    probability_array = np.ones(num_rules, dtype=np.float32)
+    
+    for i, rule in enumerate(all_rules):
+        rule_array[i, 0] = rule.prev_pattern  # 前状態パターン
+        rule_array[i, 1] = rule.next_pattern  # 後状態パターン
+        probability_array[i] = rule.probability  # 遷移確率
+    
+    return rule_array, probability_array
 
 def get_rule_ids_from_files(rule_file_paths: List[str]) -> List[int]:
     """
