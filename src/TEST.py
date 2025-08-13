@@ -371,6 +371,6 @@ def test_data_consistency():
     return all_match
 
 if __name__ == "__main__":
-    # main()
-    # test_data_consistency()
+    main()
+    test_data_consistency()
     test_probabilistic_rules()
