@@ -15,7 +15,7 @@ import numpy as np
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from lib import load_cell_space_yaml_to_numpy
+from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule
 
 # ========= 配列 -> QImage（高速LUT） =========
 
@@ -25,9 +25,10 @@ def build_palette(states: List[int]) -> Dict[int, Tuple[int, int, int]]:
     既定: 0=黒, 1=白, 2=赤。他の値はランダム色。
     """
     pal: Dict[int, Tuple[int, int, int]] = {
-        0: (0, 0, 0),
-        1: (255, 255, 255),
-        2: (220, 40, 40),
+        0: (255, 255, 255),
+        1: (180, 180, 180),
+        2: (0, 0, 0),
+        -1: (255, 0, 0)
     }
     for s in states:
         if s not in pal:
@@ -121,12 +122,20 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
     メインウィンドウ。グリッド描画やステータス表示、YAMLロードを提供。
     画像（QGraphicsPixmapItem）ベース → 将来はセル矩形を個別アイテム化も可能。
     """
-    def __init__(self, arr: Optional[np.ndarray] = None,
-                 palette: Optional[Dict[int, Tuple[int, int, int]]] = None):
+    def __init__(self, arr: np.ndarray = None):
         super().__init__()
         self.setWindowTitle("PyBCA CellSpace Viewer")
-        self._palette = palette
-        self._arr: Optional[np.ndarray] = None
+        self._arr = None
+        self._view = None
+        self._scene = None
+        self._pix = None
+        self._grid_item = None
+        self._grid_visible = True
+        self._status = None
+        
+        # 遷移規則管理
+        self._loaded_rules: List[TransitionRule] = []
+        self._rule_viewer = None
 
         # Scene / View / PixmapItem
         self._scene = QtWidgets.QGraphicsScene(self)
@@ -170,7 +179,25 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         qimg = array_to_qimage(arr, self._palette)
         self._pix.setPixmap(QtGui.QPixmap.fromImage(qimg))
         self._view.setSceneRect(self._pix.boundingRect())
-        self._view.fitInView(self._pix, QtCore.Qt.KeepAspectRatio)
+        
+        # 初期表示時はセル空間全体がウィンドウに収まるように明示的にズーム計算
+        view_rect = self._view.viewport().rect()
+        scene_rect = self._pix.boundingRect()
+        
+        if scene_rect.width() > 0 and scene_rect.height() > 0:
+            # ビューポートに対するスケール比を計算
+            scale_x = view_rect.width() / scene_rect.width()
+            scale_y = view_rect.height() / scene_rect.height()
+            scale = min(scale_x, scale_y) * 0.9  # 少し余裕を持たせる
+            
+            # 変換をリセットしてスケールを適用
+            self._view.resetTransform()
+            self._view.scale(scale, scale)
+            self._view._zoom = scale
+            
+            # 中央に配置
+            self._view.centerOn(scene_rect.center())
+        
         self._rebuild_grid()
 
     # ---- UI building ----
@@ -179,8 +206,15 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
 
         # File
         m_file = menubar.addMenu("&File")
-        a_open = m_file.addAction("Open YAML…")
+        a_open = m_file.addAction("Open CellSpace YAML…")
         a_open.triggered.connect(self._action_open_yaml)
+        m_file.addSeparator()
+        a_open_rule = m_file.addAction("Open Rule YAML…")
+        a_open_rule.triggered.connect(self._action_open_rule_yaml)
+        m_file.addSeparator()
+        a_save = m_file.addAction("Save YAML…")
+        a_save.triggered.connect(self._action_save_yaml)
+        m_file.addSeparator()
         a_quit = m_file.addAction("Quit")
         a_quit.triggered.connect(self.close)
 
@@ -190,6 +224,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._act_grid.setCheckable(True)
         self._act_grid.setChecked(True)
         self._act_grid.triggered.connect(self._toggle_grid)
+        
+        # Rule
+        m_rule = menubar.addMenu("&Rule")
+        a_show_rule = m_rule.addAction("Show Loaded Rules")
+        a_show_rule.triggered.connect(self._action_show_rule_pattern)
+        m_rule.addSeparator()
+        a_add_rule = m_rule.addAction("Add Rule File...")
+        a_add_rule.triggered.connect(self._action_add_rule_file)
+        m_rule.addSeparator()
+        a_clear_rules = m_rule.addAction("Clear All Rules")
+        a_clear_rules.triggered.connect(self._action_clear_rules)
 
     # ---- actions ----
     def _action_open_yaml(self) -> None:
@@ -197,13 +242,202 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             self, "Open CellSpace YAML", filter="YAML Files (*.yaml *.yml)")
         if not path:
             return
-        arr = load_cell_space_yaml_to_numpy(path)
-        self.set_array(arr)
-        self._status.showMessage(f"Loaded: {path}  size={arr.shape}")
+        
+        # プログレスダイアログを作成
+        progress = QtWidgets.QProgressDialog(
+            "Loading YAML file...", "Cancel", 0, 100, self)
+        progress.setWindowTitle("Loading")
+        progress.setWindowModality(QtCore.Qt.WindowModal)
+        progress.setMinimumDuration(200)  # 200ms後に表示（早めに表示）
+        progress.show()
+        
+        # プログレス更新用コールバック
+        def update_progress(current, total):
+            if progress.wasCanceled():
+                raise InterruptedError("Loading was canceled by user")
+            
+            # 進捗に応じてメッセージを更新
+            if current < 15:
+                progress.setLabelText("Reading YAML file...")
+            elif current < 85:
+                progress.setLabelText("Parsing coordinates...")
+            elif current < 90:
+                progress.setLabelText("Calculating array size...")
+            elif current < 97:
+                progress.setLabelText("Creating array...")
+            else:
+                progress.setLabelText("Finalizing...")
+            
+            progress.setValue(current)
+            QtWidgets.QApplication.processEvents()  # UI更新
+        
+        try:
+            arr = load_cell_space_yaml_to_numpy(path, progress_callback=update_progress)
+            progress.setValue(100)
+            self.set_array(arr)
+            self._status.showMessage(f"Loaded: {path}  size={arr.shape}")
+        except InterruptedError:
+            self._status.showMessage("Loading canceled")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to load YAML file:\n{str(e)}")
+        finally:
+            progress.close()
+    
+    def _action_open_rule_yaml(self) -> None:
+        """規則ファイルを読み込んで既存の規則を置き換え"""
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Open Rule YAML", filter="YAML Files (*.yaml *.yml)")
+        if not path:
+            return
+        
+        try:
+            rules = load_transition_rules_yaml(path)
+            if not rules:
+                QtWidgets.QMessageBox.warning(
+                    self, "Warning", "No transition rules found in the file")
+                return
+            
+            # 既存の規則を置き換え
+            self._loaded_rules = rules
+            
+            # 規則ビューアウィンドウを開く
+            self._rule_viewer = RuleViewerWindow(self._loaded_rules)
+            self._rule_viewer.show()
+            self._status.showMessage(f"Loaded {len(rules)} rules from {path}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to load rule YAML file:\n{str(e)}")
+    
+    def _action_add_rule_file(self) -> None:
+        """規則ファイルを追加読み込み"""
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, "Add Rule YAML", filter="YAML Files (*.yaml *.yml)")
+        if not path:
+            return
+        
+        try:
+            new_rules = load_transition_rules_yaml(path)
+            if not new_rules:
+                QtWidgets.QMessageBox.warning(
+                    self, "Warning", "No transition rules found in the file")
+                return
+            
+            # 既存の規則に追加（重複IDチェック）
+            existing_ids = {rule.rule_id for rule in self._loaded_rules}
+            added_count = 0
+            
+            for rule in new_rules:
+                if rule.rule_id not in existing_ids:
+                    self._loaded_rules.append(rule)
+                    existing_ids.add(rule.rule_id)
+                    added_count += 1
+            
+            if added_count == 0:
+                QtWidgets.QMessageBox.information(
+                    self, "Info", "All rules from this file were already loaded (duplicate IDs)")
+            else:
+                self._status.showMessage(f"Added {added_count} new rules (total: {len(self._loaded_rules)})")
+                
+                # 規則ビューアが開いている場合は更新
+                if self._rule_viewer and not self._rule_viewer.isHidden():
+                    self._rule_viewer.close()
+                    self._rule_viewer = RuleViewerWindow(self._loaded_rules)
+                    self._rule_viewer.show()
+                    
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to add rule YAML file:\n{str(e)}")
+    
+    def _action_clear_rules(self) -> None:
+        """読み込んだ規則をすべてクリア"""
+        if not self._loaded_rules:
+            QtWidgets.QMessageBox.information(
+                self, "Info", "No rules are currently loaded")
+            return
+        
+        reply = QtWidgets.QMessageBox.question(
+            self, "Clear Rules", 
+            f"Clear all {len(self._loaded_rules)} loaded rules?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.No)
+        
+        if reply == QtWidgets.QMessageBox.Yes:
+            self._loaded_rules.clear()
+            if self._rule_viewer:
+                self._rule_viewer.close()
+                self._rule_viewer = None
+            self._status.showMessage("All rules cleared")
+    
+    def _action_save_yaml(self) -> None:
+        if self._arr is None:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No cell space data to save.")
+            return
+        
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self, "Save CellSpace YAML", filter="YAML Files (*.yaml *.yml)")
+        if not path:
+            return
+        
+        try:
+            numpy_to_cell_space_yaml(self._arr, path)
+            self._status.showMessage(f"Saved: {path}  size={self._arr.shape}")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to save YAML file:\n{str(e)}")
+
+    def _action_show_rule_pattern(self) -> None:
+        """読み込み済みの規則を表示、または案内メッセージ"""
+        if not self._loaded_rules:
+            QtWidgets.QMessageBox.information(
+                self, "Rule Viewer", 
+                "まだ規則が読み込まれていません。\n\n"
+                "規則を表示するには以下の方法を使用してください：\n\n"
+                "• File → Open Rule YAML... で規則ファイルを選択\n"
+                "• Rule → Add Rule File... で追加読み込み\n\n"
+                "規則ファイルは prev（前状態）→ next（後状態）の\n"
+                "遷移パターンを並べて表示します。")
+        else:
+            # 読み込み済みの規則を表示
+            if self._rule_viewer and not self._rule_viewer.isHidden():
+                # 既に開いている場合は前面に持ってくる
+                self._rule_viewer.raise_()
+                self._rule_viewer.activateWindow()
+            else:
+                # 新しく規則ビューアを開く
+                self._rule_viewer = RuleViewerWindow(self._loaded_rules)
+                self._rule_viewer.show()
+            self._status.showMessage(f"Showing {len(self._loaded_rules)} loaded rules")
 
     def _toggle_grid(self, checked: bool) -> None:
         self._grid_visible = checked
         self._grid_item.setVisible(checked)
+
+    def _rebuild_grid(self) -> None:
+        """現在の配列サイズと表示倍率からグリッドを組み直す。"""
+        if self._arr is None or not self._grid_visible:
+            self._grid_item.setPath(QtGui.QPainterPath())
+            return
+        h, w = self._arr.shape
+        path = QtGui.QPainterPath()
+        # ピクセル境界に合わせた格子。倍率が低いときは間引き
+        scale_x = self._view.transform().m11()
+        scale_y = self._view.transform().m22()
+        step = 1
+        if scale_x < 0.6 or scale_y < 0.6:
+            step = 8
+        elif scale_x < 1.2 or scale_y < 1.2:
+            step = 4
+        # 垂直線
+        for x in range(0, w+1, step):
+            path.moveTo(x, 0)
+            path.lineTo(x, h)
+        # 水平線
+        for y in range(0, h+1, step):
+            path.moveTo(0, y)
+            path.lineTo(w, y)
+        self._grid_item.setPath(path)
 
     # ---- events ----
     def eventFilter(self, obj, event):
@@ -229,39 +463,145 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         # ズームに応じて細かすぎるグリッドは抑制（必要なら間引きロジックを強化）
         self._rebuild_grid()
 
-    def _rebuild_grid(self) -> None:
-        """現在の配列サイズと表示倍率からグリッドを組み直す。"""
-        if self._arr is None or not self._grid_visible:
-            self._grid_item.setPath(QtGui.QPainterPath())
+
+class RuleViewerWindow(QtWidgets.QMainWindow):
+    """
+    遷移規則ビューア。prev→nextの変化を左右並列表示し、矢印ボタンで規則を切り替え。
+    """
+    def __init__(self, rules: List[TransitionRule]):
+        super().__init__()
+        self.setWindowTitle("PyBCA Rule Viewer")
+        self._rules = rules
+        self._current_index = 0
+        
+        if not self._rules:
+            QtWidgets.QMessageBox.warning(self, "Warning", "No rules to display")
             return
-        h, w = self._arr.shape
-        path = QtGui.QPainterPath()
-        # ピクセル境界に合わせた格子。倍率が低いときは間引き
-        # ここでは単純に 1px あたりのスケールで閾値を決める
-        scale_x = self._view.transform().m11()
-        scale_y = self._view.transform().m22()
-        step = 1
-        if scale_x < 0.6 or scale_y < 0.6:
-            step = 8
-        elif scale_x < 1.2 or scale_y < 1.2:
-            step = 4
-        # 垂直線
-        for x in range(0, w+1, step):
-            path.moveTo(x, 0)
-            path.lineTo(x, h)
-        # 水平線
-        for y in range(0, h+1, step):
-            path.moveTo(0, y)
-            path.lineTo(w, y)
-        self._grid_item.setPath(path)
+        
+        # 中央ウィジェット
+        central = QtWidgets.QWidget()
+        self.setCentralWidget(central)
+        
+        # メインレイアウト
+        main_layout = QtWidgets.QVBoxLayout(central)
+        
+        # 規則情報表示
+        self._rule_info = QtWidgets.QLabel()
+        self._rule_info.setAlignment(QtCore.Qt.AlignCenter)
+        main_layout.addWidget(self._rule_info)
+        
+        # prev→next表示エリア
+        display_layout = QtWidgets.QHBoxLayout()
+        
+        # prev表示
+        prev_group = QtWidgets.QGroupBox("Previous State")
+        prev_layout = QtWidgets.QVBoxLayout(prev_group)
+        self._prev_scene = QtWidgets.QGraphicsScene()
+        self._prev_view = CellSpaceView(self._prev_scene)
+        self._prev_pix = QtWidgets.QGraphicsPixmapItem()
+        self._prev_scene.addItem(self._prev_pix)
+        prev_layout.addWidget(self._prev_view)
+        display_layout.addWidget(prev_group)
+        
+        # 矢印
+        arrow_layout = QtWidgets.QVBoxLayout()
+        arrow_layout.addStretch()
+        arrow_label = QtWidgets.QLabel("→")
+        arrow_label.setAlignment(QtCore.Qt.AlignCenter)
+        arrow_label.setStyleSheet("font-size: 24px; font-weight: bold;")
+        arrow_layout.addWidget(arrow_label)
+        arrow_layout.addStretch()
+        display_layout.addLayout(arrow_layout)
+        
+        # next表示
+        next_group = QtWidgets.QGroupBox("Next State")
+        next_layout = QtWidgets.QVBoxLayout(next_group)
+        self._next_scene = QtWidgets.QGraphicsScene()
+        self._next_view = CellSpaceView(self._next_scene)
+        self._next_pix = QtWidgets.QGraphicsPixmapItem()
+        self._next_scene.addItem(self._next_pix)
+        next_layout.addWidget(self._next_view)
+        display_layout.addWidget(next_group)
+        
+        main_layout.addLayout(display_layout)
+        
+        # コントロールボタン
+        control_layout = QtWidgets.QHBoxLayout()
+        
+        self._prev_btn = QtWidgets.QPushButton("◀ Previous Rule")
+        self._prev_btn.clicked.connect(self._prev_rule)
+        control_layout.addWidget(self._prev_btn)
+        
+        self._rule_selector = QtWidgets.QComboBox()
+        for i, rule in enumerate(self._rules):
+            self._rule_selector.addItem(f"Rule {rule.rule_id}")
+        self._rule_selector.currentIndexChanged.connect(self._rule_selected)
+        control_layout.addWidget(self._rule_selector)
+        
+        self._next_btn = QtWidgets.QPushButton("Next Rule ▶")
+        self._next_btn.clicked.connect(self._next_rule)
+        control_layout.addWidget(self._next_btn)
+        
+        main_layout.addLayout(control_layout)
+        
+        # ステータスバー
+        self._status = self.statusBar()
+        
+        self.resize(800, 600)
+        self._update_display()
+    
+    def _update_display(self):
+        """現在の規則を表示"""
+        if not self._rules or self._current_index >= len(self._rules):
+            return
+        
+        rule = self._rules[self._current_index]
+        
+        # 規則情報更新
+        self._rule_info.setText(f"Rule ID: {rule.rule_id} ({self._current_index + 1}/{len(self._rules)})")
+        
+        # prev表示
+        prev_qimg = array_to_qimage(rule.prev_pattern)
+        self._prev_pix.setPixmap(QtGui.QPixmap.fromImage(prev_qimg))
+        self._prev_view.setSceneRect(self._prev_pix.boundingRect())
+        self._prev_view.fitInView(self._prev_pix, QtCore.Qt.KeepAspectRatio)
+        
+        # next表示
+        next_qimg = array_to_qimage(rule.next_pattern)
+        self._next_pix.setPixmap(QtGui.QPixmap.fromImage(next_qimg))
+        self._next_view.setSceneRect(self._next_pix.boundingRect())
+        self._next_view.fitInView(self._next_pix, QtCore.Qt.KeepAspectRatio)
+        
+        # ボタン状態更新
+        self._prev_btn.setEnabled(self._current_index > 0)
+        self._next_btn.setEnabled(self._current_index < len(self._rules) - 1)
+        
+        # コンボボックス更新
+        self._rule_selector.setCurrentIndex(self._current_index)
+        
+        # ステータス更新
+        self._status.showMessage(f"Rule {rule.rule_id}: prev={rule.prev_pattern.shape}, next={rule.next_pattern.shape}")
+    
+    def _prev_rule(self):
+        if self._current_index > 0:
+            self._current_index -= 1
+            self._update_display()
+    
+    def _next_rule(self):
+        if self._current_index < len(self._rules) - 1:
+            self._current_index += 1
+            self._update_display()
+    
+    def _rule_selected(self, index: int):
+        if 0 <= index < len(self._rules):
+            self._current_index = index
+            self._update_display()
 
 
 def main(argv=None):
     app = QtWidgets.QApplication(argv or sys.argv)
-    arr = None
-    if len(sys.argv) > 1:
-        arr = load_cell_space_yaml_to_numpy(sys.argv[1])
-    win = CellSpaceWindow(arr=arr)
+    # 初期状態は空で起動
+    win = CellSpaceWindow(arr=None)
     win.show()
     sys.exit(app.exec())
 

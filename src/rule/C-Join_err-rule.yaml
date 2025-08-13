@@ -1,0 +1,88 @@
+- id: 101
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 102
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2

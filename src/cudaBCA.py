@@ -1,11 +1,7 @@
-import torch 
+# セル空間を任意回数更新する関数を定義する
+# GUIツール、CLIツールどちらもで、同じcudaを使ったセル空間更新関数を呼び出す
+# 引数を読み込んだすべての遷移規則配列(id別適用確率付き)とセル空間、進めるステップ数、特殊イベントを定義した配列
+# 戻り値を更新後のセル空間と各特殊イベントの発生した時の更新回数を記録した配列
 
-class cudaBCA:
-    def __init__(self,
-                 device: "cuda",
-                 
-                 ):
-        pass
-
-    def load_cellspace(self):
-        pass
+def update_cellspace():
+    pass
