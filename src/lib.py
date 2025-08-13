@@ -154,32 +154,7 @@ def has_offset_info(arr: np.ndarray) -> bool:
     """
     return arr.ndim == 2 and arr.shape[1] >= 2 and arr.shape[0] >= 1
 
-def convert_event_coordinates(events: List[tuple], min_x: int, min_y: int) -> List[tuple]:
-    """
-    特殊イベントの座標を元座標系から配列座標系に変換
-    
-    Args:
-        events: イベントリスト [(name, ref_coord, ref_state, write_coord, write_state), ...]
-        min_x, min_y: 元座標系の最小値
-    
-    Returns:
-        変換後のイベントリスト
-    """
-    converted_events = []
-    for event in events:
-        name, ref_coord, ref_state, write_coord, write_state = event
-        
-        # 座標を配列インデックスに変換
-        ref_x, ref_y = ref_coord
-        write_x, write_y = write_coord
-        
-        ref_array_coord = (ref_x - min_x, ref_y - min_y)
-        write_array_coord = (write_x - min_x, write_y - min_y)
-        
-        converted_event = (name, ref_array_coord, ref_state, write_array_coord, write_state)
-        converted_events.append(converted_event)
-    
-    return converted_events
+
 
 # numpy配列のセル空間をyamlファイルに変換する
 def numpy_to_cell_space_yaml(arr: np.ndarray, path: str) -> None:

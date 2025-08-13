@@ -8,13 +8,11 @@ from .lib import (
     get_rule_ids_from_files,
     extract_cellspace_and_offset,
     has_offset_info,
-    convert_event_coordinates,
+
     load_special_events_from_file,
     convert_events_to_array_coordinates,
     get_event_names_from_file,
-    save_cell_space_numpy_to_yaml,
-    load_cell_space_numpy_from_file,
-    save_cell_space_numpy_to_file
+    numpy_to_cell_space_yaml
 )
 
 # cudaBCA.pyから主要な関数をインポート
@@ -27,12 +25,10 @@ __all__ = [
     'get_rule_ids_from_files',
     'extract_cellspace_and_offset',
     'has_offset_info',
-    'convert_event_coordinates',
+
     'load_special_events_from_file',
     'convert_events_to_array_coordinates',
     'get_event_names_from_file',
-    'save_cell_space_numpy_to_yaml',
-    'load_cell_space_numpy_from_file',
-    'save_cell_space_numpy_to_file',
+    'numpy_to_cell_space_yaml',
     'update_cellspace'
 ]
