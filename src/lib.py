@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
 import yaml
+import torch
 
 
 # yamlセル空間ファイルをnumpy配列に変換する

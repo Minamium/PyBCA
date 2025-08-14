@@ -17,6 +17,9 @@ from .lib import (
     update_cellspace
 )
 
+# cli_simClass.pyからシミュレータクラスをインポート
+from .cli_simClass import BCA_Simulator
+
 __all__ = [
     'load_cell_space_yaml_to_numpy',
     'load_transition_rules_yaml',
@@ -30,5 +33,6 @@ __all__ = [
     'convert_events_to_array_coordinates',
     'get_event_names_from_file',
     'numpy_to_cell_space_yaml',
-    'update_cellspace'
+    'update_cellspace',
+    'BCA_Simulator'
 ]
