@@ -531,14 +531,30 @@ def get_event_names_from_file(event_file_path: str) -> List[str]:
 # 引数は全てtorchテンソルにして、cudaデバイス上で実行できるようにする
 ###################################
 def update_cellspace(
-    state: torch.Tensor,                # (T,H,W) or (H,W), dtype=torch.int8 or int16
+    state: torch.Tensor,                # (T,H,W), dtype=torch.int8 or int16
     rule_arrays: torch.Tensor,          # (N,2,3,3) [prev,next], dtype=torch.int8
     rule_probs: torch.Tensor | None,    # (N,), dtype=torch.float32, Noneなら常に適用可
     seed: int | None = None,
 ) -> torch.Tensor:
     """
     """
-    # 遷移規則を適用する
+    # 遷移規則配列を乱数によりシャッフルしてshuffled_rule_arraysを定義する
+
+    # shuffled_rule_arraysの要素順にfor-loop
+    #for rule_num in shuffled_rule_arrays:
+        # ruleにshuffled_rule_arrays[rule_num]を代入する
+
+        # ruleをセル空間全体に並列に走査して適用可能性領域の中心座標をリストして、中心座標リストの要素に乱数スコアを与える
+
+        # 中心座標リストの要素の乱数スコアに並列に確率ゲート(Global_prob)をかけて、棄却されたら中心座標リストから排除する
+
+        # 5*5の領域を再び畳み込み的に走査して、中心座標が複数ある場合は最も乱数スコアが高い中心座標を残し、他を排除する(規則内競合解決)
+
+        # それぞれの中心座標に対して並列に、他の遷移規則で書き換えられた領域が書き換え予約領域に含まれてないか確認して、
+        # 競合していたら中心座標リストから排除する(他遷移規則競合解決)
+
+        # 競合解決完了後、中心座標リストの要素に対して並列に、遷移規則のnext状態との差分をセル空間に対して書き換えを適用していく
+        
 
     return state
 
@@ -549,5 +565,5 @@ def apply_spatial_events(
 ) -> torch.Tensor:
     """
     """
-    return state
+    return state, do_event_list
 ###################################
