@@ -44,3 +44,16 @@ class BCA_Simulator:
             self.spatial_event_arrays_tensor = torch.from_numpy(self.spatial_event_arrays).to(self.device)
         else:
             self.spatial_event_arrays_tensor = None
+
+        # デバイス情報を表示
+        device_info = f"Device: {self.cellspace_tensor.device}"
+        if self.device == "cuda" and torch.cuda.is_available():
+            gpu_name = torch.cuda.get_device_name(self.cellspace_tensor.device)
+            device_info += f" ({gpu_name})"
+        
+        print(f"Allocated torch tensors on {device_info}")
+        print(f"Cellspace tensor shape: {self.cellspace_tensor.shape}")
+        print(f"Rule arrays tensor shape: {self.rule_arrays_tensor.shape}")
+        print(f"Rule probabilities tensor shape: {self.rule_probs_tensor.shape}")
+        if self.spatial_event_arrays_tensor is not None:
+            print(f"Spatial events tensor shape: {self.spatial_event_arrays_tensor.shape}")
