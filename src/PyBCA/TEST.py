@@ -1,16 +1,16 @@
-from cli_simClass import BCA_Simulator
+from .cli_simClass import BCA_Simulator
 
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
 
-    cellspace_path = "../SampleCP/test.yaml"
+    cellspace_path = "../../SampleCP/test.yaml"
     rule_paths = [
         "rule/base-rule.yaml",
         "rule/C-Join_err-rule.yaml"
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="../SampleCP/BCA-IP_event.py")
+                              spatial_event_filePath="../../SampleCP/BCA-IP_event.py")
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -34,4 +34,3 @@ if __name__ == "__main__":
     print(simulator.rule_arrays_tensor)
     print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
-    

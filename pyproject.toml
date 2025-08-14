@@ -11,3 +11,9 @@ dependencies = [
   "torch>=2.0",
   "scipy"
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
