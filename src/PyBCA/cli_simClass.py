@@ -57,3 +57,10 @@ class BCA_Simulator:
         print(f"Rule probabilities tensor shape: {self.rule_probs_tensor.shape}")
         if self.spatial_event_arrays_tensor is not None:
             print(f"Spatial events tensor shape: {self.spatial_event_arrays_tensor.shape}")
+
+    # 平行試行数より、三次元テンソルを作成する
+    def set_ParallelTrial(self, parallel_trial: int):
+        self.parallel_trial = parallel_trial
+
+        # Trial x Height x Widthの三次元テンソルを作成
+        self.THW_cellspace_tensor = self.cellspace_tensor.repeat(parallel_trial, 1, 1).contiguous()
