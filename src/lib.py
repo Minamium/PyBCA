@@ -408,7 +408,7 @@ def get_rule_ids_from_files(rule_file_paths: List[str]) -> List[int]:
     
     return [rule.rule_id for rule in all_rules]
 
-def load_special_events_from_file(event_file_path: str) -> List[tuple]:
+def load_special_events_from_file(event_file_path: str) -> np.ndarray:
     """
     特殊イベント定義ファイル(.py)から特殊イベントを読み込む
     
@@ -416,7 +416,9 @@ def load_special_events_from_file(event_file_path: str) -> List[tuple]:
         event_file_path: 特殊イベント定義Pythonファイルのパス
     
     Returns:
-        特殊イベントのリスト [(name, ref_coord, ref_state, write_coord, write_state), ...]
+        特殊イベントのnumpy配列 (M, 6) int32
+        [ref_x, ref_y, ref_state, write_x, write_y, write_state] の形式
+        空の場合は shape=(0, 6) の配列を返す
     """
     import os
     
@@ -436,49 +438,56 @@ def load_special_events_from_file(event_file_path: str) -> List[tuple]:
         if not isinstance(events, list):
             raise ValueError(f"'events'はリストである必要があります: {event_file_path}")
         
-        # イベント形式の検証
+        # イベント形式の検証とnumpy配列への変換
+        if len(events) == 0:
+            return np.zeros((0, 6), dtype=np.int32)
+        
+        event_array = []
         for i, event in enumerate(events):
             if not isinstance(event, tuple) or len(event) != 5:
                 raise ValueError(f"イベント{i}の形式が不正です。(name, ref_coord, ref_state, write_coord, write_state)の形式である必要があります")
+            
+            name, ref_coord, ref_state, write_coord, write_state = event
+            # ref_coord, write_coord は (x, y) のタプルと仮定
+            if not (isinstance(ref_coord, tuple) and len(ref_coord) == 2):
+                raise ValueError(f"イベント{i}のref_coordは(x, y)のタプルである必要があります")
+            if not (isinstance(write_coord, tuple) and len(write_coord) == 2):
+                raise ValueError(f"イベント{i}のwrite_coordは(x, y)のタプルである必要があります")
+            
+            # [ref_x, ref_y, ref_state, write_x, write_y, write_state] の形式で配列に追加
+            event_array.append([
+                ref_coord[0], ref_coord[1], ref_state,
+                write_coord[0], write_coord[1], write_state
+            ])
         
-        return events
+        return np.array(event_array, dtype=np.int32)
         
     except Exception as e:
         raise RuntimeError(f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}")
 
-def convert_events_to_array_coordinates(events: List[tuple], min_x: int, min_y: int) -> np.ndarray:
+def convert_events_to_array_coordinates(events: np.ndarray, min_x: int, min_y: int) -> np.ndarray:
     """
     特殊イベントを配列座標系に変換し、numpy配列として返す
     
     Args:
-        events: 特殊イベントのリスト
+        events: 特殊イベントのnumpy配列 (M, 6) [ref_x, ref_y, ref_state, write_x, write_y, write_state]
         min_x, min_y: セル空間の最小座標（オフセット）
     
     Returns:
-        変換された特殊イベント配列 (N, 6) 形状
-        各行: [ref_x, ref_y, ref_state, write_x, write_y, write_state]
+        変換された特殊イベント配列 (M, 6) 形状
+        各行: [ref_x, ref_y, ref_state, write_x, write_y, write_state] (配列座標系)
     """
-    if not events:
+    if events.shape[0] == 0:
         return np.empty((0, 6), dtype=np.int32)
     
-    num_events = len(events)
-    event_array = np.zeros((num_events, 6), dtype=np.int32)
+    # 座標変換（オフセット減算）
+    converted_events = events.copy()
+    converted_events[:, 0] -= min_x  # ref_x
+    converted_events[:, 1] -= min_y  # ref_y
+    converted_events[:, 3] -= min_x  # write_x
+    converted_events[:, 4] -= min_y  # write_y
     
-    for i, event in enumerate(events):
-        name, ref_coord, ref_state, write_coord, write_state = event
-        
-        # 座標を配列インデックスに変換
-        ref_x, ref_y = ref_coord
-        write_x, write_y = write_coord
-        
-        event_array[i, 0] = ref_x - min_x    # ref_x (配列座標)
-        event_array[i, 1] = ref_y - min_y    # ref_y (配列座標)
-        event_array[i, 2] = ref_state        # ref_state
-        event_array[i, 3] = write_x - min_x  # write_x (配列座標)
-        event_array[i, 4] = write_y - min_y  # write_y (配列座標)
-        event_array[i, 5] = write_state      # write_state
-    
-    return event_array
+    return converted_events
 
 def get_event_names_from_file(event_file_path: str) -> List[str]:
     """
@@ -490,8 +499,29 @@ def get_event_names_from_file(event_file_path: str) -> List[str]:
     Returns:
         イベント名のリスト
     """
-    events = load_special_events_from_file(event_file_path)
-    return [event[0] for event in events]  # name部分を抽出
+    # load_special_events_from_file は numpy 配列を返すが、
+    # イベント名は元の Python ファイルから直接取得する必要がある
+    import os
+    
+    if not os.path.exists(event_file_path):
+        raise FileNotFoundError(f"特殊イベントファイルが見つかりません: {event_file_path}")
+    
+    spec = {}
+    try:
+        with open(event_file_path, 'r', encoding='utf-8') as f:
+            exec(f.read(), spec)
+        
+        if 'events' not in spec:
+            raise ValueError(f"'events'変数が見つかりません: {event_file_path}")
+        
+        events = spec['events']
+        if not isinstance(events, list):
+            raise ValueError(f"'events'はリストである必要があります: {event_file_path}")
+        
+        return [event[0] for event in events]  # name部分を抽出
+        
+    except Exception as e:
+        raise RuntimeError(f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}")
 
 ###################################
 # セル空間を更新する関数を定義する

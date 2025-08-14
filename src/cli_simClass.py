@@ -13,7 +13,8 @@ class BCA_Simulator:
     def __init__(self,
                  cellspace_path: str,
                  rule_paths: List[str],
-                 device: str = "cuda"
+                 device: str = "cuda",
+                 spatial_event_filePath: str | None = None
                  ):
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
@@ -22,6 +23,12 @@ class BCA_Simulator:
         # 遷移規則読み込み
         self.rule_ids = lib.get_rule_ids_from_files(rule_paths)
         self.rule_arrays, self.rule_probs = lib.load_multiple_transition_rules_with_probability(rule_paths)
+
+        # 特殊イベント読み込み
+        if spatial_event_filePath is not None:
+            self.spatial_event_arrays = lib.load_special_events_from_file(spatial_event_filePath)
+        else:
+            self.spatial_event_arrays = None    
 
         # 計算デバイス設定
         self.device = device
@@ -32,3 +39,8 @@ class BCA_Simulator:
         #self.rule_ids_tensor = torch.from_numpy(self.rule_ids).to(self.device)
         self.rule_arrays_tensor = torch.from_numpy(self.rule_arrays).to(self.device)
         self.rule_probs_tensor = torch.from_numpy(self.rule_probs).to(self.device)
+        
+        if self.spatial_event_arrays is not None:
+            self.spatial_event_arrays_tensor = torch.from_numpy(self.spatial_event_arrays).to(self.device)
+        else:
+            self.spatial_event_arrays_tensor = None
