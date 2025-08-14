@@ -9,8 +9,13 @@ requires-python = ">=3.9"
 dependencies = [
   "numpy",
   "torch>=2.0",
-  "scipy"
+  "scipy",
+  "pyyaml"
 ]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
