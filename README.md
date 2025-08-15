@@ -33,15 +33,6 @@ pip install -e ./PyBCA
 ReCycleBinとは、理想的にトークンが十分に存在する領域であり、その接続点はトークンが出てきたり、また入っていく(回路上からは消える)動作を示す.
 ---
 
-#### 入出力・前提
-
-- **入力テンソル** `State`：セル空間 `[Trial, H, W]`（既定）。`dtype=uint8` 推奨（1セル=1B）。  
-  - `Trial` は独立試行の本数（多数並列）。  
-- **乱数**：**stateless**（例：Philox/SplitMix64）で `(seed, step, trial, y, x, salt)` から決定的生成。  
-- **境界**：既定 **periodic**（トーラス）。回路設計上、境界依存は本質ではない。  
-- **グローバル適用確率** `p_global ∈ [0,1]`。  
----
-
 ## 更新アルゴリズム
 
 ### 事前準備
@@ -99,3 +90,5 @@ THW_boolMaskとruleのnextを使ってTHWを書き換える。同時にTHW_appli
 ### loop end
 
 ### THWが更新後のセル空間になる
+
+---
