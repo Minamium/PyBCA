@@ -43,7 +43,7 @@ if __name__ == "__main__":
     print(simulator.spatial_event_arrays_tensor)
 
     simulator.set_ParallelTrial(2)
-    simulator.run_steps(3, global_prob=0.5)
+    simulator.run_steps(3, global_prob=0.5, seed=1)
 
     print("After Apllied run_steps, TCHW")
     print(simulator.TCHW)

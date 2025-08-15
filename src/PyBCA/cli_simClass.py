@@ -152,6 +152,9 @@ class BCA_Simulator:
         # グローバル確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
         self.TNHW_boolMask = self._global_prob_gate(global_prob)
 
+        # 遷移規則確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
+        self.TNHW_boolMask = self._rule_prob_gate()
+
         ################################
         # 遷移規則のシャッフル(トライアル共有) #
         ################################
@@ -170,9 +173,6 @@ class BCA_Simulator:
 
             # 遷移規則の確率の取り出し
             self.Pickup_rule_prob = self.shuffle_probs[i]
-
-            # 遷移規則確率ゲート(セル空間とtrialに並列な処理)
-            rule_prob = self.shuffle_probs[i]
 
             # 規則内競合解決(セル空間とtrialに並列な処理)
 
@@ -233,6 +233,7 @@ class BCA_Simulator:
 
         return match_tnhw                                       # [T,N,H,W]
 
+    # グローバル確率ゲート
     def _global_prob_gate(self, global_prob: float) -> torch.Tensor:
         """
         self.TNHW_boolMask: [T,N,H,W] bool を前提（_match_centers_all_rules の結果）
@@ -317,6 +318,42 @@ class BCA_Simulator:
         out = (base & gate).contiguous()
         return out
         
+    # 遷移規則確率ゲート
+    def _rule_prob_gate(self) -> torch.Tensor:
+        """
+        self.TNHW_boolMask: [T,N,H,W] bool（_global_prob_gate後）を規則適用確率でゲートする。
+        確率は self.shuffle_probs（存在すれば）または self.rule_probs_tensor（[N]）を使用。
+        戻り値: [T,N,H,W] bool
+        """
+        assert hasattr(self, "TNHW_boolMask"), "先に _match_centers_all_rules() を実行してください。"
+        base = self.TNHW_boolMask
+        assert base.dtype == torch.bool and base.dim() == 4, "TNHW_boolMask は [T,N,H,W] の bool です。"
+        T, N, H, W = base.shape
+        device = base.device
+
+        # 規則確率（シャッフル後があればそれを優先）
+        probs = getattr(self, "shuffle_probs", None)
+        if probs is None or probs.shape[0] != N:
+            probs = self.rule_probs_tensor  # [N]
+
+        p = probs.to(device=device, dtype=torch.float32).clamp_(0.0, 1.0)  # [N]
+
+        # 早期リターン最適化
+        if torch.all(p == 1):
+            out = base.clone()
+            return out
+        if torch.all(p == 0):
+            out = torch.zeros_like(base, dtype=torch.bool)
+            return out
+
+        # 乱数を生成して [T,N,H,W] へブロードキャスト（HWは共有）
+        rnd = torch.rand((T, N, 1, 1), device=device, generator=self.rng)
+        gate = (rnd < p.view(1, N, 1, 1)).expand(T, N, H, W)
+
+        out = (base & gate).contiguous()
+        return out
+        
+    # デバッグ情報
     def debug(self):
         # デバッグ情報
         print(f"Pattern matching debug:")
