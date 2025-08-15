@@ -1,5 +1,5 @@
 # PyBCA
-Brownian Cellular Automaton for Python
+Brownian Cellular Automaton for Python and torch library
 
 ## Installation
 ```bash
@@ -9,8 +9,7 @@ pip install -e ./PyBCA
 
 # 開発方針メモ
 
-2次元のブラウン回路の動作をシミュレートするセルオートマトン. 状態は3状態で表す.
-
+2次元のブラウン回路の動作をシミュレートするセルオートマトン. 
 
 ### cudaBCA
 既存のセル空間と遷移規則を保存したyamlよりセル空間と遷移規則を読み込み, cuda上でシミュレーションを行うクラス.
@@ -19,11 +18,10 @@ pip install -e ./PyBCA
 
 また重要な機能として, 任意に新しい遷移規則を追加してC-JoinやCrossのエラーレートを表現できるようしなければならない.
 
-### CellSpaceEditor
-セル空間を編集するGUIアプリケーション. セル空間を表示し, 任意のセルを任意の状態に変更することができる.
+### CellSpaceViewer
+セル空間を表示するGUIアプリケーション.
 またセル空間の更新の様子を確認するため, 任意ステップ数の更新後のセル空間の表示や, 1ステップ毎の更新を見れるよう, 連続更新も可能.
 
-また, 範囲指定のコピーアンドペースト, Redo/Undo, セル空間の保存とロードを行う.
 
 ## セル空間の更新操作の検討
 
