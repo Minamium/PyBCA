@@ -536,6 +536,7 @@ def update_cellspace(
     rule_probs: torch.Tensor | None,    # (N,), dtype=torch.float32, Noneなら常に適用可
     global_prob: float | None,            # グローバル確率
     seed: int | None = None,
+    device: str = "cuda",
 ) -> torch.Tensor:
 
     ####################################
@@ -543,22 +544,40 @@ def update_cellspace(
     ####################################
 
     # THW: [Trial, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
+    # 要求するデータ型と合致するかの生合成チエック
+    assert THW.ndim == 3, "THW must be (T,H,W)"
+    T, H, W = THW.shape
 
     # rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
+    # 要求するデータ型と合致するかの生合成チエック
+    assert rule_arrays.ndim == 4 and rule_arrays.shape[1:] == (2,3,3), "rule_arrays must be (N,2,3,3)"
 
     # rule_mask: [[0, 1, 0], [1, 1, 1], [0, 1, 0]] dtype=bool, 四近傍遷移規則マッチング用のマスク配列
+    rule_mask = torch.tensor(
+        [[0,1,0],
+         [1,1,1],
+         [0,1,0]], dtype=torch.bool, device=device
+    )
 
     # rule_probs: [N] dtype=float32, N種類の遷移規則の確率配列(引数)
+    # 要求するデータ型と合致するかの生合成チエック
+    assert rule_probs.ndim == 1 and rule_probs.shape[0] == rule_arrays.shape[0], "rule_probs must be (N,)"
 
     # global_prob: float32, グローバル確率(引数)
+    # 要求するデータ型と合致するかの生合成チエック
+    assert global_prob is None or isinstance(global_prob, float), "global_prob must be float or None"
 
     # Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
+    Pickup_rule = torch.zeros((2,3,3), dtype=torch.int8, device=device)
 
     # THW_boolMask: [Trial, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+    THW_boolMask = torch.zeros((T,H,W), dtype=torch.bool, device=device)
 
     # tmp_mask: [Trial, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
+    tmp_mask = torch.zeros((T,H,W), dtype=torch.int8, device=device)
 
     # THW_applied: [Trial, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
+    THW_applied = torch.zeros((T,H,W), dtype=torch.bool, device=device)
 
     ###########################
     # 更新関数内テンソルの初期化  #

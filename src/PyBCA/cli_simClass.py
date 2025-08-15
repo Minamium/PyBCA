@@ -66,13 +66,15 @@ class BCA_Simulator:
         self.THW_cellspace_tensor = self.cellspace_tensor.repeat(parallel_trial, 1, 1).contiguous()
 
     # 任意ステップ数だけセル空間を更新する
-    def run_steps(self, steps: int):
+    def run_steps(self, steps: int, global_prob: float):
         
         for i in range(steps):
             self.THW_cellspace_tensor = lib.update_cellspace(
                 self.THW_cellspace_tensor,
                 self.rule_arrays_tensor,
                 self.rule_probs_tensor,
-                seed=None
+                global_prob=global_prob,
+                seed=None,
+                device=self.device
             )
             
