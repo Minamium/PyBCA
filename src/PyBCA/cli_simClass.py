@@ -91,7 +91,7 @@ class BCA_Simulator:
     
 
     # 任意ステップ数だけセル空間を更新する
-    def run_steps(self, steps: int, global_prob: float, seed: int = 0):
+    def run_steps(self, steps: int, global_prob: float, seed: int = 0, debug: bool = False):
         print(f"Run steps: {steps}")
         for i in range(steps):
             print(f"Step {i}")
@@ -100,7 +100,8 @@ class BCA_Simulator:
             ###################
             self.rng.manual_seed(i + 65536 + seed)
             self.update_cellspace(
-                global_prob=global_prob
+                global_prob=global_prob,
+                debug=debug
             )
 
     ###################################

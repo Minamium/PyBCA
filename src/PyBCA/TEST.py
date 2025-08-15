@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     simulator.Allocate_torch_Tensors_on_Device()
 
-    simulator.rule_probs_tensor.fill_(0.5)
+    simulator.rule_probs_tensor.fill_(0.99)
 
     # PyTorchテンソルの表示
     #print(simulator.cellspace_tensor)
