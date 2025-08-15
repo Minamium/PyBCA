@@ -46,6 +46,12 @@ ReCycleBinとは、理想的にトークンが十分に存在する領域であ�
 
 ## 更新アルゴリズム
 
+### 遷移規則のシャッフル
+
+### シャッフルされた遷移規則配列の要素順に以下のループを実行
+
+### loop begin
+
 ### ルールマッチング
 
 THW, ruleテンソルによりTHW_boolMaskにマッチした3*3領域の中心座標を1へ(GPUでセル, trial並列)
@@ -57,12 +63,16 @@ THW_boolMaskの1のセルに対して独立に乱数スコアを与え、グロ�
 
 ### 規則内競合解決
 
-THW_boolMaskより中心座標から3*3拡大したtmp_maskを作成して規則内で3*3領域がかぶっているTHW_boolMaskの1の要素については両方とも0にする(GPUでセル, trial並列)
+THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を作成して規則内で書き換え領域がかぶっている(値が1より大きい)書き換えセルをもつTHW_boolMaskの1の要素については両方とも0にする(GPUでセル, trial並列)
 
 ### 他規則競合解決
-
+THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を上書き
 これまでの遷移規則により書き換えられたセルについて1を立てるフラグ情報配列[Trial, H, W]であるTHW_apllyed(bool)とtmp_maskがかぶるTHW_boolMaskの1の要素を0にする(GPUでセル, trial並列)
 
 ### 書き換え実行
 
 THW_boolMaskとruleのnextを使ってnew_THWを書き換える。同時にTHW_apllyedの書き換えた差分セルの要素に対応する座標を0から1へ(GPUでセル, trial並列)
+
+### loop end
+
+### new_THWが更新語のセル空間になる
