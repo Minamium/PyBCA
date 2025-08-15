@@ -230,3 +230,34 @@ class BCA_Simulator:
             self.TCHW_boolMask.copy_(match_tnhw.any(dim=1, keepdim=True))
 
         return match_tnhw                                       # [T,N,H,W]
+
+
+    def debug(self):
+        # デバッグ情報
+        print(f"Pattern matching debug:")
+        print(f"  TNHW_boolMask shape: {self.TNHW_boolMask.shape}")
+        total_matches = self.TNHW_boolMask.sum().item()
+        print(f"  Total matches: {total_matches}")
+        print(f"  TCHW unique values: {torch.unique(self.TCHW)}")
+        print(f"  Rule pattern unique values: {torch.unique(self.rule_arrays_tensor[:, 0])}")
+        
+        # 各ルールのマッチ数を計算
+        rule_matches = self.TNHW_boolMask.sum(dim=(0, 2, 3))  # [N] - 各ルールのマッチ数
+        matched_rules = torch.nonzero(rule_matches).squeeze(-1)
+        print(f"  Matched rules count: {len(matched_rules)}")
+        
+        if len(matched_rules) > 0:
+            print(f"  Rules with matches:")
+            for rule_idx in matched_rules:
+                count = rule_matches[rule_idx].item()
+                print(f"    Rule {rule_idx}: {count} matches")
+                
+                # 各ルールの具体的なマッチ位置を表示（最初の5個まで）
+                rule_positions = torch.nonzero(self.TNHW_boolMask[:, rule_idx, :, :])
+                if len(rule_positions) > 0:
+                    positions_to_show = min(5, len(rule_positions))
+                    print(f"      Positions (first {positions_to_show}): {rule_positions[:positions_to_show]}")
+        else:
+            print(f"  No matches found - pattern mismatch")
+        print()
+    

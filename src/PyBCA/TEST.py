@@ -11,7 +11,7 @@ torch.set_printoptions(
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
 
-    cellspace_path = "SampleCP/cross.yaml"
+    cellspace_path = "SampleCP/test.yaml"
     rule_paths = [
         "src/PyBCA/rule/base-rule.yaml",
         "src/PyBCA/rule/C-Join_err-rule.yaml"
@@ -49,8 +49,11 @@ if __name__ == "__main__":
     print(simulator.TCHW)
 
     print("After Apllied run_steps, TNHW_boolMask")
-    print(simulator.TNHW_boolMask)
+    print(simulator.TNHW_boolMask[0,:,:,:])
+    print(simulator.TNHW_boolMask[1,:,:,:])
 
     print("After Apllied run_steps, TCHW_applied")
     print(simulator.TCHW_applied)
+
+    simulator.debug()
     
