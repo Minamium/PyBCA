@@ -49,8 +49,8 @@ if __name__ == "__main__":
     print("After Apllied run_steps, TCHW")
     print(simulator.TCHW)
 
-    print("After Apllied run_steps, TCHW_boolMask")
-    print(simulator.TCHW_boolMask)
+    print("After Apllied run_steps, TNHW_boolMask")
+    print(simulator.TNHW_boolMask)
 
     print("After Apllied run_steps, TCHW_applied")
     print(simulator.TCHW_applied)

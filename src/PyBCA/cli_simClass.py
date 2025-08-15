@@ -147,7 +147,7 @@ class BCA_Simulator:
         ####################################
 
         # TCHW, ruleテンソルによりTNHW_boolMaskにマッチした3*3領域の中心座標を1へ(畳み込みによるセル空間とtrialと全遷移規則に並列な処理)
-        
+        self.TNHW_boolMask = self._match_centers_all_rules()
 
         # グローバル確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
 
@@ -187,31 +187,46 @@ class BCA_Simulator:
         pass
 ###################################
 
-    def _match_centers_all_rules(self, pre_rules_3x3: torch.Tensor) -> torch.Tensor:
+    def _match_centers_all_rules(self) -> torch.Tensor:
         """
-        pre_rules_3x3: [N,3,3] int8 （-1 を含むがワイルドカードではなく厳密一致）
-        戻り: [T,N,H,W] bool （3x3 の四近傍十字が一致 → 中心 True）
+        Returns:
+            TNHW bool: 各 trial × 各 rule × 各セル中心が「preの3x3（四近傍）と一致」したか
+        振る舞い:
+            - 境界外は0として照合
+            - rule_mask が False の位置は「不問（常に一致扱い）」
+            - -1 は通常の状態として厳密一致（ワイルドカードではない）
         """
+        assert hasattr(self, "TCHW"), "call set_ParallelTrial() first."
         T, _, H, W = self.TCHW.shape
-        N = pre_rules_3x3.shape[0]
 
-        # 境界=0 を保証
-        padded = F.pad(self.TCHW, pad=(1,1,1,1), mode="constant", value=0)  # [T,1,H+2,W+2]
-        # 3x3 パッチを展開（各中心の周囲 9 要素）
-        patches = F.unfold(padded, kernel_size=3, stride=1)                  # [T, 9, H*W]（int8 のままでOK）
+        # 使うルール集合（シャッフル済みがあればそれ、無ければ元のテンソル）
+        rules = getattr(self, "shuffle_rule", self.rule_arrays_tensor)   # [N,2,3,3] int8
+        N = rules.shape[0]
 
-        # ルール前件（pre）とマスクをフラット化
-        R9 = pre_rules_3x3.view(N, 9).to(self.TCHW.dtype)                    # [N,9]
-        M9 = self.rule_mask.view(9)                                          # [9] bool
+        # 3x3 pre パターン（int16で比較。-1等もそのまま厳密比較）
+        pre = rules[:, 0].to(torch.int16)                                # [N,3,3]
 
-        # 値の一致をブロードキャストで一括判定
-        #  eq: [T,N,9,HW] （各中心パッチの9要素が pre の9要素に等しいか）
-        HW = H * W
-        eq = (patches.unsqueeze(1) == R9[None, :, :, None])                  # [T,1,9,HW] vs [1,N,9,1]
+        # 境界外=0 でパディング→unfoldして全3×3近傍を一括取得
+        x = self.TCHW.to(torch.int16)                                    # [T,1,H,W]
+        x_pad = F.pad(x, pad=(1,1,1,1), mode="constant", value=0)        # [T,1,H+2,W+2]
+        # unfold: [T, 1*9, H*W] → 形を戻す
+        nbh = F.unfold(x_pad, kernel_size=3, padding=0, stride=1)        # [T,9,H*W]
+        nbh = nbh.view(T, 1, 3, 3, H, W)                                 # [T,1,3,3,H,W]
 
-        # マスク外（M9=False）は拘束しない → True 扱いにする
-        eq_masked = eq | (~M9[None, None, :, None])
+        # ブロードキャスト比較（全位置）
+        # nbh: [T,1,3,3,H,W] vs pre: [N,3,3] → [T,N,3,3,H,W]
+        eq = (nbh == pre.view(1, N, 3, 3, 1, 1))
 
-        # 9要素すべて（マスク外を除く）が一致 → 中心ヒット
-        hits = eq_masked.all(dim=2)                                          # [T,N,HW]
-        return hits.view(T, N, H, W)                                         # [T,N,H,W]
+        # 四近傍マスク適用：False の位置は「不問」= 常に一致扱い
+        mask = self.rule_mask.bool()                                     # [3,3]
+        eq_masked = eq | (~mask.view(1, 1, 3, 3, 1, 1))
+
+        # 3×3 の全てが一致 → 中心だけ True のマスク（中心も mask=True なので厳密に比較される）
+        # [T,N,3,3,H,W] → [T,N,9,H,W] → all → [T,N,H,W]
+        match_tnhw = eq_masked.view(T, N, 9, H, W).all(dim=2).contiguous()
+
+        # 必要なら「何かの規則に一致した」T×1×H×W も更新しておく（従来のTCHW_boolMask互換）
+        if hasattr(self, "TCHW_boolMask"):
+            self.TCHW_boolMask.copy_(match_tnhw.any(dim=1, keepdim=True))
+
+        return match_tnhw                                       # [T,N,H,W]
