@@ -11,7 +11,7 @@ torch.set_printoptions(
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
 
-    cellspace_path = "SampleCP/test.yaml"
+    cellspace_path = "SampleCP/cross.yaml"
     rule_paths = [
         "src/PyBCA/rule/base-rule.yaml",
         "src/PyBCA/rule/C-Join_err-rule.yaml"
@@ -38,7 +38,6 @@ if __name__ == "__main__":
 
     # PyTorchテンソルの表示
     print(simulator.cellspace_tensor)
-    #print(simulator.rule_ids_tensor)
     print(simulator.rule_arrays_tensor)
     print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
