@@ -203,11 +203,11 @@ class BCA_Simulator:
         rules = getattr(self, "shuffle_rule", self.rule_arrays_tensor)   # [N,2,3,3] int8
         N = rules.shape[0]
 
-        # 3x3 pre パターン（int16で比較。-1等もそのまま厳密比較）
-        pre = rules[:, 0].to(torch.int16)                                # [N,3,3]
+        # 3x3 pre パターン（float32で比較。-1等もそのまま厳密比較）
+        pre = rules[:, 0].float()                                        # [N,3,3]
 
         # 境界外=0 でパディング→unfoldして全3×3近傍を一括取得
-        x = self.TCHW.to(torch.int16)                                    # [T,1,H,W]
+        x = self.TCHW.float()                                            # [T,1,H,W] float32に変換
         x_pad = F.pad(x, pad=(1,1,1,1), mode="constant", value=0)        # [T,1,H+2,W+2]
         # unfold: [T, 1*9, H*W] → 形を戻す
         nbh = F.unfold(x_pad, kernel_size=3, padding=0, stride=1)        # [T,9,H*W]
@@ -215,7 +215,7 @@ class BCA_Simulator:
 
         # ブロードキャスト比較（全位置）
         # nbh: [T,1,3,3,H,W] vs pre: [N,3,3] → [T,N,3,3,H,W]
-        eq = (nbh == pre.view(1, N, 3, 3, 1, 1))
+        eq = (nbh == pre.view(1, N, 3, 3, 1, 1))                         # float32で比較
 
         # 四近傍マスク適用：False の位置は「不問」= 常に一致扱い
         mask = self.rule_mask.bool()                                     # [3,3]
