@@ -534,14 +534,62 @@ def update_cellspace(
     THW: torch.Tensor,                # (T,H,W), dtype=torch.int8 or int16
     rule_arrays: torch.Tensor,          # (N,2,3,3) [prev,next], dtype=torch.int8
     rule_probs: torch.Tensor | None,    # (N,), dtype=torch.float32, Noneなら常に適用可
+    global_prob: float | None,            # グローバル確率
     seed: int | None = None,
 ) -> torch.Tensor:
 
-    # 更新に使うテンソルの定義
-    # THW_boolMask: (T,H,W), dtype=torch.bool
-    
-        
+    ####################################
+    # 更新に使うテンソルの定義と整合性チェック  #
+    ####################################
 
+    # THW: [Trial, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
+
+    # rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
+
+    # rule_mask: [[0, 1, 0], [1, 1, 1], [0, 1, 0]] dtype=bool, 四近傍遷移規則マッチング用のマスク配列
+
+    # rule_probs: [N] dtype=float32, N種類の遷移規則の確率配列(引数)
+
+    # global_prob: float32, グローバル確率(引数)
+
+    # Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
+
+    # THW_boolMask: [Trial, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+
+    # tmp_mask: [Trial, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
+
+    # THW_applied: [Trial, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
+
+    ###########################
+    # 更新関数内テンソルの初期化  #
+    ###########################
+    
+    # Pickup_rule, THW_boolMask, tmp_mask, THW_appliedを初期化
+    
+    ###################
+    # 乱数生成器の定義  #
+    ###################
+    
+
+    ################################
+    # 遷移規則のシャッフル(トライアル共有) #
+    ################################
+    
+    # 遷移規則のシャッフル
+
+    ########################################
+    # シャッフル遷移規則配列の要素順にループを回す  #
+    ########################################
+
+    # loop begin
+    # for ..
+
+
+
+
+    
+    # loop end
+        
     return THW
 
 # 特殊イベントを適用する
