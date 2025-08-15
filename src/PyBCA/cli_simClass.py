@@ -79,7 +79,7 @@ class BCA_Simulator:
 
         # 更新関数でのバッファテンソル群の作成
         self.Pickup_rule = torch.zeros((2,3,3), dtype=torch.int8, device=self.device)
-        self.TCHW_boolMask = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
+        self.TNHW_boolMask = torch.zeros((parallel_trial,self.rule_arrays_tensor.shape[0],H,W), dtype=torch.bool, device=self.device)
         self.tmp_mask = torch.zeros((parallel_trial,1,H,W), dtype=torch.int8, device=self.device)
         self.TCHW_applied = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
         self.shuffle_rule = self.rule_arrays_tensor.clone()
@@ -130,9 +130,9 @@ class BCA_Simulator:
         # Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
         # ループ前処理は特に必要ない, シャッフルルールテンソルから取り出す時上書きするため
         
-        # TCHW_boolMask: [Trial, 1, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+        # TNHW_boolMask: [Trial, N, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
         # 初期化
-        self.TCHW_boolMask.fill_(False)
+        self.TNHW_boolMask.fill_(False)
 
         # tmp_mask: [Trial, 1, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
         # 初期化
