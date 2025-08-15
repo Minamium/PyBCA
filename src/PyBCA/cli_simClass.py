@@ -150,6 +150,7 @@ class BCA_Simulator:
         self.TNHW_boolMask = self._match_centers_all_rules()
 
         # グローバル確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
+        self.TNHW_boolMask = self._global_prob_gate(global_prob)
 
         ################################
         # 遷移規則のシャッフル(トライアル共有) #
@@ -187,6 +188,7 @@ class BCA_Simulator:
         pass
 ###################################
 
+    # 遷移規則マッチング
     def _match_centers_all_rules(self) -> torch.Tensor:
         """
         Returns:
@@ -231,7 +233,90 @@ class BCA_Simulator:
 
         return match_tnhw                                       # [T,N,H,W]
 
+    def _global_prob_gate(self, global_prob: float) -> torch.Tensor:
+        """
+        self.TNHW_boolMask: [T,N,H,W] bool を前提（_match_centers_all_rules の結果）
+        global_prob:
+          - float（スカラー）         : 全 trial・全 rule で同一確率（HWへブロードキャスト）
+          - 1D Tensor [N]            : ルールごとの確率（T,HWへブロードキャスト）
+          - 2D Tensor [T,N]          : trial×rule ごとの確率（HWへブロードキャスト）
+          - 4D Tensor [T,N,H,W]      : 完全ローカル確率（各セル独立）
+        返り値: [T,N,H,W] bool
+        """
+        assert hasattr(self, "TNHW_boolMask"), "先に _match_centers_all_rules() を呼んでください。"
+        base = self.TNHW_boolMask
+        assert base.dtype == torch.bool and base.dim() == 4, "TNHW_boolMask は [T,N,H,W] の bool です。"
+        T, N, H, W = base.shape
+        device = base.device
 
+        # 確率テンソルを作る（None相当は1.0扱い）
+        if global_prob is None:
+            p = torch.ones((N,), dtype=torch.float32, device=device)
+        else:
+            p = torch.as_tensor(global_prob, dtype=torch.float32, device=device)
+
+        # 形状正規化 & [0,1] へクランプ
+        if p.ndim == 0:                   # スカラー
+            p = p.clamp_(0, 1)
+            if p.item() >= 1:
+                return base.clone()
+            if p.item() <= 0:
+                out = torch.zeros_like(base, dtype=torch.bool)
+                self.TNHW_boolMask = out
+                return out
+            p_view = p.view(1, 1, 1, 1)   # → [T,N,1,1] に比較
+            rnd = torch.rand((T, N, 1, 1), device=device, generator=self.rng)
+            gate = (rnd < p_view).expand(T, N, H, W)
+
+        elif p.ndim == 1:                 # [N]
+            if p.shape[0] != N:
+                raise ValueError(f"global_prob length {p.shape[0]} != N={N}")
+            p = p.clamp_(0, 1)
+            if torch.all(p == 1):
+                return base.clone()
+            if torch.all(p == 0):
+                out = torch.zeros_like(base, dtype=torch.bool)
+                self.TNHW_boolMask = out
+                return out
+            p_view = p.view(1, N, 1, 1)
+            rnd = torch.rand((T, N, 1, 1), device=device, generator=self.rng)
+            gate = (rnd < p_view).expand(T, N, H, W)
+
+        elif p.ndim == 2:                 # [T,N]（[N,T]が来たら転置）
+            if p.shape == (N, T):
+                p = p.transpose(0, 1).contiguous()
+            if p.shape != (T, N):
+                raise ValueError(f"global_prob shape {tuple(p.shape)} must be [T,N]")
+            p = p.clamp_(0, 1)
+            if torch.all(p == 1):
+                return base.clone()
+            if torch.all(p == 0):
+                out = torch.zeros_like(base, dtype=torch.bool)
+                self.TNHW_boolMask = out
+                return out
+            p_view = p.view(T, N, 1, 1)
+            rnd = torch.rand((T, N, 1, 1), device=device, generator=self.rng)
+            gate = (rnd < p_view).expand(T, N, H, W)
+
+        elif p.ndim == 4:                 # [T,N,H,W] 完全ローカル
+            if p.shape != (T, N, H, W):
+                raise ValueError(f"global_prob shape {tuple(p.shape)} must be [T,N,H,W]")
+            p = p.clamp_(0, 1)
+            if torch.all(p == 1):
+                return base.clone()
+            if torch.all(p == 0):
+                out = torch.zeros_like(base, dtype=torch.bool)
+                self.TNHW_boolMask = out
+                return out
+            rnd = torch.rand((T, N, H, W), device=device, generator=self.rng)
+            gate = (rnd < p)
+
+        else:
+            raise ValueError("global_prob はスカラー / [N] / [T,N] / [T,N,H,W] / None に対応します。")
+
+        out = (base & gate).contiguous()
+        return out
+        
     def debug(self):
         # デバッグ情報
         print(f"Pattern matching debug:")
