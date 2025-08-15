@@ -29,9 +29,14 @@ class BCA_Simulator:
             self.spatial_event_arrays = lib.load_special_events_from_file(spatial_event_filePath)
         else:
             self.spatial_event_arrays = None    
-
+        
         # 計算デバイス設定
         self.device = device
+
+        # 乱数生成器
+        self.rng = torch.Generator(device=self.device)
+
+        
 
     def Allocate_torch_Tensors_on_Device(self):
         # PyTorchテンソルにnumpy配列を転送
@@ -47,8 +52,8 @@ class BCA_Simulator:
 
         # デバイス情報を表示
         device_info = f"Device: {self.cellspace_tensor.device}"
-        if self.device == "cuda" and torch.cuda.is_available():
-            gpu_name = torch.cuda.get_device_name(self.cellspace_tensor.device)
+        if self.device == "cuda":
+            gpu_name = torch.cuda.get_device_name(torch.cuda.current_device())
             device_info += f" ({gpu_name})"
         
         print(f"Allocated torch tensors on {device_info}")
@@ -63,7 +68,7 @@ class BCA_Simulator:
         self.parallel_trial = parallel_trial
 
         # Trial x 1 x Height x Widthの4次元テンソルを作成
-        self.TCHW = self.cellspace_tensor.unsqueeze(0).unsqueeze(1).expand(parallel_trial, 1, *self.cellspace_tensor.shape).clone()
+        self.TCHW = self.cellspace_tensor.repeat(parallel_trial, 1, 1).unsqueeze(1).contiguous()
         T, C, H, W = self.TCHW.shape
 
         # 更新関数でのバッファテンソル群の作成
@@ -71,16 +76,25 @@ class BCA_Simulator:
         self.TCHW_boolMask = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
         self.tmp_mask = torch.zeros((parallel_trial,1,H,W), dtype=torch.int8, device=self.device)
         self.TCHW_applied = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
+        self.shuffle_rule = self.rule_arrays_tensor.clone()
+        self.rule_mask = torch.tensor(
+            [[0,1,0],
+             [1,1,1],
+             [0,1,0]], dtype=torch.bool, device=self.device
+        )
+    
 
     # 任意ステップ数だけセル空間を更新する
-    def run_steps(self, steps: int, global_prob: float):
+    def run_steps(self, steps: int, global_prob: float, seed: int = 0):
         print(f"Run steps: {steps}")
         for i in range(steps):
             print(f"Step {i}")
-            # デバッグのために受け取る配列を増やす
+            ###################
+            # 乱数生成器の定義  #
+            ###################
+            self.rng.manual_seed(i + 65536 + seed)
             self.update_cellspace(
-                global_prob=global_prob,
-                seed=None,
+                global_prob=global_prob
             )
 
     ###################################
@@ -89,7 +103,6 @@ class BCA_Simulator:
     ###################################
     def update_cellspace(self,
                          global_prob: float | None,            # グローバル確率
-                         seed: int | None = None,
                         ) -> torch.Tensor:
 
         ####################################
@@ -97,71 +110,64 @@ class BCA_Simulator:
         ####################################
 
         # TCHW: [Trial, 1, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
-        # 要求するデータ型と合致するかの整合性チェック
-        assert self.TCHW.ndim == 4, "TCHW must be (T,1,H,W)"
+        # ループ前処理は特に必要ない
 
         # rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
-        # 要求するデータ型と合致するかの整合性チェック
-        assert self.rule_arrays.ndim == 4 and self.rule_arrays.shape[1:] == (2,3,3), "rule_arrays must be (N,2,3,3)"
-
+        # ループ前処理は特に必要ない
+        
         # rule_mask: [[0, 1, 0], [1, 1, 1], [0, 1, 0]] dtype=bool, 四近傍遷移規則マッチング用のマスク配列
-        rule_mask = torch.tensor(
-            [[0,1,0],
-             [1,1,1],
-             [0,1,0]], dtype=torch.bool, device=self.device
-        )
+        # ループ前処理は特に必要ない
 
         # rule_probs: [N] dtype=float32, N種類の遷移規則の確率配列(引数)
-        # 要求するデータ型と合致するかの整合性チェック
-        assert self.rule_probs.ndim == 1 and self.rule_probs.shape[0] == self.rule_arrays.shape[0], "rule_probs must be (N,)"
-
-        # global_prob: float32, グローバル確率(引数)
-        # 要求するデータ型と合致するかの整合性チェック
-        assert global_prob is None or isinstance(global_prob, float), "global_prob must be float or None"
+        # ループ前処理は特に必要ない
 
         # Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
-        # 要求するデータ型と合致するかの整合性チェック
-
-        # THW_boolMask: [Trial, 1, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
-        # 要求するデータ型と合致するかの整合性チェック
+        # ループ前処理は特に必要ない, シャッフルルールテンソルから取り出す時上書きするため
+        
+        # TCHW_boolMask: [Trial, 1, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+        # 初期化
+        self.TCHW_boolMask.fill_(False)
 
         # tmp_mask: [Trial, 1, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
-        # 要求するデータ型と合致するかの整合性チェック
+        # 初期化
+        self.tmp_mask.fill_(0)
 
-        # THW_applied: [Trial, 1, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
-        # 要求するデータ型と合致するかの整合性チェック
-
-        ###########################
-        # 更新関数内テンソルの初期化  #
-        ###########################
-    
-        # Pickup_rule, THW_boolMask, tmp_mask, THW_appliedを初期化
-    
-        ###################
-        # 乱数生成器の定義  #
-        ###################
-    
+        # TCHW_applied: [Trial, 1, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
+        # 初期化
+        self.TCHW_applied.fill_(False)
 
         ################################
         # 遷移規則のシャッフル(トライアル共有) #
         ################################
-    
         # 遷移規則のシャッフル
+        N = self.rule_arrays_tensor.shape[0]
+        perm = torch.randperm(N, generator=self.rng, device=self.device)
+        self.shuffle_rule  = self.rule_arrays_tensor.index_select(0, perm)
+        self.shuffle_probs = self.rule_probs_tensor.index_select(0, perm)
 
         ########################################
         # シャッフル遷移規則配列の要素順にループを回す  #
         ########################################
+        for i in range(N):
+            # 遷移規則の取り出し
+            self.Pickup_rule = self.shuffle_rule[i]
 
-        # loop begin
-        # for ..
+            # 遷移規則の確率の取り出し
+            self.Pickup_rule_prob = self.rule_probs_tensor[i]
 
+            # TCHW, ruleテンソルによりTCHW_boolMaskにマッチした3*3領域の中心座標を1へ(畳み込みによるセル空間とtrialに並列な処理)
 
+            # グローバル確率ゲート(セル空間とtrialに並列な処理)
 
+            # 遷移規則確率ゲート(セル空間とtrialに並列な処理)
 
-    
+            # 規則内競合解決(セル空間とtrialに並列な処理)
+
+            # 他規則競合解決(セル空間とtrialに並列な処理)
+
+            # 書き換え実行(セル空間とtrialに並列な処理)
+            
         # loop end
-        
-        # デバッグのために受け取る
         return self.TCHW
 
     # 特殊イベントを適用する
