@@ -572,7 +572,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._event_overlay_items.clear()
         
         # イベント表示が無効、またはデータがない場合は何もしない
-        if not self._events_visible or not self._loaded_events or self._event_array is None:
+        if not self._events_visible or len(self._loaded_events) == 0 or self._event_array is None:
             return
         
         # セル空間が読み込まれていない場合は何もしない

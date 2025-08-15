@@ -43,7 +43,7 @@ ReCycleBinとは、理想的にトークンが十分に存在する領域であ�
 
 更新に使うテンソル, 変数の定義
 
-THW: [Trial, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
+TCHW: [Trial, 1, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
 
 rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
 
@@ -55,11 +55,11 @@ global_prob: float32, グローバル確率(引数)
 
 Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
 
-THW_boolMask: [Trial, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+TCHW_boolMask: [Trial, 1, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
 
-tmp_mask: [Trial, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
+tmp_mask: [Trial, 1, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
 
-THW_applied: [Trial, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
+TCHW_applied: [Trial, 1, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
 
 
 ### シャッフルされた遷移規則配列の要素順に以下のループを実行
@@ -68,27 +68,27 @@ THW_applied: [Trial, H, W] dtype=bool, 今までの遷移規則の適用によ�
 
 ### ルールマッチング
 
-THW, ruleテンソルによりTHW_boolMaskにマッチした3*3領域の中心座標を1へ(GPUでセル, trial並列)
+TCHW, ruleテンソルによりTCHW_boolMaskにマッチした3*3領域の中心座標を1へ(GPUでセル, trial並列)
 
 ### 確率ゲート
 
-THW_boolMaskの1のセルに対して独立に乱数スコアを与え、グローバル確率ゲートにより受容か棄却を判定、棄却ならTHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
-さらに遷移規則確率ゲートを遷移規則別確率よりかけて受容か棄却を判定、棄却ならTHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
+TCHW_boolMaskの1のセルに対して独立に乱数スコアを与え、グローバル確率ゲートにより受容か棄却を判定、棄却ならTCHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
+さらに遷移規則確率ゲートを遷移規則別確率よりかけて受容か棄却を判定、棄却ならTCHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
 
 ### 規則内競合解決
 
-THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を作成して規則内で書き換え領域がかぶっている(値が1より大きい)書き換えセルをもつTHW_boolMaskの1の要素については両方とも0にする(GPUでセル, trial並列)
+TCHW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を作成して規則内で書き換え領域がかぶっている(値が1より大きい)書き換えセルをもつTCHW_boolMaskの1の要素については両方とも0にする(GPUでセル, trial並列)
 
 ### 他規則競合解決
-THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を上書き
-これまでの遷移規則により書き換えられたセルについて1を立てるフラグ情報配列[Trial, H, W]であるTHW_applied(bool)とtmp_maskがかぶるTHW_boolMaskの1の要素を0にする(GPUでセル, trial並列)
+TCHW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を上書き
+これまでの遷移規則により書き換えられたセルについて1を立てるフラグ情報配列[Trial, 1, H, W]であるTCHW_applied(bool)とtmp_maskがかぶるTCHW_boolMaskの1の要素を0にする(GPUでセル, trial並列)
 
 ### 書き換え実行
 
-THW_boolMaskとruleのnextを使ってTHWを書き換える。同時にTHW_appliedの書き換えた差分セルの要素に対応する座標を0から1へ(GPUでセル, trial並列)
+TCHW_boolMaskとruleのnextを使ってTCHWを書き換える。同時にTCHW_appliedの書き換えた差分セルの要素に対応する座標を0から1へ(GPUでセル, trial並列)
 
 ### loop end
 
-### THWが更新後のセル空間になる
+### TCHWが更新後のセル空間になる
 
 ---
