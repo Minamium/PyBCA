@@ -555,7 +555,7 @@ def update_cellspace(
         # 中心座標リストの要素に対して並列に、遷移規則のnext状態との差分をセル空間に対して書き換えを適用していく
         
 
-    return state
+    return THW
 
 # 特殊イベントを適用する
 def apply_spatial_events(

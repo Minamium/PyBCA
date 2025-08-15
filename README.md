@@ -46,7 +46,32 @@ ReCycleBinとは、理想的にトークンが十分に存在する領域であ�
 
 ## 更新アルゴリズム
 
-### 遷移規則のシャッフル
+### 事前準備
+
+乱数生成器の準備
+
+遷移規則配列のシャッフル
+
+更新に使うテンソル, 変数の定義
+
+THW: [Trial, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
+
+rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
+
+rule_mask: [[0, 1, 0], [1, 1, 1], [0, 1, 0]] dtype=bool, 四近傍遷移規則マッチング用のマスク配列
+
+rule_probs: [N] dtype=float32, N種類の遷移規則の確率配列(引数)
+
+global_prob: float32, グローバル確率(引数)
+
+Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
+
+THW_boolMask: [Trial, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+
+tmp_mask: [Trial, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
+
+THW_applied: [Trial, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
+
 
 ### シャッフルされた遷移規則配列の要素順に以下のループを実行
 
@@ -67,12 +92,12 @@ THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_
 
 ### 他規則競合解決
 THW_boolMaskより中心座標からk_writeカーネルにより加算したtmp_mask(int8)を上書き
-これまでの遷移規則により書き換えられたセルについて1を立てるフラグ情報配列[Trial, H, W]であるTHW_apllyed(bool)とtmp_maskがかぶるTHW_boolMaskの1の要素を0にする(GPUでセル, trial並列)
+これまでの遷移規則により書き換えられたセルについて1を立てるフラグ情報配列[Trial, H, W]であるTHW_applied(bool)とtmp_maskがかぶるTHW_boolMaskの1の要素を0にする(GPUでセル, trial並列)
 
 ### 書き換え実行
 
-THW_boolMaskとruleのnextを使ってnew_THWを書き換える。同時にTHW_apllyedの書き換えた差分セルの要素に対応する座標を0から1へ(GPUでセル, trial並列)
+THW_boolMaskとruleのnextを使ってTHWを書き換える。同時にTHW_appliedの書き換えた差分セルの要素に対応する座標を0から1へ(GPUでセル, trial並列)
 
 ### loop end
 
-### new_THWが更新語のセル空間になる
+### THWが更新後のセル空間になる
