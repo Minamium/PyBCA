@@ -64,10 +64,13 @@ class BCA_Simulator:
 
         # Trial x 1 x Height x Widthの4次元テンソルを作成
         self.TCHW = self.cellspace_tensor.unsqueeze(0).unsqueeze(1).expand(parallel_trial, 1, *self.cellspace_tensor.shape).clone()
+        T, C, H, W = self.TCHW.shape
+
+        # 更新関数でのバッファテンソル群の作成
         self.Pickup_rule = torch.zeros((2,3,3), dtype=torch.int8, device=self.device)
-        self.TCHW_boolMask = torch.zeros((T,1,H,W), dtype=torch.bool, device=self.device)
-        self.tmp_mask = torch.zeros((T,1,H,W), dtype=torch.int8, device=self.device)
-        self.TCHW_applied = torch.zeros((T,1,H,W), dtype=torch.bool, device=self.device)
+        self.TCHW_boolMask = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
+        self.tmp_mask = torch.zeros((parallel_trial,1,H,W), dtype=torch.int8, device=self.device)
+        self.TCHW_applied = torch.zeros((parallel_trial,1,H,W), dtype=torch.bool, device=self.device)
 
     # 任意ステップ数だけセル空間を更新する
     def run_steps(self, steps: int, global_prob: float):
@@ -75,7 +78,7 @@ class BCA_Simulator:
         for i in range(steps):
             print(f"Step {i}")
             # デバッグのために受け取る配列を増やす
-            self.TCHW, self.TCHW_boolMask, self.TCHW_applied = self.update_cellspace(
+            self.update_cellspace(
                 global_prob=global_prob,
                 seed=None,
             )
@@ -96,7 +99,6 @@ class BCA_Simulator:
         # TCHW: [Trial, 1, H, W] dtype=int8, Trial別セル空間配列(引数, 戻り値)
         # 要求するデータ型と合致するかの整合性チェック
         assert self.TCHW.ndim == 4, "TCHW must be (T,1,H,W)"
-        T, C, H, W = self.TCHW.shape
 
         # rule_arrays: [N,2,3,3] dtype=int8, N種類の遷移規則を記録した配列(引数)
         # 要求するデータ型と合致するかの整合性チェック
@@ -106,7 +108,7 @@ class BCA_Simulator:
         rule_mask = torch.tensor(
             [[0,1,0],
              [1,1,1],
-             [0,1,0]], dtype=torch.bool, device=device
+             [0,1,0]], dtype=torch.bool, device=self.device
         )
 
         # rule_probs: [N] dtype=float32, N種類の遷移規則の確率配列(引数)
@@ -163,11 +165,6 @@ class BCA_Simulator:
         return self.TCHW
 
     # 特殊イベントを適用する
-    def apply_spatial_events(self, 
-                             state: torch.Tensor,
-                             event_array: torch.Tensor
-                            ) -> torch.Tensor:
-        """
-        """
-        return state, do_event_list
+    def apply_spatial_events(self):
+        pass
 ###################################

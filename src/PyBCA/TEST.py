@@ -46,12 +46,12 @@ if __name__ == "__main__":
     simulator.set_ParallelTrial(2)
     simulator.run_steps(3, global_prob=0.5)
 
-    print("After Apllied run_steps, THW_cellspace_tensor")
-    print(simulator.THW_cellspace_tensor)
+    print("After Apllied run_steps, TCHW")
+    print(simulator.TCHW)
 
-    print("After Apllied run_steps, THW_boolMask")
-    print(simulator.THW_boolMask)
+    print("After Apllied run_steps, TCHW_boolMask")
+    print(simulator.TCHW_boolMask)
 
-    print("After Apllied run_steps, THW_applied")
-    print(simulator.THW_applied)
+    print("After Apllied run_steps, TCHW_applied")
+    print(simulator.TCHW_applied)
     
