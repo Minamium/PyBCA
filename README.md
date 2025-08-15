@@ -55,25 +55,27 @@ global_prob: float32, グローバル確率(引数)
 
 Pickup_rule: [2, 3, 3] dtype=int8, ループ内でシャッフル遷移規則から取り出す遷移規則
 
-TCHW_boolMask: [Trial, 1, H, W] dtype=bool, 取り出した遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク
+TNHW_boolMask: [Trial, N, H, W] dtype=bool, 遷移規則をマッチして適用できたセルの中心座標を1とするboolマスク. ルール数次元に並列に遷移規則マッチングできる.
 
 tmp_mask: [Trial, 1, H, W] dtype=int8, 取り出した遷移規則により書き換えられる差分セルだけを検査するk_writeカーネルを元に書き換え予定のセルに1を足していくためのテンソル
 
 TCHW_applied: [Trial, 1, H, W] dtype=bool, 今までの遷移規則の適用により書き換えが行われたセルに1を立てておくboolマスク
 
+### ルールマッチング
+
+TCHW, ruleテンソルによりTNHW_boolMaskにマッチした3*3領域の中心座標を1へ(GPUでセル, trial並列)
+
+### グローバル確率ゲート
+
+TNHW_boolMaskの1のセルに対して独立に乱数スコアを与え、グローバル確率ゲートにより受容か棄却を判定、棄却ならTNHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
 
 ### シャッフルされた遷移規則配列の要素順に以下のループを実行
 
 ### loop begin
 
-### ルールマッチング
+### 遷移規則確率ゲート
 
-TCHW, ruleテンソルによりTCHW_boolMaskにマッチした3*3領域の中心座標を1へ(GPUでセル, trial並列)
-
-### 確率ゲート
-
-TCHW_boolMaskの1のセルに対して独立に乱数スコアを与え、グローバル確率ゲートにより受容か棄却を判定、棄却ならTCHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
-さらに遷移規則確率ゲートを遷移規則別確率よりかけて受容か棄却を判定、棄却ならTCHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
+遷移規則確率ゲートを遷移規則別確率よりかけて受容か棄却を判定、棄却ならTNHW_boolMaskの該当要素を0に(GPUでセル, trial並列)
 
 ### 規則内競合解決
 

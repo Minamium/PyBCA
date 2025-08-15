@@ -6,6 +6,7 @@ except ImportError:
     import lib
 
 import torch
+import torch.nn.functional as F 
 from typing import List
 
 # クラス定義
@@ -35,6 +36,11 @@ class BCA_Simulator:
 
         # 乱数生成器
         self.rng = torch.Generator(device=self.device)
+
+        # 畳み込み有効化
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
 
         
 
@@ -136,6 +142,15 @@ class BCA_Simulator:
         # 初期化
         self.TCHW_applied.fill_(False)
 
+        ####################################
+        # 遷移規則マッチングとグローバル確率ゲート #
+        ####################################
+
+        # TCHW, ruleテンソルによりTNHW_boolMaskにマッチした3*3領域の中心座標を1へ(畳み込みによるセル空間とtrialと全遷移規則に並列な処理)
+        
+
+        # グローバル確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
+
         ################################
         # 遷移規則のシャッフル(トライアル共有) #
         ################################
@@ -153,13 +168,10 @@ class BCA_Simulator:
             self.Pickup_rule = self.shuffle_rule[i]
 
             # 遷移規則の確率の取り出し
-            self.Pickup_rule_prob = self.rule_probs_tensor[i]
-
-            # TCHW, ruleテンソルによりTCHW_boolMaskにマッチした3*3領域の中心座標を1へ(畳み込みによるセル空間とtrialに並列な処理)
-
-            # グローバル確率ゲート(セル空間とtrialに並列な処理)
+            self.Pickup_rule_prob = self.shuffle_probs[i]
 
             # 遷移規則確率ゲート(セル空間とtrialに並列な処理)
+            rule_prob = self.shuffle_probs[i]
 
             # 規則内競合解決(セル空間とtrialに並列な処理)
 
@@ -174,3 +186,32 @@ class BCA_Simulator:
     def apply_spatial_events(self):
         pass
 ###################################
+
+    def _match_centers_all_rules(self, pre_rules_3x3: torch.Tensor) -> torch.Tensor:
+        """
+        pre_rules_3x3: [N,3,3] int8 （-1 を含むがワイルドカードではなく厳密一致）
+        戻り: [T,N,H,W] bool （3x3 の四近傍十字が一致 → 中心 True）
+        """
+        T, _, H, W = self.TCHW.shape
+        N = pre_rules_3x3.shape[0]
+
+        # 境界=0 を保証
+        padded = F.pad(self.TCHW, pad=(1,1,1,1), mode="constant", value=0)  # [T,1,H+2,W+2]
+        # 3x3 パッチを展開（各中心の周囲 9 要素）
+        patches = F.unfold(padded, kernel_size=3, stride=1)                  # [T, 9, H*W]（int8 のままでOK）
+
+        # ルール前件（pre）とマスクをフラット化
+        R9 = pre_rules_3x3.view(N, 9).to(self.TCHW.dtype)                    # [N,9]
+        M9 = self.rule_mask.view(9)                                          # [9] bool
+
+        # 値の一致をブロードキャストで一括判定
+        #  eq: [T,N,9,HW] （各中心パッチの9要素が pre の9要素に等しいか）
+        HW = H * W
+        eq = (patches.unsqueeze(1) == R9[None, :, :, None])                  # [T,1,9,HW] vs [1,N,9,1]
+
+        # マスク外（M9=False）は拘束しない → True 扱いにする
+        eq_masked = eq | (~M9[None, None, :, None])
+
+        # 9要素すべて（マスク外を除く）が一致 → 中心ヒット
+        hits = eq_masked.all(dim=2)                                          # [T,N,HW]
+        return hits.view(T, N, H, W)                                         # [T,N,H,W]
