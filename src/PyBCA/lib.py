@@ -609,7 +609,8 @@ def update_cellspace(
     
     # loop end
         
-    return THW
+    # デバッグのために受け取る
+    return THW, THW_boolMask, THW_applied
 
 # 特殊イベントを適用する
 def apply_spatial_events(

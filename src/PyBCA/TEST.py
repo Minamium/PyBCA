@@ -1,16 +1,24 @@
 from .cli_simClass import BCA_Simulator
 
+import torch, sys
+torch.set_printoptions(
+    threshold=sys.maxsize,   # 省略せず全部出す
+    linewidth=200,           # 1行の最大幅
+    sci_mode=False,          # 指数表記をやめる（必要なら）
+    precision=10             # 小数表示桁数（浮動小数なら）
+)
+
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
 
-    cellspace_path = "../../SampleCP/test.yaml"
+    cellspace_path = "SampleCP/test.yaml"
     rule_paths = [
-        "rule/base-rule.yaml",
-        "rule/C-Join_err-rule.yaml"
+        "src/PyBCA/rule/base-rule.yaml",
+        "src/PyBCA/rule/C-Join_err-rule.yaml"
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="../../SampleCP/BCA-IP_event.py")
+                              spatial_event_filePath="SampleCP/BCA-IP_event.py")
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -34,3 +42,16 @@ if __name__ == "__main__":
     print(simulator.rule_arrays_tensor)
     print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
+
+    simulator.set_ParallelTrial(2)
+    simulator.run_steps(3, global_prob=0.5)
+
+    print("After Apllied run_steps, THW_cellspace_tensor")
+    print(simulator.THW_cellspace_tensor)
+
+    print("After Apllied run_steps, THW_boolMask")
+    print(simulator.THW_boolMask)
+
+    print("After Apllied run_steps, THW_applied")
+    print(simulator.THW_applied)
+    

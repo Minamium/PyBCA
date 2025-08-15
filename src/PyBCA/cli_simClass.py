@@ -67,9 +67,11 @@ class BCA_Simulator:
 
     # 任意ステップ数だけセル空間を更新する
     def run_steps(self, steps: int, global_prob: float):
-        
+        print(f"Run steps: {steps}")
         for i in range(steps):
-            self.THW_cellspace_tensor = lib.update_cellspace(
+            print(f"Step {i}")
+            # デバッグのために受け取る配列を増やす
+            self.THW_cellspace_tensor, self.THW_boolMask, self.THW_applied = lib.update_cellspace(
                 self.THW_cellspace_tensor,
                 self.rule_arrays_tensor,
                 self.rule_probs_tensor,
