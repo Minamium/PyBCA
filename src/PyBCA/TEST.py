@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     simulator.Allocate_torch_Tensors_on_Device()
 
-    simulator.rule_probs_tensor.fill_(0.99)
+    simulator.rule_probs_tensor[0] = 0.1
 
     # PyTorchテンソルの表示
     #print(simulator.cellspace_tensor)
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     #print(simulator.spatial_event_arrays_tensor)
 
     simulator.set_ParallelTrial(2)
-    simulator.run_steps(1, global_prob=0.5, seed=1, debug=True)
+    simulator.run_steps(1, global_prob=0.5, seed=1, debug=True, debug_per_trial=True)
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)

@@ -91,7 +91,7 @@ class BCA_Simulator:
     
 
     # 任意ステップ数だけセル空間を更新する
-    def run_steps(self, steps: int, global_prob: float, seed: int = 0, debug: bool = False):
+    def run_steps(self, steps: int, global_prob: float, seed: int = 0, debug: bool = False, debug_per_trial: bool = False):
         print(f"Run steps: {steps}")
         for i in range(steps):
             print(f"Step {i}")
@@ -101,7 +101,8 @@ class BCA_Simulator:
             self.rng.manual_seed(i + 65536 + seed)
             self.update_cellspace(
                 global_prob=global_prob,
-                debug=debug
+                debug=debug,
+                debug_per_trial=debug_per_trial
             )
 
     ###################################
@@ -110,7 +111,8 @@ class BCA_Simulator:
     ###################################
     def update_cellspace(self,
                          global_prob: float | None,            # グローバル確率
-                         debug: bool = False                   # デバッグモード
+                         debug: bool = False,                  # デバッグモード
+                         debug_per_trial: bool = False         # トライアル別詳細統計
                         ) -> torch.Tensor:
 
         ####################################
@@ -153,21 +155,21 @@ class BCA_Simulator:
         
         if debug:
             print("After Match Centers All Rules")
-            self.debug()
+            self.debug(show_per_trial=debug_per_trial)
 
         # グローバル確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
         self.TNHW_boolMask = self._global_prob_gate(global_prob)
 
         if debug:
             print("After Global Prob Gate")
-            self.debug()
+            self.debug(show_per_trial=debug_per_trial)
 
         # 遷移規則確率ゲート(セル空間とtrialと全遷移規則に並列な処理)
         self.TNHW_boolMask = self._rule_prob_gate()
 
         if debug:
             print("After Rule Prob Gate")
-            self.debug()
+            self.debug(show_per_trial=debug_per_trial)
 
         ################################
         # 遷移規則のシャッフル(トライアル共有) #
@@ -176,7 +178,6 @@ class BCA_Simulator:
         N = self.rule_arrays_tensor.shape[0]
         perm = torch.randperm(N, generator=self.rng, device=self.device)
         self.shuffle_rule  = self.rule_arrays_tensor.index_select(0, perm)
-        self.shuffle_probs = self.rule_probs_tensor.index_select(0, perm)
 
         ########################################
         # シャッフル遷移規則配列の要素順にループを回す  #
@@ -184,9 +185,6 @@ class BCA_Simulator:
         for i in range(N):
             # 遷移規則の取り出し
             self.Pickup_rule = self.shuffle_rule[i]
-
-            # 遷移規則の確率の取り出し
-            self.Pickup_rule_prob = self.shuffle_probs[i]
 
             # 規則内競合解決(セル空間とtrialに並列な処理)
 
@@ -337,16 +335,18 @@ class BCA_Simulator:
 
 
     # デバッグ情報
-    def debug(self):
+    def debug(self, show_per_trial: bool = False):
         # デバッグ情報
         print(f"Pattern matching debug:")
         print(f"  TNHW_boolMask shape: {self.TNHW_boolMask.shape}")
+        
+        # 全体の統計
         total_matches = self.TNHW_boolMask.sum().item()
         print(f"  Total matches: {total_matches}")
         print(f"  TCHW unique values: {torch.unique(self.TCHW)}")
         print(f"  Rule pattern unique values: {torch.unique(self.rule_arrays_tensor[:, 0])}")
         
-        # 各ルールのマッチ数を計算
+        # 各ルールのマッチ数を計算（全トライアル合計）
         rule_matches = self.TNHW_boolMask.sum(dim=(0, 2, 3))  # [N] - 各ルールのマッチ数
         matched_rules = torch.nonzero(rule_matches).squeeze(-1)
         print(f"  Matched rules count: {len(matched_rules)}")
@@ -364,5 +364,26 @@ class BCA_Simulator:
                     print(f"      Positions (first {positions_to_show}): {rule_positions[:positions_to_show]}")
         else:
             print(f"  No matches found - pattern mismatch")
+        
+        # トライアル別詳細統計
+        if show_per_trial:
+            T = self.TNHW_boolMask.shape[0]
+            print(f"\n  Per-trial statistics:")
+            for trial_idx in range(T):
+                trial_matches = self.TNHW_boolMask[trial_idx].sum().item()
+                print(f"    Trial {trial_idx}: {trial_matches} matches")
+                
+                # トライアル別ルールマッチ数
+                trial_rule_matches = self.TNHW_boolMask[trial_idx].sum(dim=(1, 2))  # [N]
+                trial_matched_rules = torch.nonzero(trial_rule_matches).squeeze(-1)
+                
+                if len(trial_matched_rules) > 0:
+                    rule_details = []
+                    for rule_idx in trial_matched_rules:
+                        count = trial_rule_matches[rule_idx].item()
+                        rule_details.append(f"Rule {rule_idx}:{count}")
+                    print(f"      Rules: {', '.join(rule_details)}")
+                else:
+                    print(f"      No matches in this trial")
+        
         print()
-    
