@@ -531,28 +531,15 @@ def get_event_names_from_file(event_file_path: str) -> List[str]:
 # 引数は全てtorchテンソルにして、cudaデバイス上で実行できるようにする
 ###################################
 def update_cellspace(
-    state: torch.Tensor,                # (T,H,W), dtype=torch.int8 or int16
+    THW: torch.Tensor,                # (T,H,W), dtype=torch.int8 or int16
     rule_arrays: torch.Tensor,          # (N,2,3,3) [prev,next], dtype=torch.int8
     rule_probs: torch.Tensor | None,    # (N,), dtype=torch.float32, Noneなら常に適用可
     seed: int | None = None,
 ) -> torch.Tensor:
-    """
-    """
-    # 遷移規則配列を乱数によりシャッフルしてshuffled_rule_arraysを定義する
 
-    # THWサイズの書き込み予約マスクbool配列(TorchTensor)のTHW_maskを定義する
-
-    # shuffled_rule_arraysの要素順にfor-loop
-    #for rule_num in shuffled_rule_arrays:
-        # ruleにshuffled_rule_arrays[rule_num]を代入する
-
-        # ruleをセル空間全体に並列に走査して適用可能性領域の中心座標をリストして、中心座標リストの要素に乱数スコアを与える
-
-        # 規則内競合解決、他規則競合解決
-
-        # 中心座標リストの要素の乱数スコアに並列に確率ゲート(Global_prob)をかけて、棄却されたら中心座標リストから排除する
-
-        # 中心座標リストの要素に対して並列に、遷移規則のnext状態との差分をセル空間に対して書き換えを適用していく
+    # 更新に使うテンソルの定義
+    # THW_boolMask: (T,H,W), dtype=torch.bool
+    
         
 
     return THW
