@@ -12,15 +12,18 @@ from typing import Dict, Tuple, Optional, List
 
 import yaml
 import numpy as np
+import torch
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
 try:
     # パッケージとしてインポートされる場合
     from .lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
+    from .cli_simClass import BCA_Simulator
 except ImportError:
     # 直接実行される場合
     from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
+    from cli_simClass import BCA_Simulator
 
 # ========= 配列 -> QImage（高速LUT） =========
 
@@ -153,7 +156,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._event_array: np.ndarray = None   # 配列座標系変換済みイベント
         self._event_names: List[str] = []      # イベント名リスト
         self._events_visible = False           # イベント表示フラグ
-
+        
+        # ファイルパス保存
+        self._cellspace_file_path = None
+        self._rule_file_paths = []
+        
+        # シミュレーション設定
+        self._sim_steps = 1
+        self._sim_global_prob = 1.0
+        self._sim_seed = 1
+        self._sim_parallel_trials = 1
+        
         # Scene / View / PixmapItem
         self._scene = QtWidgets.QGraphicsScene(self)
         self._pix = QtWidgets.QGraphicsPixmapItem()
@@ -192,6 +205,9 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
 
         # ズーム表示更新
         self._view.zoomChanged.connect(self._on_zoom_changed)
+        
+        # デフォルトファイルの自動読み込み
+        self._load_default_files()
 
     # ---- public API ----
     def set_array(self, arr: np.ndarray) -> None:
@@ -296,6 +312,14 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         m_event.addSeparator()
         a_clear_events = m_event.addAction("Clear Events")
         a_clear_events.triggered.connect(self._action_clear_events)
+        
+        # Simulation
+        m_sim = menubar.addMenu("&Simulation")
+        a_config = m_sim.addAction("Configure...")
+        a_config.triggered.connect(self._action_configure_simulation)
+        m_sim.addSeparator()
+        a_run = m_sim.addAction("Run Simulation")
+        a_run.triggered.connect(self._action_run_simulation)
 
     # ---- actions ----
     def _action_open_yaml(self) -> None:
@@ -336,6 +360,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             arr = load_cell_space_yaml_to_numpy(path, progress_callback=update_progress)
             progress.setValue(100)
             self.set_array(arr)
+            self._cellspace_file_path = path  # ファイルパスを保存
             self._status.showMessage(f"Loaded: {path}  size={arr.shape}")
         except InterruptedError:
             self._status.showMessage("Loading canceled")
@@ -380,6 +405,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             try:
                 # 新しい統合関数を使用
                 self._loaded_rule_files = [path]
+                self._rule_file_paths = [path]  # ファイルパスを保存
                 self._loaded_rule_array = load_multiple_transition_rules_to_numpy([path])
                 self._loaded_rule_ids = get_rule_ids_from_files([path])
                 
@@ -408,6 +434,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             # 既存のファイルリストに追加
             if path not in self._loaded_rule_files:
                 self._loaded_rule_files.append(path)
+                self._rule_file_paths.append(path)  # ファイルパスを保存
                 
                 # 全ファイルから統合配列を再生成
                 self._loaded_rule_array = load_multiple_transition_rules_to_numpy(self._loaded_rule_files)
@@ -564,68 +591,6 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         
         self._status.showMessage("Special events cleared")
 
-    def _update_event_overlay(self) -> None:
-        """特殊イベントのオーバーレイ表示を更新"""
-        # 既存のイベント表示アイテムをクリア
-        for item in self._event_overlay_items:
-            self._scene.removeItem(item)
-        self._event_overlay_items.clear()
-        
-        # イベント表示が無効、またはデータがない場合は何もしない
-        if not self._events_visible or len(self._loaded_events) == 0 or self._event_array is None:
-            return
-        
-        # セル空間が読み込まれていない場合は何もしない
-        if self._arr is None:
-            return
-        
-        # 各イベントを描画
-        for i, event in enumerate(self._loaded_events):
-            name, ref_coord, ref_state, write_coord, write_state = event
-            
-            # 配列座標系での座標を取得
-            ref_array_x = self._event_array[i, 0]
-            ref_array_y = self._event_array[i, 1]
-            write_array_x = self._event_array[i, 3]
-            write_array_y = self._event_array[i, 4]
-            
-            # 配列境界チェック
-            h, w = self._arr.shape
-            if not (0 <= ref_array_x < w and 0 <= ref_array_y < h):
-                continue  # 参照座標が範囲外の場合はスキップ
-            if not (0 <= write_array_x < w and 0 <= write_array_y < h):
-                continue  # 書込座標が範囲外の場合はスキップ
-            
-            # 参照位置にマーカーを描画（青い円）
-            ref_marker = QtWidgets.QGraphicsEllipseItem(
-                ref_array_x - 0.3, ref_array_y - 0.3, 0.6, 0.6)
-            ref_marker.setBrush(QtGui.QBrush(QtGui.QColor(0, 100, 255, 180)))  # 半透明青
-            ref_marker.setPen(QtGui.QPen(QtGui.QColor(0, 50, 200), 0.1))
-            self._scene.addItem(ref_marker)
-            self._event_overlay_items.append(ref_marker)
-            
-            # 書込位置にマーカーを描画（赤い四角）
-            write_marker = QtWidgets.QGraphicsRectItem(
-                write_array_x - 0.3, write_array_y - 0.3, 0.6, 0.6)
-            write_marker.setBrush(QtGui.QBrush(QtGui.QColor(255, 50, 50, 180)))  # 半透明赤
-            write_marker.setPen(QtGui.QPen(QtGui.QColor(200, 0, 0), 0.1))
-            self._scene.addItem(write_marker)
-            self._event_overlay_items.append(write_marker)
-            
-            # 参照位置から書込位置への矢印を描画
-            if ref_array_x != write_array_x or ref_array_y != write_array_y:
-                arrow_line = QtWidgets.QGraphicsLineItem(
-                    ref_array_x, ref_array_y, write_array_x, write_array_y)
-                arrow_pen = QtGui.QPen(QtGui.QColor(100, 100, 100, 150), 0.05)
-                arrow_pen.setCosmetic(True)
-                arrow_line.setPen(arrow_pen)
-                self._scene.addItem(arrow_line)
-                self._event_overlay_items.append(arrow_line)
-            
-            # イベント名をツールチップとして設定
-            ref_marker.setToolTip(f"Event: {name}\nRef: {ref_coord} (state {ref_state})")
-            write_marker.setToolTip(f"Event: {name}\nWrite: {write_coord} (state {write_state})")
-
     def _toggle_grid(self, checked: bool) -> None:
         self._grid_visible = checked
         self._grid_item.setVisible(checked)
@@ -654,6 +619,105 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             path.moveTo(0, y)
             path.lineTo(w, y)
         self._grid_item.setPath(path)
+
+    # ---- Simulation ----
+    def _action_configure_simulation(self) -> None:
+        """シミュレーション設定ダイアログを表示"""
+        dialog = SimulationConfigDialog(
+            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials = dialog.get_values()
+            self._status.showMessage(f"Simulation config: steps={self._sim_steps}, prob={self._sim_global_prob}, seed={self._sim_seed}")
+
+    def _action_run_simulation(self) -> None:
+        """シミュレーションを実行"""
+        if self._cellspace_file_path is None:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No cell space file loaded.")
+            return
+        
+        if len(self._rule_file_paths) == 0:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No transition rules loaded.")
+            return
+        
+        try:
+            # 毎回新しいBCA_Simulatorインスタンスを作成
+            simulator = BCA_Simulator(
+                cellspace_path=self._cellspace_file_path,
+                rule_paths=self._rule_file_paths,
+                device="cpu"
+            )
+            
+            # 必要なメソッドを順次実行
+            simulator.Allocate_torch_Tensors_on_Device()
+            simulator.set_ParallelTrial(self._sim_parallel_trials)
+            
+            # シミュレーションを実行
+            simulator.run_steps(
+                self._sim_steps, 
+                global_prob=self._sim_global_prob, 
+                seed=self._sim_seed, 
+                debug=False
+            )
+            
+            # 結果を取得してnumpy配列に変換
+            result_tensor = simulator.TCHW[0, 0]  # [H, W]
+            result_arr = result_tensor.cpu().numpy().astype(np.int32)
+            
+            # デバッグ出力
+            print(f"Original array unique values: {np.unique(self._arr)}")
+            print(f"Result array unique values: {np.unique(result_arr)}")
+            print(f"Arrays equal: {np.array_equal(self._arr, result_arr)}")
+            print(f"Difference count: {np.sum(self._arr != result_arr)}")
+            
+            # 結果を表示（強制的に再描画）
+            self.set_array(result_arr)
+            # 追加の強制更新
+            self._rebuild_grid()
+            self._view.scene().update()
+            QtWidgets.QApplication.processEvents()
+            self._status.showMessage(f"Simulation completed: {self._sim_steps} steps")
+            
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Error", f"Failed to run simulation:\n{str(e)}")
+            print(f"Simulation error: {e}")  # デバッグ用
+            import traceback
+            traceback.print_exc()  # 詳細なエラー情報
+
+    def _load_default_files(self) -> None:
+        """デフォルトファイルを自動読み込み"""
+        import os
+        
+        # デフォルトファイルパス
+        default_cellspace = "SampleCP/test.yaml"
+        default_rules = "src/PyBCA/rule/base-rule.yaml"
+        
+        try:
+            # セル空間の読み込み
+            if os.path.exists(default_cellspace):
+                arr = load_cell_space_yaml_to_numpy(default_cellspace)
+                self.set_array(arr)
+                self._cellspace_file_path = default_cellspace  # ファイルパスを保存
+                self._status.showMessage(f"Auto-loaded: {default_cellspace}")
+            
+            # 遷移規則の読み込み
+            if os.path.exists(default_rules):
+                self._loaded_rule_files = [default_rules]
+                self._rule_file_paths = [default_rules]  # ファイルパスを保存
+                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([default_rules])
+                self._loaded_rule_ids = get_rule_ids_from_files([default_rules])
+                
+                # ルールビューア用に一時的にTransitionRuleリストを作成
+                temp_rules = load_transition_rules_yaml(default_rules)
+                self._rule_viewer = RuleViewerWindow(temp_rules)
+                
+                self._status.showMessage(f"Auto-loaded: {default_cellspace} and {default_rules}")
+                
+        except Exception as e:
+            print(f"Failed to load default files: {e}")
+            self._status.showMessage("Failed to load default files")
 
     # ---- events ----
     def eventFilter(self, obj, event):
@@ -811,7 +875,60 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
     def _rule_selected(self, index: int):
         if 0 <= index < len(self._rules):
             self._current_index = index
-            self._update_display()
+            self._rule_selected(index)
+
+
+class SimulationConfigDialog(QtWidgets.QDialog):
+    """シミュレーション設定ダイアログ"""
+    def __init__(self, steps, global_prob, seed, parallel_trials, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Simulation Configuration")
+        self.setModal(True)
+        
+        layout = QtWidgets.QFormLayout(self)
+        
+        # Steps
+        self._steps_spin = QtWidgets.QSpinBox()
+        self._steps_spin.setRange(1, 10000)
+        self._steps_spin.setValue(steps)
+        layout.addRow("Steps:", self._steps_spin)
+        
+        # Global Probability
+        self._prob_spin = QtWidgets.QDoubleSpinBox()
+        self._prob_spin.setRange(0.0, 1.0)
+        self._prob_spin.setSingleStep(0.1)
+        self._prob_spin.setDecimals(2)
+        self._prob_spin.setValue(global_prob)
+        layout.addRow("Global Probability:", self._prob_spin)
+        
+        # Seed
+        self._seed_spin = QtWidgets.QSpinBox()
+        self._seed_spin.setRange(1, 999999)
+        self._seed_spin.setValue(seed)
+        layout.addRow("Seed:", self._seed_spin)
+        
+        # Parallel Trials
+        self._trials_spin = QtWidgets.QSpinBox()
+        self._trials_spin.setRange(1, 10)
+        self._trials_spin.setValue(parallel_trials)
+        layout.addRow("Parallel Trials:", self._trials_spin)
+        
+        # Buttons
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addRow(buttons)
+        
+        self.resize(300, 150)
+    
+    def get_values(self):
+        return (
+            self._steps_spin.value(),
+            self._prob_spin.value(),
+            self._seed_spin.value(),
+            self._trials_spin.value()
+        )
 
 
 def main(argv=None):

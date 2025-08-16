@@ -177,22 +177,35 @@ class BCA_Simulator:
         # 遷移規則のシャッフル
         N = self.rule_arrays_tensor.shape[0]
         perm = torch.randperm(N, generator=self.rng, device=self.device)
-        self.shuffle_rule  = self.rule_arrays_tensor.index_select(0, perm)
+        index_shuffle = perm
 
         ########################################
         # シャッフル遷移規則配列の要素順にループを回す  #
         ########################################
         for i in range(N):
             # 遷移規則の取り出し
-            self.Pickup_rule = self.shuffle_rule[i]
+            idx = index_shuffle[i]
+            self.Pickup_rule = self.rule_arrays_tensor[idx]
 
             # 規則内競合解決(セル空間とtrialに並列な処理)
+            self.TNHW_boolMask[:, idx, :, :] = self._rule_inner_conflict_resolution(idx)
+            if debug:
+                print(f"After Rule Inner Conflict Resolution {idx}")
+                #self.debug(show_per_trial=debug_per_trial)
 
             # 他規則競合解決(セル空間とtrialに並列な処理)
+            self.TNHW_boolMask[:, idx, :, :] = self._rule_outer_conflict_resolution(idx)
+            if debug:
+                print(f"After Rule Outer Conflict Resolution {idx}")
+                #self.debug(show_per_trial=debug_per_trial)
 
             # 書き換え実行(セル空間とtrialに並列な処理)
+            self._write_back(idx)
             
         # loop end
+        if debug:
+            print("After Write Back")
+            self.debug(show_per_trial=debug_per_trial)
         return self.TCHW
 
     # 特殊イベントを適用する
@@ -333,6 +346,100 @@ class BCA_Simulator:
         gate = (rnd < p)
         return (base & gate).contiguous()
 
+    def _rule_outer_conflict_resolution(self, rule_idx: int) -> torch.Tensor:
+        """
+        既に確定（書込み済み）セルと衝突する書込みを除外。
+        返り値: 競合除外後の中心マスク [T,H,W] bool
+        """
+        center = self.TNHW_boolMask[:, rule_idx, :, :]           # [T,H,W] bool
+        wf, wb, _ = self._build_rule_kernels(rule_idx)
+        if wf is None:
+            return center
+
+        # このルールが書こうとしている任意ターゲット
+        tgt_any = (F.conv2d(center.unsqueeze(1).float(), wf, padding=1) > 0.5).any(dim=1)  # [T,H,W]
+        # 既に確定済みセルと衝突
+        hit = tgt_any & self.TCHW_applied[:, 0]
+
+        if not hit.any():
+            return center
+
+        # 衝突ターゲットに寄与した中心を逆射影で特定し除外
+        bad_center = (F.conv2d(hit.unsqueeze(1).float(), wb, padding=1) > 0.5) \
+                     .any(dim=1) & center
+        return (center & ~bad_center)
+
+    def _build_rule_kernels(self, rule_idx: int):
+        pre  = self.rule_arrays_tensor[rule_idx, 0]   # [3,3] int8
+        post = self.rule_arrays_tensor[rule_idx, 1]   # [3,3] int8
+
+        # 書き込み対象は pre↔post の差分セルのみ（post==-1 は変更なし）
+        write_pos = (post != pre) & (post != -1)
+
+        idx = torch.nonzero(write_pos, as_tuple=False)  # [M,2] (y,x)
+        if idx.numel() == 0:
+            return None, None, None
+
+        y, x = idx[:, 0], idx[:, 1]
+        M = idx.shape[0]
+
+        # 中心→ターゲット: conv2d の仕様上 (2-y, 2-x) に 1 を置く
+        w_fwd = torch.zeros((M, 1, 3, 3), device=self.device, dtype=torch.float32)
+        w_fwd[torch.arange(M, device=self.device), 0, 2 - y, 2 - x] = 1.0
+
+        # ターゲット→中心: (y, x) に 1 を置く（逆射影）
+        w_back = torch.zeros_like(w_fwd)
+        w_back[torch.arange(M, device=self.device), 0, y, x] = 1.0
+
+        # 各ターゲットへ書く値
+        v_post = post[y, x].to(torch.int8)
+        return w_fwd, w_back, v_post
+
+    def _rule_inner_conflict_resolution(self, rule_idx: int) -> torch.Tensor:
+        """
+        同一ルール内で同一ターゲットに複数中心から書こうとする競合を除外。
+        返り値: 競合除外後の中心マスク [T,H,W] bool
+        """
+        center = self.TNHW_boolMask[:, rule_idx, :, :]           # [T,H,W] bool
+        wf, wb, _ = self._build_rule_kernels(rule_idx)
+        if wf is None:
+            return center
+
+        c = center.unsqueeze(1).float()                          # [T,1,H,W]
+        tgt = (F.conv2d(c, wf, padding=1) > 0.5)                 # [T,M,H,W] bool
+
+        # 同一ルール内のターゲット重複
+        conflict = (tgt.sum(dim=1) >= 2)                         # [T,H,W] bool
+        if not conflict.any():
+            return center
+
+        # 競合ターゲットに寄与した中心を逆射影で除外
+        bad_center = (F.conv2d(conflict.unsqueeze(1).float(), wb, padding=1) > 0.5) \
+                     .any(dim=1) & center
+        return (center & ~bad_center)
+
+    def _write_back(self, rule_idx: int) -> None:
+        """
+        競合解決後の中心マスクに基づいて差分セルのみ書き込み。
+        """
+        center = self.TNHW_boolMask[:, rule_idx, :, :]           # [T,H,W] bool
+        wf, _, v_post = self._build_rule_kernels(rule_idx)
+        if wf is None:
+            return
+
+        # 中心→ターゲット（M 本）
+        tgt = (F.conv2d(center.unsqueeze(1).float(), wf, padding=1) > 0.5)  # [T,M,H,W] bool
+        if not tgt.any():
+            return
+
+        # 競合は事前解決済みなので合算でOK
+        cs = self.TCHW[:, 0]                                                     # [T,H,W] int8
+        vals = tgt.to(torch.int16) * v_post.view(1, -1, 1, 1).to(torch.int16)    # [T,M,H,W]
+        write_val  = vals.sum(dim=1).to(torch.int8)                               # [T,H,W]
+        write_mask = tgt.any(dim=1)                                               # [T,H,W]
+
+        self.TCHW[:, 0] = torch.where(write_mask, write_val, cs)
+        self.TCHW_applied[:, 0] |= write_mask
 
     # デバッグ情報
     def debug(self, show_per_trial: bool = False):
@@ -387,3 +494,6 @@ class BCA_Simulator:
                     print(f"      No matches in this trial")
         
         print()
+
+    
+
