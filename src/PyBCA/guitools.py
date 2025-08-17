@@ -641,50 +641,8 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 self, "Warning", "No transition rules loaded.")
             return
         
-        try:
-            # 毎回新しいBCA_Simulatorインスタンスを作成
-            simulator = BCA_Simulator(
-                cellspace_path=self._cellspace_file_path,
-                rule_paths=self._rule_file_paths,
-                device="cpu"
-            )
-            
-            # 必要なメソッドを順次実行
-            simulator.Allocate_torch_Tensors_on_Device()
-            simulator.set_ParallelTrial(self._sim_parallel_trials)
-            
-            # シミュレーションを実行
-            simulator.run_steps(
-                self._sim_steps, 
-                global_prob=self._sim_global_prob, 
-                seed=self._sim_seed, 
-                debug=False
-            )
-            
-            # 結果を取得してnumpy配列に変換
-            result_tensor = simulator.TCHW[0, 0]  # [H, W]
-            result_arr = result_tensor.cpu().numpy().astype(np.int32)
-            
-            # デバッグ出力
-            print(f"Original array unique values: {np.unique(self._arr)}")
-            print(f"Result array unique values: {np.unique(result_arr)}")
-            print(f"Arrays equal: {np.array_equal(self._arr, result_arr)}")
-            print(f"Difference count: {np.sum(self._arr != result_arr)}")
-            
-            # 結果を表示（強制的に再描画）
-            self.set_array(result_arr)
-            # 追加の強制更新
-            self._rebuild_grid()
-            self._view.scene().update()
-            QtWidgets.QApplication.processEvents()
-            self._status.showMessage(f"Simulation completed: {self._sim_steps} steps")
-            
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(
-                self, "Error", f"Failed to run simulation:\n{str(e)}")
-            print(f"Simulation error: {e}")  # デバッグ用
-            import traceback
-            traceback.print_exc()  # 詳細なエラー情報
+        # TODO: シミュレーション実行処理を実装
+        self._status.showMessage("Simulation execution not implemented yet")
 
     def _load_default_files(self) -> None:
         """デフォルトファイルを自動読み込み"""

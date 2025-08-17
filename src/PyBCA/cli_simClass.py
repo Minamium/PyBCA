@@ -105,6 +105,9 @@ class BCA_Simulator:
                 debug_per_trial=debug_per_trial
             )
 
+            # 特殊イベントの適用
+            self.apply_spatial_events()
+
     ###################################
     # セル空間を更新する関数を定義する
     # 引数は全てtorchテンソルにして、cudaデバイス上で実行できるようにする
