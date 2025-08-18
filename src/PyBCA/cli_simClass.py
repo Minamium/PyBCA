@@ -212,7 +212,6 @@ class BCA_Simulator:
         return self.TCHW
 
     # 特殊イベントを適用する
-    # 特殊イベントを適用する
     def apply_spatial_events(self) -> None:
         """
         lib.load_special_events_from_file() の形式に準拠:

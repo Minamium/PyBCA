@@ -18,11 +18,11 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 try:
     # パッケージとしてインポートされる場合
-    from .lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
+    from .lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, load_multiple_transition_rules_with_probability, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
     from .cli_simClass import BCA_Simulator
 except ImportError:
     # 直接実行される場合
-    from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
+    from lib import load_cell_space_yaml_to_numpy, numpy_to_cell_space_yaml, load_transition_rules_yaml, TransitionRule, extract_cellspace_and_offset, has_offset_info, load_multiple_transition_rules_to_numpy, load_multiple_transition_rules_with_probability, get_rule_ids_from_files, load_special_events_from_file, convert_events_to_array_coordinates, get_event_names_from_file
     from cli_simClass import BCA_Simulator
 
 # ========= 配列 -> QImage（高速LUT） =========
@@ -144,6 +144,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         # 遷移規則管理 - numpy配列形式で統一
         self._loaded_rule_files: List[str] = []  # 読み込み済みファイルパス
         self._loaded_rule_array: np.ndarray = None  # (N, 2, 3, 3) 形状の統合配列
+        self._loaded_rule_probs: np.ndarray = None  # (N,) 形状の確率配列
         self._loaded_rule_ids: List[int] = []  # 対応するrule_id
         self._rule_viewer = None
         
@@ -377,9 +378,9 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         )
         if path:
             try:
-                # 新しい統合関数を使用
+                # 新しい統合関数を使用（確率情報付き）
                 self._loaded_rule_files = [path]
-                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([path])
+                self._loaded_rule_array, self._loaded_rule_probs = load_multiple_transition_rules_with_probability([path])
                 self._loaded_rule_ids = get_rule_ids_from_files([path])
                 
                 print(f"Loaded {len(self._loaded_rule_ids)} rules from {path}")
@@ -387,7 +388,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 
                 # ルールビューア用に一時的にTransitionRuleリストを作成
                 temp_rules = load_transition_rules_yaml(path)
-                self._rule_viewer = RuleViewerWindow(temp_rules)
+                self._rule_viewer = RuleViewerWindow(temp_rules, self._loaded_rule_probs)
                 self._rule_viewer.show()
                 
                 self._status.showMessage(f"Loaded {len(self._loaded_rule_ids)} transition rules from {path}")
@@ -403,10 +404,10 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         )
         if path:
             try:
-                # 新しい統合関数を使用
+                # 新しい統合関数を使用（確率情報付き）
                 self._loaded_rule_files = [path]
                 self._rule_file_paths = [path]  # ファイルパスを保存
-                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([path])
+                self._loaded_rule_array, self._loaded_rule_probs = load_multiple_transition_rules_with_probability([path])
                 self._loaded_rule_ids = get_rule_ids_from_files([path])
                 
                 print(f"Loaded {len(self._loaded_rule_ids)} rules from {path}")
@@ -414,7 +415,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 
                 # ルールビューア用に一時的にTransitionRuleリストを作成
                 temp_rules = load_transition_rules_yaml(path)
-                self._rule_viewer = RuleViewerWindow(temp_rules)
+                self._rule_viewer = RuleViewerWindow(temp_rules, self._loaded_rule_probs)
                 self._rule_viewer.show()
                 
                 self._status.showMessage(f"Loaded {len(self._loaded_rule_ids)} transition rules from {path}")
@@ -436,8 +437,8 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 self._loaded_rule_files.append(path)
                 self._rule_file_paths.append(path)  # ファイルパスを保存
                 
-                # 全ファイルから統合配列を再生成
-                self._loaded_rule_array = load_multiple_transition_rules_to_numpy(self._loaded_rule_files)
+                # 全ファイルから統合配列を再生成（確率情報付き）
+                self._loaded_rule_array, self._loaded_rule_probs = load_multiple_transition_rules_with_probability(self._loaded_rule_files)
                 self._loaded_rule_ids = get_rule_ids_from_files(self._loaded_rule_files)
                 
                 print(f"Added rule file: {path}")
@@ -448,11 +449,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                 for file_path in self._loaded_rule_files:
                     temp_rules = load_transition_rules_yaml(file_path)
                     all_temp_rules.extend(temp_rules)
-                
-                # 規則ビューアウィンドウを更新
-                if self._rule_viewer:
-                    self._rule_viewer.close()
-                self._rule_viewer = RuleViewerWindow(all_temp_rules)
+                self._rule_viewer = RuleViewerWindow(all_temp_rules, self._loaded_rule_probs)
                 self._rule_viewer.show()
                 
                 self._status.showMessage(f"Added rule file (total: {len(self._loaded_rule_ids)} rules from {len(self._loaded_rule_files)} files)")
@@ -573,7 +570,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._events_visible = checked
         self._update_event_overlay()
         
-        if checked and self._loaded_events:
+        if checked and len(self._loaded_events) > 0:
             self._status.showMessage(f"Showing {len(self._loaded_events)} special events")
         else:
             self._status.showMessage("Events hidden")
@@ -590,6 +587,47 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._update_event_overlay()
         
         self._status.showMessage("Special events cleared")
+
+    def _update_event_overlay(self) -> None:
+        """特殊イベントオーバーレイを更新"""
+        # 既存のオーバーレイアイテムをクリア
+        for item in self._event_overlay_items:
+            self._scene.removeItem(item)
+        self._event_overlay_items.clear()
+        
+        # イベントが非表示または存在しない場合は終了
+        if not self._events_visible or self._event_array is None or len(self._event_array) == 0:
+            return
+        
+        # セル空間が読み込まれていない場合は終了
+        if self._arr is None:
+            return
+        
+        # 各イベントに対してオーバーレイアイテムを作成
+        for i, event in enumerate(self._event_array):
+            x, y = int(event[0]), int(event[1])
+            
+            # 配列範囲内チェック
+            if 0 <= y < self._arr.shape[0] and 0 <= x < self._arr.shape[1]:
+                # 円形のオーバーレイアイテムを作成
+                overlay_item = QtWidgets.QGraphicsEllipseItem(x - 0.4, y - 0.4, 0.8, 0.8)
+                
+                # 半透明の赤色で表示
+                pen = QtGui.QPen(QtGui.QColor(255, 0, 0, 200))
+                pen.setWidth(0.1)
+                brush = QtGui.QBrush(QtGui.QColor(255, 0, 0, 100))
+                overlay_item.setPen(pen)
+                overlay_item.setBrush(brush)
+                
+                # ツールチップを設定（イベント名があれば表示）
+                if i < len(self._event_names):
+                    overlay_item.setToolTip(f"Event: {self._event_names[i]} at ({x}, {y})")
+                else:
+                    overlay_item.setToolTip(f"Special Event at ({x}, {y})")
+                
+                # シーンに追加
+                self._scene.addItem(overlay_item)
+                self._event_overlay_items.append(overlay_item)
 
     def _toggle_grid(self, checked: bool) -> None:
         self._grid_visible = checked
@@ -664,12 +702,12 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             if os.path.exists(default_rules):
                 self._loaded_rule_files = [default_rules]
                 self._rule_file_paths = [default_rules]  # ファイルパスを保存
-                self._loaded_rule_array = load_multiple_transition_rules_to_numpy([default_rules])
+                self._loaded_rule_array, self._loaded_rule_probs = load_multiple_transition_rules_with_probability([default_rules])
                 self._loaded_rule_ids = get_rule_ids_from_files([default_rules])
                 
                 # ルールビューア用に一時的にTransitionRuleリストを作成
                 temp_rules = load_transition_rules_yaml(default_rules)
-                self._rule_viewer = RuleViewerWindow(temp_rules)
+                self._rule_viewer = RuleViewerWindow(temp_rules, self._loaded_rule_probs)
                 
                 self._status.showMessage(f"Auto-loaded: {default_cellspace} and {default_rules}")
                 
@@ -706,10 +744,11 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
     """
     遷移規則ビューア。prev→nextの変化を左右並列表示し、矢印ボタンで規則を切り替え。
     """
-    def __init__(self, rules: List[TransitionRule]):
+    def __init__(self, rules: List[TransitionRule], probabilities: np.ndarray = None):
         super().__init__()
         self.setWindowTitle("PyBCA Rule Viewer")
         self._rules = rules
+        self._probabilities = probabilities if probabilities is not None else np.ones(len(rules))
         self._current_index = 0
         
         if not self._rules:
@@ -772,7 +811,8 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
         
         self._rule_selector = QtWidgets.QComboBox()
         for i, rule in enumerate(self._rules):
-            self._rule_selector.addItem(f"Rule {rule.rule_id}")
+            prob_text = f" (p={self._probabilities[i]:.3f})" if self._probabilities is not None else ""
+            self._rule_selector.addItem(f"Rule {rule.rule_id}{prob_text}")
         self._rule_selector.currentIndexChanged.connect(self._rule_selected)
         control_layout.addWidget(self._rule_selector)
         
@@ -796,7 +836,8 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
         rule = self._rules[self._current_index]
         
         # 規則情報更新
-        self._rule_info.setText(f"Rule ID: {rule.rule_id} ({self._current_index + 1}/{len(self._rules)})")
+        prob_text = f", Probability: {self._probabilities[self._current_index]:.3f}" if self._probabilities is not None else ""
+        self._rule_info.setText(f"Rule ID: {rule.rule_id} ({self._current_index + 1}/{len(self._rules)}){prob_text}")
         
         # prev表示
         prev_qimg = array_to_qimage(rule.prev_pattern)
@@ -818,7 +859,8 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
         self._rule_selector.setCurrentIndex(self._current_index)
         
         # ステータス更新
-        self._status.showMessage(f"Rule {rule.rule_id}: prev={rule.prev_pattern.shape}, next={rule.next_pattern.shape}")
+        prob_text = f", prob={self._probabilities[self._current_index]:.3f}" if self._probabilities is not None else ""
+        self._status.showMessage(f"Rule {rule.rule_id}: prev={rule.prev_pattern.shape}, next={rule.next_pattern.shape}{prob_text}")
     
     def _prev_rule(self):
         if self._current_index > 0:
@@ -833,7 +875,7 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
     def _rule_selected(self, index: int):
         if 0 <= index < len(self._rules):
             self._current_index = index
-            self._rule_selected(index)
+            self._update_display()
 
 
 class SimulationConfigDialog(QtWidgets.QDialog):

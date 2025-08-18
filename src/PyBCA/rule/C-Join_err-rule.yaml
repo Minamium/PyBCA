@@ -1,5 +1,5 @@
 - id: 101
-  probability: 0.0
+  probability: 0.1
   rule:
     prev:
     - coord:
@@ -44,7 +44,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 102
-  probability: 0.0
+  probability: 0.1
   rule:
     prev:
     - coord:
