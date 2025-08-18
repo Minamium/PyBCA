@@ -9,7 +9,7 @@
 - coord:
     x: 19
     y: 2
-  value: 1
+  value: 2
 - coord:
     x: 18
     y: 3
@@ -25,7 +25,7 @@
 - coord:
     x: 19
     y: 4
-  value: 2
+  value: 1
 - coord:
     x: 20
     y: 4
@@ -33,7 +33,7 @@
 - coord:
     x: 19
     y: 5
-  value: 2
+  value: 1
 - coord:
     x: 18
     y: 6
@@ -721,7 +721,7 @@
 - coord:
     x: 19
     y: 29
-  value: 2
+  value: 1
 - coord:
     x: 18
     y: 30
@@ -741,7 +741,7 @@
 - coord:
     x: 19
     y: 32
-  value: 2
+  value: 1
 - coord:
     x: 20
     y: 32
@@ -761,7 +761,7 @@
 - coord:
     x: 19
     y: 34
-  value: 1
+  value: 2
 - coord:
     x: 19
     y: 35
