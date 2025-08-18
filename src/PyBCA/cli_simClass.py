@@ -212,79 +212,75 @@ class BCA_Simulator:
         return self.TCHW
 
     # 特殊イベントを適用する
+    # 特殊イベントを適用する
     def apply_spatial_events(self) -> None:
         """
-        仕様:
-          - イベント1行: [pre_y, pre_x, pre_val, post_y, post_x, post_val]
-          - (pre_y,pre_x) が pre_val のとき (post_y,post_x) に post_val を確定書き込み
-          - 全 trial に同内容を適用（trial個別にしたい場合は拡張可）
-          - 完全ベクトル化（T×E）。競合なし前提。
+        イベント1行: [pre_y, pre_x, pre_val, post_y, post_x, post_val]（global座標）
+        (pre_y,pre_x) が pre_val のとき (post_y,post_x) に post_val を確定書き込み。
+        全 trial に同一内容を適用。完全ベクトル化。競合なし前提。
         """
-        if self.spatial_event_arrays_tensor is None:
+        if getattr(self, "spatial_event_arrays_tensor", None) is None:
             return
-        ev = self.spatial_event_arrays_tensor.to(self.device)
+
+        ev = self.spatial_event_arrays_tensor
         if ev.numel() == 0:
             return
 
-        # intに揃える
-        ev = ev.to(torch.int64)
-        pre_y_g, pre_x_g, pre_v = ev[:, 0], ev[:, 1], ev[:, 2].to(torch.int8)
-        pst_y_g, pst_x_g, pst_v = ev[:, 3], ev[:, 4], ev[:, 5].to(torch.int8)
+        device = self.device
+        ev = ev.to(device=device, dtype=torch.int64)
 
-        # グローバル→ローカル（offsetを引く）
-        pre_y = (pre_y_g - self.offset_y).clamp_min(0)
-        pre_x = (pre_x_g - self.offset_x).clamp_min(0)
-        pst_y = (pst_y_g - self.offset_y).clamp_min(0)
-        pst_x = (pst_x_g - self.offset_x).clamp_min(0)
+        pre_y_g, pre_x_g = ev[:, 0], ev[:, 1]
+        pre_v            = ev[:, 2].to(torch.int8)
+        pst_y_g, pst_x_g = ev[:, 3], ev[:, 4]
+        pst_v            = ev[:, 5].to(torch.int8)
+
+        # global -> local （clampしない：この後にin-bounds判定）
+        pre_y = pre_y_g - self.offset_y
+        pre_x = pre_x_g - self.offset_x
+        pst_y = pst_y_g - self.offset_y
+        pst_x = pst_x_g - self.offset_x
 
         T, _, H, W = self.TCHW.shape
-        device = self.device    
 
         # 画面内だけ採用
-        in_pre = (pre_y >= 0) & (pre_y < H) & (pre_x >= 0) & (pre_x < W)
-        in_pst = (pst_y >= 0) & (pst_y < H) & (pst_x >= 0) & (pst_x < W)
-        keep = in_pre & in_pst
+        keep = (pre_y >= 0) & (pre_y < H) & (pre_x >= 0) & (pre_x < W) & \
+               (pst_y >= 0) & (pst_y < H) & (pst_x >= 0) & (pst_x < W)
         if not keep.any():
             return
 
-        pre_y = pre_y[keep]; pre_x = pre_x[keep]; pre_v = pre_v[keep]
-        pst_y = pst_y[keep]; pst_x = pst_x[keep]; pst_v = pst_v[keep]
+        pre_y = pre_y[keep].to(torch.int64)
+        pre_x = pre_x[keep].to(torch.int64)
+        pre_v = pre_v[keep]
+        pst_y = pst_y[keep].to(torch.int64)
+        pst_x = pst_x[keep].to(torch.int64)
+        pst_v = pst_v[keep]
 
         # 線形Index
-        pre_lin = (pre_y * W + pre_x)  # [E]
-        pst_lin = (pst_y * W + pst_x)  # [E]
+        pre_lin = pre_y * W + pre_x           # [E]
+        pst_lin = pst_y * W + pst_x           # [E]
 
-        # 現在のセル値を T×E で集めて条件判定
-        cs_flat = self.TCHW[:, 0].reshape(T, H * W)           # [T, H*W] int8
-        pre_lin_TE = pre_lin.view(1, -1).expand(T, -1)        # [T, E]
-        cur_pre_TE = cs_flat.gather(1, pre_lin_TE)            # [T, E] int8
-        cond_TE = (cur_pre_TE == pre_v.view(1, -1).expand(T, -1))  # [T, E] bool
-
+        # (T×E)で条件判定
+        cs_flat    = self.TCHW[:, 0].reshape(T, H * W)                       # [T, H*W] (ビュー)
+        cur_pre_TE = cs_flat.gather(1, pre_lin.view(1, -1).expand(T, -1))    # [T, E]
+        cond_TE    = (cur_pre_TE == pre_v.view(1, -1).expand(T, -1))         # [T, E] bool
         if not cond_TE.any():
             return
 
-        # 書き込みを 1D (T*H*W) 空間に一括 index_copy_
-        t_idx_TE = torch.arange(T, device=device).view(-1, 1).expand(T, pst_lin.numel())
-        pst_lin_TE = pst_lin.view(1, -1).expand(T, -1)
-        pst_val_TE = pst_v.view(1, -1).expand(T, -1)
+        # 条件を満たす (t,e) を抽出し、(t*HW + pst_lin[e]) へ書き込み
+        hit    = cond_TE.nonzero(as_tuple=False)    # [K,2] (t,e)
+        t_idx  = hit[:, 0]
+        e_idx  = hit[:, 1]
+        dst    = (t_idx.to(torch.int64) * (H * W) + pst_lin[e_idx]).to(torch.int64)
+        wvals  = pst_v[e_idx]                       # int8
 
-        mask = cond_TE.reshape(-1)
-        t_idx = t_idx_TE.reshape(-1)[mask]                 # [K]
-        dst_lin = pst_lin_TE.reshape(-1)[mask]             # [K]
-        wvals  = pst_val_TE.reshape(-1)[mask].to(torch.int8)  # [K]
+        # self.TCHW をインプレース更新（ビューに対する index_copy_）
+        cs_all = self.TCHW[:, 0].reshape(T * H * W) # int8, ビュー
+        cs_all.index_copy_(0, dst, wvals)
 
-        if t_idx.numel() == 0:
-            return
-
-        global_lin = (t_idx * (H * W) + dst_lin).to(torch.int64)  # [K]
-
-        # 値の書き込み（後勝ち/順序通り上書き）
-        cs_all = self.TCHW[:, 0].reshape(T * H * W)               # int8
-        cs_all.index_copy_(0, global_lin, wvals)
-
-        # 適用フラグ
-        applied_all = self.TCHW_applied[:, 0].reshape(T * H * W)
-        applied_all.index_fill_(0, global_lin, True)
+        # 適用フラグ（競合解決ロジック等で利用したい場合）
+        if hasattr(self, "TCHW_applied"):
+            applied_all = self.TCHW_applied[:, 0].reshape(T * H * W)
+            applied_all.index_fill_(0, dst, True)
 
 ###################################
 
