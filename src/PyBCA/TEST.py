@@ -18,7 +18,7 @@ torch.set_printoptions(
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
 
-    cellspace_path = "SampleCP/test.yaml"
+    cellspace_path = "SampleCP/BCA-IP.yaml"
     rule_paths = [
         "src/PyBCA/rule/base-rule.yaml",
         "src/PyBCA/rule/C-Join_err-rule.yaml"
@@ -49,11 +49,11 @@ if __name__ == "__main__":
     #print(simulator.cellspace_tensor)
     #print(simulator.rule_arrays_tensor)
     #print(simulator.rule_probs_tensor)
-    print(simulator.spatial_event_arrays_tensor)
+    #print(simulator.spatial_event_arrays_tensor)
 
-    #simulator.set_ParallelTrial(2)
-    #print(simulator.TCHW)
-    #simulator.run_steps(100, global_prob=1.0, seed=1, debug=False, debug_per_trial=False)
+    simulator.set_ParallelTrial(1)
+    print(simulator.TCHW)
+    simulator.run_steps(10000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)
@@ -67,5 +67,5 @@ if __name__ == "__main__":
 
     #simulator.debug()
     #print(simulator.TCHW)
-    #lib.numpy_to_cell_space_yaml(simulator.TCHW[0,0].cpu().numpy(), "tested.yaml")
+    lib.numpy_to_cell_space_yaml(simulator.TCHW[0,0].cpu().numpy(), "tested.yaml")
     
