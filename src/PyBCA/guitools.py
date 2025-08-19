@@ -67,7 +67,14 @@ def array_to_qimage(arr: np.ndarray,
 
     rgb = lut[idx_map]  # HxWx3
     h, w = rgb.shape[:2]
-    qimg = QtGui.QImage(rgb.data, w, h, 3 * w, QtGui.QImage.Format_RGB888)
+    
+    # デバッグ: 配列形状とQImage作成パラメータを確認
+    print(f"Debug array_to_qimage: arr.shape={arr.shape}, rgb.shape={rgb.shape}")
+    print(f"Debug array_to_qimage: h={h}, w={w}, bytes_per_line={3*w}")
+    
+    # メモリ連続性を確保
+    rgb_contiguous = np.ascontiguousarray(rgb)
+    qimg = QtGui.QImage(rgb_contiguous.data, w, h, 3 * w, QtGui.QImage.Format_RGB888)
     return qimg.copy()  # バッファ寿命の独立性を確保
 
 
@@ -232,8 +239,15 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             self._status.showMessage("No data")
             return
 
-        # オフセット情報付きの場合は分離
-        if has_offset_info(arr) and arr.shape[0] > 1 and arr.shape[1] > 2:
+        # シミュレーション結果の場合はオフセット処理をスキップ
+        # オフセット情報付きかどうかの判定を厳密化
+        if (hasattr(self, '_bca_simulator') and self._bca_simulator is not None and 
+            hasattr(self._bca_simulator, 'cellspace_tensor') and
+            arr.shape == tuple(self._bca_simulator.cellspace_tensor.shape)):
+            # シミュレーション結果の場合は直接使用
+            self._arr = arr
+            status_msg = f"Simulation result: size={arr.shape}"
+        elif has_offset_info(arr) and arr.shape[0] > 1 and arr.shape[1] > 2:
             try:
                 cellspace, min_x, min_y = extract_cellspace_and_offset(arr)
                 self._arr = cellspace

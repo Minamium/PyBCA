@@ -51,12 +51,12 @@ if __name__ == "__main__":
     #print(simulator.rule_probs_tensor)
     #print(simulator.spatial_event_arrays_tensor)
 
-    simulator.set_ParallelTrial(3)
-    print(simulator.TCHW)
+    simulator.set_ParallelTrial(300)
+    #print(simulator.TCHW)
     simulator.run_steps(1000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
 
     print("After Apllied run_steps, TCHW")
-    print(simulator.TCHW)
+    #print(simulator.TCHW)
 
     #print("After Apllied run_steps, TNHW_boolMask")
     #print(simulator.TNHW_boolMask[0,:,:,:])
