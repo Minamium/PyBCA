@@ -806,6 +806,13 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
             result_array = result_tensor.cpu().numpy()
             
+            # デバッグ: テンソル形状を確認
+            original_shape = self._bca_simulator.cellspace_tensor.shape
+            result_shape = result_array.shape
+            print(f"Debug: Original cellspace shape: {original_shape}")
+            print(f"Debug: Result array shape: {result_shape}")
+            print(f"Debug: Shape match: {original_shape == result_shape}")
+            
             # 表示を更新
             self.set_array(result_array)
             
@@ -872,6 +879,13 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             # シミュレーション結果をGUIに反映
             result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
             result_array = result_tensor.cpu().numpy()
+            
+            # デバッグ: テンソル形状を確認
+            original_shape = self._bca_simulator.cellspace_tensor.shape
+            result_shape = result_array.shape
+            print(f"Debug: Original cellspace shape: {original_shape}")
+            print(f"Debug: Result array shape: {result_shape}")
+            print(f"Debug: Shape match: {original_shape == result_shape}")
             
             # 表示を更新
             self.set_array(result_array)
