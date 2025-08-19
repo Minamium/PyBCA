@@ -28,8 +28,10 @@ class BCA_Simulator:
         # 特殊イベント読み込み
         if spatial_event_filePath is not None:
             self.spatial_event_arrays = lib.load_special_events_from_file(spatial_event_filePath)
+            self.spatial_event_names  = lib.get_event_names_from_file(spatial_event_filePath)
         else:
             self.spatial_event_arrays = None    
+            self.spatial_event_names  = None
         
         # 計算デバイス設定
         self.device = device
@@ -88,6 +90,13 @@ class BCA_Simulator:
              [1,1,1],
              [0,1,0]], dtype=torch.bool, device=self.device
         )
+
+        # trial ごとの {event_name: [steps...]} 辞書を作る
+        if getattr(self, "spatial_event_names", None) is not None:
+            names = list(self.spatial_event_names)
+            self.event_history = [{name: [] for name in names} for _ in range(parallel_trial)]
+        else:
+            self.event_history = None
     
 
     # 任意ステップ数だけセル空間を更新する
@@ -95,6 +104,7 @@ class BCA_Simulator:
         print(f"Run steps: {steps}")
         for i in range(steps):
             print(f"Step {i}")
+            self._current_step = i
             ###################
             # 乱数生成器の定義  #
             ###################
@@ -289,6 +299,19 @@ class BCA_Simulator:
             print("  sample(local):",
                   list(zip(pre_x.tolist()[:3], pre_y.tolist()[:3], pre_v.tolist()[:3],
                            pst_x.tolist()[:3], pst_y.tolist()[:3], pst_v.tolist()[:3])))
+
+        # 既存：hit, t_idx, e_idx を算出済み
+        # names を keep マスクに合わせて整列
+        if getattr(self, "event_history", None) is not None:
+            # GPUの keep をCPU boolsへ
+            keep_list = keep.detach().to('cpu').tolist()
+            names_kept = [n for n, k in zip(self.spatial_event_names, keep_list) if k]
+
+        step = getattr(self, "_current_step", None)
+        if step is not None and hit.shape[0] > 0:
+            # (t,e) ごとに発火ステップを記録
+            for t, e in zip(t_idx.tolist(), e_idx.tolist()):
+                self.event_history[t][names_kept[e]].append(step)
 
 ###################################
 
@@ -586,5 +609,80 @@ class BCA_Simulator:
         
         print()
 
-    
+    def save_event_histry_for_dataframe(
+        self,
+        path: str | None = None,
+        format: str = "jsonl",              # "parquet" | "csv" | "jsonl" | "yaml"
+        deduplicate: bool = False,            # Trueなら各(eventのsteps)を集合化→昇順
+        return_df: bool = True,               # TrueならDataFrameを返す
+        parquet_compression: str = "snappy"   # "snappy" | "zstd" など
+    ):
+        """
+        self.event_history（各trialの {event_name: [steps...]} 辞書）を
+        フラット表 (trial, event, step) に変換して保存するユーティリティ。
+
+        - path が None なら保存せずに DataFrame だけ返す
+        - format は parquet/csv/jsonl/yaml をサポート（すべてフラット表）
+        - deduplicate=True で各イベントの重複stepを排除（同一stepの多重発火を潰す）
+        """
+        if getattr(self, "event_history", None) is None:
+            raise RuntimeError("event_history がありません。set_ParallelTrial() と run_steps() の後に呼んでください。")
+
+        import os
+        import pandas as pd
+
+        # rows 構築（フラット表）
+        rows = []
+        for t, edict in enumerate(self.event_history):
+            for name, steps in edict.items():
+                if deduplicate:
+                    steps_iter = sorted(set(int(s) for s in steps))
+                else:
+                    steps_iter = steps
+                for s in steps_iter:
+                    rows.append({"trial": int(t), "event": str(name), "step": int(s)})
+
+        # DataFrame 化（空でも列は固定）
+        df = pd.DataFrame(rows, columns=["trial", "event", "step"])
+        if not df.empty:
+            # 安全な安定ソート（trial→event→step）
+            df.sort_values(["trial", "event", "step"], inplace=True, kind="mergesort")
+            df.reset_index(drop=True, inplace=True)
+        else:
+            # 空でも書けるように dtypes を持たせる
+            try:
+                df = df.astype({"trial": "int64", "event": "string", "step": "int64"})
+            except Exception:
+                pass
+
+        # 保存しない運用（DataFrameだけ返す）
+        if path is None:
+            return df if return_df else None
+
+        fmt = format.lower()
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+
+        if fmt == "parquet":
+            try:
+                df.to_parquet(path, index=False, compression=parquet_compression)
+            except Exception as e:
+                raise RuntimeError(
+                    f"to_parquet失敗（pandas/pyarrow/fastparquetが必要）: {e}"
+                )
+        elif fmt == "csv":
+            df.to_csv(path, index=False)
+        elif fmt == "jsonl":
+            # 1行1レコード（trial,event,step）で書き出し
+            df.to_json(path, orient="records", lines=True, force_ascii=False)
+        elif fmt == "yaml":
+            try:
+                import yaml
+            except ImportError as e:
+                raise RuntimeError("YAML出力には PyYAML が必要です（pip install pyyaml）。") from e
+            with open(path, "w", encoding="utf-8") as f:
+                yaml.safe_dump(df.to_dict(orient="records"), f, allow_unicode=True, sort_keys=False)
+        else:
+            raise ValueError("format は parquet/csv/jsonl/yaml のいずれかです。")
+
+        return df if return_df else path
 

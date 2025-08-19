@@ -49,11 +49,11 @@ if __name__ == "__main__":
     print(simulator.cellspace_tensor)
     #print(simulator.rule_arrays_tensor)
     #print(simulator.rule_probs_tensor)
-    #print(simulator.spatial_event_arrays_tensor)
+    print(simulator.spatial_event_arrays_tensor)
 
     simulator.set_ParallelTrial(300)
     #print(simulator.TCHW)
-    simulator.run_steps(1000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
+    simulator.run_steps(1, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
 
     print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)

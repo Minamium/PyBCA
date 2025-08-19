@@ -117,3 +117,6 @@ dmypy.json
 # *.yaml
 # *.yml
 # SampleCP/
+
+# デバッグ用テストファイル
+tested*.yaml
