@@ -323,9 +323,21 @@ class BCA_Simulator:
         # nbh: [T,1,3,3,H,W] vs pre: [N,3,3] → [T,N,3,3,H,W]
         eq = (nbh == pre.view(1, N, 3, 3, 1, 1))                         # float32で比較
 
-        # 四近傍マスク適用：False の位置は「不問」= 常に一致扱い
-        mask = self.rule_mask.bool()                                     # [3,3]
-        eq_masked = eq | (~mask.view(1, 1, 3, 3, 1, 1))
+        # --- 動的マスク（四隅に非ゼロがあるルールだけ8近傍を使う） ---
+        cross_mask = self.rule_mask.bool()  # [3,3] 十字
+        corner_mask = torch.tensor(
+            [[1,0,1],
+             [0,0,0],
+             [1,0,1]], dtype=torch.bool, device=self.device
+        )  # 角だけTrue
+
+        # ルールごとに「見る位置」= 十字 + （角で pre!=0 の場所）
+        # ※ pre==0 は“未指定”として扱う前提。0を条件にしたい設計なら別途「指定マスク」が必要。
+        use_corners = (pre != 0) & corner_mask                # [N,3,3]
+        mask_N = cross_mask.view(1,3,3).expand(N,-1,-1) | use_corners  # [N,3,3]
+
+        # マスクFalseは“不問”＝常に一致扱い
+        eq_masked = eq | (~mask_N.view(1, N, 3, 3, 1, 1))
 
         # 3×3 の全てが一致 → 中心だけ True のマスク（中心も mask=True なので厳密に比較される）
         # [T,N,3,3,H,W] → [T,N,9,H,W] → all → [T,N,H,W]

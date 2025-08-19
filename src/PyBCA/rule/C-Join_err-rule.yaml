@@ -4,6 +4,10 @@
     prev:
     - coord:
         x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
         y: 0
       state: !OccupiedBy 2
     - coord:
@@ -23,6 +27,10 @@
         y: 1
       state: !OccupiedBy 1
     next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
     - coord:
         x: -1
         y: 0
@@ -49,6 +57,10 @@
     prev:
     - coord:
         x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
         y: 0
       state: !OccupiedBy 1
     - coord:
@@ -68,6 +80,10 @@
         y: 1
       state: !OccupiedBy 1
     next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
     - coord:
         x: -1
         y: 0
