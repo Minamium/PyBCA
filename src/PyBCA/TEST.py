@@ -51,9 +51,9 @@ if __name__ == "__main__":
     #print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
 
-    simulator.set_ParallelTrial(300)
+    simulator.set_ParallelTrial(30)
     #print(simulator.TCHW)
-    simulator.run_steps(1, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
+    simulator.run_steps(1000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False)
 
     print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)
@@ -70,5 +70,7 @@ if __name__ == "__main__":
     lib.numpy_to_cell_space_yaml(simulator.TCHW[0,0].cpu().numpy(), "tested1.yaml")
     lib.numpy_to_cell_space_yaml(simulator.TCHW[1,0].cpu().numpy(), "tested2.yaml")
     lib.numpy_to_cell_space_yaml(simulator.TCHW[2,0].cpu().numpy(), "tested3.yaml")
+
+    simulator.save_event_histry_for_dataframe("event_history.jsonl", format="jsonl_trials", deduplicate=True, return_df=False)
     
     

@@ -612,67 +612,98 @@ class BCA_Simulator:
     def save_event_histry_for_dataframe(
         self,
         path: str | None = None,
-        format: str = "jsonl",              # "parquet" | "csv" | "jsonl" | "yaml"
+        format: str = "parquet",              # "parquet" | "csv" | "jsonl" | "yaml" | "jsonl_trials" | "jsonl_trials_dict"
         deduplicate: bool = False,            # Trueなら各(eventのsteps)を集合化→昇順
-        return_df: bool = True,               # TrueならDataFrameを返す
+        return_df: bool = True,               # TrueならDataFrameを返す（jsonl_trials系は保存が主目的）
         parquet_compression: str = "snappy"   # "snappy" | "zstd" など
     ):
         """
-        self.event_history（各trialの {event_name: [steps...]} 辞書）を
-        フラット表 (trial, event, step) に変換して保存するユーティリティ。
+        event_history を保存/変換するユーティリティ。
 
-        - path が None なら保存せずに DataFrame だけ返す
-        - format は parquet/csv/jsonl/yaml をサポート（すべてフラット表）
-        - deduplicate=True で各イベントの重複stepを排除（同一stepの多重発火を潰す）
+        event_history 仕様:
+          self.event_history: List[Dict[str, List[int]]]
+            └ 各trialについて { event_name: [fired_steps...] } の辞書
+        追加対応:
+          - format="jsonl_trials": 1 trial = 1行。{"trial":t,"events":[["name",[...]], ...]}
+          - format="jsonl_trials_dict": 1 trial = 1行。{"trial":t,"events":{"name":[...], ...}}
+
+        既存:
+          - "parquet"/"csv"/"jsonl"/"yaml" はフラット表 (trial,event,step)
+
+        注意:
+          - deduplicate=True のとき各イベントの step を set→昇順にします
+          - "jsonl_trials"系は保存が主目的。return_df=Trueでもフラット表を返します
         """
         if getattr(self, "event_history", None) is None:
             raise RuntimeError("event_history がありません。set_ParallelTrial() と run_steps() の後に呼んでください。")
 
-        import os
+        import os, json
         import pandas as pd
 
-        # rows 構築（フラット表）
+        # ---- フラット表（既存互換; DataFrame作成用）----
         rows = []
         for t, edict in enumerate(self.event_history):
             for name, steps in edict.items():
-                if deduplicate:
-                    steps_iter = sorted(set(int(s) for s in steps))
-                else:
-                    steps_iter = steps
+                steps_iter = sorted(set(int(s) for s in steps)) if deduplicate else (int(s) for s in steps)
                 for s in steps_iter:
                     rows.append({"trial": int(t), "event": str(name), "step": int(s)})
 
-        # DataFrame 化（空でも列は固定）
         df = pd.DataFrame(rows, columns=["trial", "event", "step"])
         if not df.empty:
-            # 安全な安定ソート（trial→event→step）
             df.sort_values(["trial", "event", "step"], inplace=True, kind="mergesort")
             df.reset_index(drop=True, inplace=True)
         else:
-            # 空でも書けるように dtypes を持たせる
             try:
                 df = df.astype({"trial": "int64", "event": "string", "step": "int64"})
             except Exception:
                 pass
 
-        # 保存しない運用（DataFrameだけ返す）
+        # 保存不要ならここで返す
         if path is None:
             return df if return_df else None
 
         fmt = format.lower()
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
 
+        # ---- 追加: 1 trial = 1行 の JSONL 出力（ペア配列 or dict）----
+        if fmt in ("jsonl_trials", "jsonl_trials_dict"):
+            # 全イベント名を揃えたい場合は self.event_names を使用、無ければ union(keys)
+            if hasattr(self, "event_names") and self.event_names:
+                all_names = list(self.event_names)
+            else:
+                name_set = set()
+                for ed in self.event_history:
+                    name_set.update(ed.keys())
+                all_names = sorted(name_set)
+
+            with open(path, "w", encoding="utf-8") as f:
+                for t, edict in enumerate(self.event_history):
+                    # イベントごとの steps を準備（存在しないイベントは空リスト）
+                    def _steps_list(v):
+                        arr = list(map(int, v)) if v is not None else []
+                        return sorted(set(arr)) if deduplicate else arr
+
+                    if fmt == "jsonl_trials":
+                        # 期待例: ["core_input_1",[...]], ...
+                        events_payload = [[name, _steps_list(edict.get(name, []))] for name in all_names]
+                    else:
+                        # dict 版
+                        events_payload = {name: _steps_list(edict.get(name, [])) for name in all_names}
+
+                    rec = {"trial": int(t), "events": events_payload}
+                    f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+            return df if return_df else path
+
+        # ---- 既存のフラット表フォーマット出力 ----
         if fmt == "parquet":
             try:
                 df.to_parquet(path, index=False, compression=parquet_compression)
             except Exception as e:
-                raise RuntimeError(
-                    f"to_parquet失敗（pandas/pyarrow/fastparquetが必要）: {e}"
-                )
+                raise RuntimeError("to_parquet失敗（pandas/pyarrow/fastparquetが必要）: %s" % e)
         elif fmt == "csv":
             df.to_csv(path, index=False)
         elif fmt == "jsonl":
-            # 1行1レコード（trial,event,step）で書き出し
             df.to_json(path, orient="records", lines=True, force_ascii=False)
         elif fmt == "yaml":
             try:
@@ -680,9 +711,9 @@ class BCA_Simulator:
             except ImportError as e:
                 raise RuntimeError("YAML出力には PyYAML が必要です（pip install pyyaml）。") from e
             with open(path, "w", encoding="utf-8") as f:
+                import pandas as pd
                 yaml.safe_dump(df.to_dict(orient="records"), f, allow_unicode=True, sort_keys=False)
         else:
-            raise ValueError("format は parquet/csv/jsonl/yaml のいずれかです。")
+            raise ValueError("format は parquet/csv/jsonl/yaml/jsonl_trials/jsonl_trials_dict のいずれかです。")
 
         return df if return_df else path
-
