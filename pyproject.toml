@@ -1,6 +1,6 @@
 [project]
 name = "PyBCA"
-version = "0.1.2"
+version = "0.2.0"
 description = "Brownian Cellular Automaton"
 authors = [{ name = "Minamium", email = "arcadia.battery@gmail.com" }]
 readme = "README.md"

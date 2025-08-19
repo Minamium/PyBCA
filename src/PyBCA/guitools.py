@@ -154,9 +154,11 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         
         # 特殊イベント管理
         self._loaded_events: List[tuple] = []  # 読み込み済み特殊イベント
-        self._event_array: np.ndarray = None   # 配列座標系変換済みイベント
+        self._event_array: np.ndarray = None   # 配列座標系変換済みイベント（オーバーレイ表示用）
+        self._event_array_raw: np.ndarray = None  # 生座標イベント配列（シミュレーション用）
         self._event_names: List[str] = []      # イベント名リスト
         self._events_visible = False           # イベント表示フラグ
+        self._event_file_path = None           # 特殊イベントファイルパス
         
         # ファイルパス保存
         self._cellspace_file_path = None
@@ -167,6 +169,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._sim_global_prob = 1.0
         self._sim_seed = 1
         self._sim_parallel_trials = 1
+        self._sim_device = "cpu"  # デバイス設定
+        self._current_step = 0  # 現在のステップ数
+        
+        # 連続実行用タイマー
+        self._timer = QtCore.QTimer(self)
+        self._timer.timeout.connect(self._timer_step)
+        self._is_running = False
+        self._step_interval = 500  # ミリ秒
+        
+        # BCA_Simulatorインスタンス
+        self._bca_simulator = None
         
         # Scene / View / PixmapItem
         self._scene = QtWidgets.QGraphicsScene(self)
@@ -260,7 +273,8 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._rebuild_grid()
         
         # セル空間が新しく読み込まれた場合、既存イベントの座標変換を更新
-        if self._loaded_events and self._arr is not None:
+        if len(self._loaded_events) > 0 and self._arr is not None:
+            # オーバーレイ表示用の座標変換済み配列を更新
             self._event_array = convert_events_to_array_coordinates(
                 self._loaded_events, self._offset_x, self._offset_y)
             self._update_event_overlay()
@@ -316,11 +330,19 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         
         # Simulation
         m_sim = menubar.addMenu("&Simulation")
-        a_config = m_sim.addAction("Configure...")
+        a_config = m_sim.addAction("Simulation Config...")
         a_config.triggered.connect(self._action_configure_simulation)
         m_sim.addSeparator()
-        a_run = m_sim.addAction("Run Simulation")
-        a_run.triggered.connect(self._action_run_simulation)
+        a_step = m_sim.addAction("Step Forward")
+        a_step.triggered.connect(self._action_step_simulation)
+        m_sim.addSeparator()
+        self._a_run_continuous = m_sim.addAction("Start Continuous Run")
+        self._a_run_continuous.triggered.connect(self._action_toggle_continuous_run)
+        a_speed = m_sim.addAction("Set Speed...")
+        a_speed.triggered.connect(self._action_set_speed)
+        m_sim.addSeparator()
+        a_reset = m_sim.addAction("Reset Simulation")
+        a_reset.triggered.connect(self._action_reset_simulation)
 
     # ---- actions ----
     def _action_open_yaml(self) -> None:
@@ -538,16 +560,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             events = load_special_events_from_file(path)
             event_names = get_event_names_from_file(path)
             
-            # セル空間が読み込まれている場合のみ座標変換
-            if self._arr is not None:
-                event_array = convert_events_to_array_coordinates(
-                    events, self._offset_x, self._offset_y)
-                self._event_array = event_array
-            else:
-                self._event_array = None
-            
             self._loaded_events = events
             self._event_names = event_names
+            self._event_file_path = path  # ファイルパスを保存
+            
+            # 生座標配列（シミュレーション用）を保存
+            self._event_array_raw = events.copy() if events is not None else None
+            
+            # オーバーレイ表示用の座標変換済み配列を作成
+            if self._arr is not None:
+                self._event_array = convert_events_to_array_coordinates(
+                    events, self._offset_x, self._offset_y)
             
             # イベントオーバーレイを更新
             self._update_event_overlay()
@@ -579,8 +602,10 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         """読み込み済み特殊イベントをクリア"""
         self._loaded_events = []
         self._event_array = None
+        self._event_array_raw = None
         self._event_names = []
         self._events_visible = False
+        self._event_file_path = None
         self._act_show_events.setChecked(False)
         
         # イベントオーバーレイをクリア
@@ -660,27 +685,241 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
 
     # ---- Simulation ----
     def _action_configure_simulation(self) -> None:
-        """シミュレーション設定ダイアログを表示"""
-        dialog = SimulationConfigDialog(
-            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self)
-        if dialog.exec() == QtWidgets.QDialog.Accepted:
-            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials = dialog.get_values()
-            self._status.showMessage(f"Simulation config: steps={self._sim_steps}, prob={self._sim_global_prob}, seed={self._sim_seed}")
-
-    def _action_run_simulation(self) -> None:
-        """シミュレーションを実行"""
+        """シミュレーション設定ダイアログを表示してBCA_Simulatorインスタンスを作成"""
+        # 必要なファイルが読み込まれているかチェック
         if self._cellspace_file_path is None:
             QtWidgets.QMessageBox.warning(
-                self, "Warning", "No cell space file loaded.")
+                self, "Warning", "No cell space file loaded. Please load a cell space file first.")
             return
         
         if len(self._rule_file_paths) == 0:
             QtWidgets.QMessageBox.warning(
-                self, "Warning", "No transition rules loaded.")
+                self, "Warning", "No transition rules loaded. Please load rule files first.")
             return
         
-        # TODO: シミュレーション実行処理を実装
-        self._status.showMessage("Simulation execution not implemented yet")
+        dialog = SimulationConfigDialog(
+            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self._sim_device, self)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self._sim_device = dialog.get_values()
+            
+            # BCA_Simulatorインスタンスを作成
+            try:
+                self._bca_simulator = BCA_Simulator(
+                    cellspace_path=self._cellspace_file_path,
+                    rule_paths=self._rule_file_paths,
+                    device=self._sim_device,
+                    spatial_event_filePath=self._event_file_path
+                )
+                
+                # テンソル割り当て
+                self._bca_simulator.Allocate_torch_Tensors_on_Device()
+                
+                # デバッグ情報を収集
+                debug_info = self._collect_simulator_debug_info()
+                
+                self._status.showMessage(
+                    f"Simulation configured: steps={self._sim_steps}, prob={self._sim_global_prob}, "
+                    f"seed={self._sim_seed}, device={self._sim_device}, BCA_Simulator ready")
+                
+                QtWidgets.QMessageBox.information(
+                    self, "Simulation Configured", 
+                    f"BCA_Simulator instance created successfully!\n\n"
+                    f"Cell space: {self._cellspace_file_path}\n"
+                    f"Rules: {len(self._rule_file_paths)} files\n"
+                    f"Events: {'Yes' if self._event_file_path else 'None'}\n"
+                    f"Device: {self._sim_device}\n"
+                    f"Steps: {self._sim_steps}\n"
+                    f"Global Probability: {self._sim_global_prob}\n"
+                    f"Seed: {self._sim_seed}\n\n"
+                    f"Debug Info:\n{debug_info}")
+                
+            except Exception as e:
+                QtWidgets.QMessageBox.critical(
+                    self, "Error", f"Failed to create BCA_Simulator instance:\n{str(e)}")
+                self._bca_simulator = None
+
+    def _collect_simulator_debug_info(self) -> str:
+        """BCA_Simulatorインスタンスのデバッグ情報を収集"""
+        if self._bca_simulator is None:
+            return "No simulator instance"
+        
+        info_lines = []
+        
+        # 基本情報
+        info_lines.append(f"Device: {self._bca_simulator.device}")
+        
+        # セル空間テンソル
+        if hasattr(self._bca_simulator, 'cellspace_tensor') and self._bca_simulator.cellspace_tensor is not None:
+            tensor = self._bca_simulator.cellspace_tensor
+            info_lines.append(f"Cellspace tensor: {tensor.shape} {tensor.dtype} on {tensor.device}")
+        else:
+            info_lines.append("Cellspace tensor: Not allocated")
+        
+        # 遷移規則テンソル
+        if hasattr(self._bca_simulator, 'rule_arrays_tensor') and self._bca_simulator.rule_arrays_tensor is not None:
+            tensor = self._bca_simulator.rule_arrays_tensor
+            info_lines.append(f"Rule arrays tensor: {tensor.shape} {tensor.dtype} on {tensor.device}")
+        else:
+            info_lines.append("Rule arrays tensor: Not allocated")
+        
+        # 確率テンソル
+        if hasattr(self._bca_simulator, 'rule_probs_tensor') and self._bca_simulator.rule_probs_tensor is not None:
+            tensor = self._bca_simulator.rule_probs_tensor
+            info_lines.append(f"Rule probs tensor: {tensor.shape} {tensor.dtype} on {tensor.device}")
+        else:
+            info_lines.append("Rule probs tensor: Not allocated")
+        
+        # 特殊イベントテンソル
+        if hasattr(self._bca_simulator, 'spatial_event_arrays_tensor') and self._bca_simulator.spatial_event_arrays_tensor is not None:
+            tensor = self._bca_simulator.spatial_event_arrays_tensor
+            info_lines.append(f"Event arrays tensor: {tensor.shape} {tensor.dtype} on {tensor.device}")
+        else:
+            info_lines.append("Event arrays tensor: None")
+        
+        return "\n".join(info_lines)
+
+    def _action_step_simulation(self) -> None:
+        """1ステップだけシミュレーションを実行"""
+        if self._bca_simulator is None:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No BCA_Simulator instance. Please configure simulation first.")
+            return
+        
+        try:
+            # 初回実行時のみ平行試行数を設定
+            if self._current_step == 0:
+                self._bca_simulator.set_ParallelTrial(self._sim_parallel_trials)
+            
+            # 1ステップだけ実行
+            self._bca_simulator.run_steps(
+                steps=1,
+                global_prob=self._sim_global_prob,
+                seed=self._sim_seed + self._current_step,  # ステップごとに異なるシード
+                debug=False,
+                debug_per_trial=False
+            )
+            
+            self._current_step += 1
+            
+            # シミュレーション結果をGUIに反映
+            # 最初のトライアルの結果を表示用に取得
+            result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
+            result_array = result_tensor.cpu().numpy()
+            
+            # 表示を更新
+            self.set_array(result_array)
+            
+            self._status.showMessage(
+                f"Step {self._current_step} completed (prob={self._sim_global_prob}, "
+                f"seed={self._sim_seed + self._current_step - 1}, device={self._sim_device})")
+                
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Simulation Error", f"Failed to run simulation step:\n{str(e)}")
+            import traceback
+            traceback.print_exc()
+    
+    def _action_toggle_continuous_run(self) -> None:
+        """連続実行の開始・停止を切り替え"""
+        if self._bca_simulator is None:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No BCA_Simulator instance. Please configure simulation first.")
+            return
+        
+        if self._is_running:
+            # 停止
+            self._timer.stop()
+            self._is_running = False
+            self._a_run_continuous.setText("Start Continuous Run")
+            self._status.showMessage(f"Continuous run stopped at step {self._current_step}")
+        else:
+            # 開始
+            # 初回実行時のみ平行試行数を設定
+            if self._current_step == 0:
+                self._bca_simulator.set_ParallelTrial(self._sim_parallel_trials)
+            
+            self._timer.start(self._step_interval)
+            self._is_running = True
+            self._a_run_continuous.setText("Stop Continuous Run")
+            self._status.showMessage(f"Continuous run started (interval: {self._step_interval}ms)")
+    
+    def _action_set_speed(self) -> None:
+        """実行速度を設定"""
+        interval, ok = QtWidgets.QInputDialog.getInt(
+            self, "Set Speed", "Step interval (milliseconds):", 
+            self._step_interval, 50, 5000, 50)
+        
+        if ok:
+            self._step_interval = interval
+            if self._is_running:
+                self._timer.setInterval(self._step_interval)
+            self._status.showMessage(f"Step interval set to {self._step_interval}ms")
+    
+    def _timer_step(self) -> None:
+        """タイマーによる自動ステップ実行"""
+        try:
+            # 1ステップだけ実行
+            self._bca_simulator.run_steps(
+                steps=1,
+                global_prob=self._sim_global_prob,
+                seed=self._sim_seed + self._current_step,
+                debug=False,
+                debug_per_trial=False
+            )
+            
+            self._current_step += 1
+            
+            # シミュレーション結果をGUIに反映
+            result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
+            result_array = result_tensor.cpu().numpy()
+            
+            # 表示を更新
+            self.set_array(result_array)
+            
+            self._status.showMessage(
+                f"Step {self._current_step} (continuous, interval: {self._step_interval}ms)")
+                
+        except Exception as e:
+            # エラー時は自動停止
+            self._timer.stop()
+            self._is_running = False
+            self._a_run_continuous.setText("Start Continuous Run")
+            QtWidgets.QMessageBox.critical(
+                self, "Simulation Error", f"Failed to run simulation step:\n{str(e)}")
+            import traceback
+            traceback.print_exc()
+    
+    def _action_reset_simulation(self) -> None:
+        """シミュレーション状態をリセット"""
+        if self._bca_simulator is None:
+            QtWidgets.QMessageBox.warning(
+                self, "Warning", "No BCA_Simulator instance. Please configure simulation first.")
+            return
+        
+        try:
+            # セル空間を初期状態に戻す
+            self._bca_simulator.cellspace_tensor = torch.from_numpy(self._bca_simulator.cellspace).to(self._bca_simulator.device)
+            
+            # ステップカウンタをリセット
+            self._current_step = 0
+            
+            # 初期状態を表示
+            initial_array = self._bca_simulator.cellspace_tensor.cpu().numpy()
+            self.set_array(initial_array)
+            
+            # 連続実行中の場合は停止
+            if self._is_running:
+                self._timer.stop()
+                self._is_running = False
+                self._a_run_continuous.setText("Start Continuous Run")
+            
+            self._status.showMessage("Simulation reset to initial state")
+            
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(
+                self, "Reset Error", f"Failed to reset simulation:\n{str(e)}")
+            import traceback
+            traceback.print_exc()
 
     def _load_default_files(self) -> None:
         """デフォルトファイルを自動読み込み"""
@@ -880,7 +1119,7 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
 
 class SimulationConfigDialog(QtWidgets.QDialog):
     """シミュレーション設定ダイアログ"""
-    def __init__(self, steps, global_prob, seed, parallel_trials, parent=None):
+    def __init__(self, steps, global_prob, seed, parallel_trials, device, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Simulation Configuration")
         self.setModal(True)
@@ -913,6 +1152,12 @@ class SimulationConfigDialog(QtWidgets.QDialog):
         self._trials_spin.setValue(parallel_trials)
         layout.addRow("Parallel Trials:", self._trials_spin)
         
+        # Device
+        self._device_combo = QtWidgets.QComboBox()
+        self._device_combo.addItems(["cpu", "cuda"])
+        self._device_combo.setCurrentText(device)
+        layout.addRow("Device:", self._device_combo)
+        
         # Buttons
         buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
@@ -920,14 +1165,15 @@ class SimulationConfigDialog(QtWidgets.QDialog):
         buttons.rejected.connect(self.reject)
         layout.addRow(buttons)
         
-        self.resize(300, 150)
+        self.resize(300, 180)
     
     def get_values(self):
         return (
             self._steps_spin.value(),
             self._prob_spin.value(),
             self._seed_spin.value(),
-            self._trials_spin.value()
+            self._trials_spin.value(),
+            self._device_combo.currentText()
         )
 
 
