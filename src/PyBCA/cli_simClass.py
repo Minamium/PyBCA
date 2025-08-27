@@ -717,3 +717,7 @@ class BCA_Simulator:
             raise ValueError("format は parquet/csv/jsonl/yaml/jsonl_trials/jsonl_trials_dict のいずれかです。")
 
         return df if return_df else path
+
+    def save_final_state(self, trial_idx: int, file_name: str) -> None:
+        lib.numpy_to_cell_space_yaml(self.TCHW[trial_idx,0].cpu().numpy(), file_name)
+        print(f"Saved final state of trial {trial_idx} to {file_name}")
