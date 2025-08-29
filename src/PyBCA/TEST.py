@@ -67,9 +67,9 @@ if __name__ == "__main__":
 
     #simulator.debug()
     #print(simulator.TCHW)
-    simulator.save_final_state(0, "tested1.yaml")
-    simulator.save_final_state(1, "tested2.yaml")
-    simulator.save_final_state(2, "tested3.yaml")
+    #simulator.save_final_state(0, "tested1.yaml")
+    #simulator.save_final_state(1, "tested2.yaml")
+    #simulator.save_final_state(2, "tested3.yaml")
 
     simulator.save_event_histry_for_dataframe("event_history.jsonl", format="jsonl_trials", deduplicate=True, return_df=False)
     

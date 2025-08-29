@@ -1,3 +1,3 @@
-{"trial": 0, "events": [["output1", [43]], ["output2", [53, 60, 96]]]}
-{"trial": 1, "events": [["output1", [69]], ["output2", []]]}
-{"trial": 2, "events": [["output1", [79]], ["output2", [40]]]}
+{"trial": 0, "events": [["output1", [55]], ["output2", [60, 82, 92]]]}
+{"trial": 1, "events": [["output1", []], ["output2", [40]]]}
+{"trial": 2, "events": [["output1", [56, 82]], ["output2", [56]]]}

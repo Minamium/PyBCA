@@ -179,6 +179,10 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._sim_device = "cpu"  # デバイス設定
         self._current_step = 0  # 現在のステップ数
         
+        # 編集モード設定
+        self._edit_mode = False
+        self._edit_brush_value = 1  # デフォルトの編集値
+        
         # 連続実行用タイマー
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._timer_step)
@@ -310,6 +314,24 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         m_file.addSeparator()
         a_quit = m_file.addAction("Quit")
         a_quit.triggered.connect(self.close)
+
+        # Edit
+        m_edit = menubar.addMenu("&Edit")
+        # macOSシステムメニュー項目を無効化
+        m_edit.menuAction().setMenuRole(QtGui.QAction.NoRole)
+        self._act_edit_mode = m_edit.addAction("Edit Mode")
+        self._act_edit_mode.setCheckable(True)
+        self._act_edit_mode.setChecked(False)
+        self._act_edit_mode.triggered.connect(self._toggle_edit_mode)
+        m_edit.addSeparator()
+        a_new_cellspace = m_edit.addAction("New Cell Space...")
+        a_new_cellspace.triggered.connect(self._action_new_cellspace)
+        m_edit.addSeparator()
+        a_clear_all = m_edit.addAction("Clear All Cells")
+        a_clear_all.triggered.connect(self._action_clear_all_cells)
+        m_edit.addSeparator()
+        a_fill_pattern = m_edit.addAction("Fill Pattern...")
+        a_fill_pattern.triggered.connect(self._action_fill_pattern)
 
         # View
         m_view = menubar.addMenu("&View")
@@ -588,7 +610,7 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             
             # イベントオーバーレイを更新
             self._update_event_overlay()
-            
+
             self._status.showMessage(
                 f"Loaded {len(events)} special events from {path}")
             
@@ -982,15 +1004,104 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             print(f"Failed to load default files: {e}")
             self._status.showMessage("Failed to load default files")
 
+    # ---- Edit Mode Actions ----
+    def _toggle_edit_mode(self) -> None:
+        """編集モードの切り替え"""
+        self._edit_mode = self._act_edit_mode.isChecked()
+        
+        if self._edit_mode:
+            self._view.setCursor(QtCore.Qt.CrossCursor)
+            self._status.showMessage(f"Edit Mode ON - Click to paint value {self._edit_brush_value}")
+        else:
+            self._view.setCursor(QtCore.Qt.ArrowCursor)
+            self._status.showMessage("Edit Mode OFF")
+    
+    def _action_new_cellspace(self) -> None:
+        """新しいセル空間を作成"""
+        dialog = NewCellSpaceDialog(self)
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            width, height = dialog.get_size()
+            
+            # 新しい0で埋められたセル空間を作成
+            new_array = np.zeros((height, width), dtype=np.int8)
+            
+            # 現在のセル空間を置き換え
+            self.set_array(new_array)
+            
+            # ステータス更新
+            self._status.showMessage(f"New cell space created: {width}x{height}")
+            
+            # 編集モードを有効にする
+            self._act_edit_mode.setChecked(True)
+            self._toggle_edit_mode()
+    
+    def _action_clear_all_cells(self) -> None:
+        """全セルをクリア（値0に設定）"""
+        if self._arr is None:
+            QtWidgets.QMessageBox.warning(self, "Warning", "No cell space loaded.")
+            return
+        
+        reply = QtWidgets.QMessageBox.question(
+            self, "Clear All Cells", 
+            "Are you sure you want to clear all cells to 0?",
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
+            QtWidgets.QMessageBox.No)
+        
+        if reply == QtWidgets.QMessageBox.Yes:
+            self._arr.fill(0)
+            self._update_display()
+            self._status.showMessage("All cells cleared to 0")
+    
+    def _action_fill_pattern(self) -> None:
+        """パターン塗りつぶしダイアログ"""
+        if self._arr is None:
+            QtWidgets.QMessageBox.warning(self, "Warning", "No cell space loaded.")
+            return
+        
+        dialog = FillPatternDialog(self._edit_brush_value, self)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            self._edit_brush_value = dialog.get_value()
+            self._status.showMessage(f"Brush value set to {self._edit_brush_value}")
+
+    def _update_display(self) -> None:
+        """表示を更新する"""
+        if self._arr is None:
+            return
+        
+        qimg = array_to_qimage(self._arr)
+        pixmap = QtGui.QPixmap.fromImage(qimg)
+        self._pix.setPixmap(pixmap)
+        
+        # シーンのサイズを更新
+        self._scene.setSceneRect(pixmap.rect())
+        
+        # グリッドを再描画
+        self._rebuild_grid()
+
     # ---- events ----
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.MouseMove and self._arr is not None:
+            # マウス座標→シーン座標→配列インデックス
             pos = self._view.mapToScene(event.pos())
-            x = int(pos.x()); y = int(pos.y())
+            x, y = int(pos.x()), int(pos.y())
             h, w = self._arr.shape
-            if 0 <= x < w and 0 <= y < h:
-                val = int(self._arr[y, x])
-                self._status.showMessage(f"(x,y)=({x},{y})  val={val}")
+            if 0 <= y < h and 0 <= x < w:
+                val = self._arr[y, x]
+                self._status.showMessage(f"({x},{y}) = {val}")
+            else:
+                self._status.showMessage("")
+        elif event.type() == QtCore.QEvent.MouseButtonPress and self._edit_mode and self._arr is not None:
+            # 編集モードでのマウスクリック処理
+            if event.button() == QtCore.Qt.LeftButton:
+                pos = self._view.mapToScene(event.pos())
+                x, y = int(pos.x()), int(pos.y())
+                h, w = self._arr.shape
+                if 0 <= y < h and 0 <= x < w:
+                    old_val = self._arr[y, x]
+                    self._arr[y, x] = self._edit_brush_value
+                    self._update_display()
+                    self._status.showMessage(f"Cell ({x},{y}) changed: {old_val} → {self._edit_brush_value}")
+                    return True  # イベントを消費
         return super().eventFilter(obj, event)
 
     def resizeEvent(self, event: QtGui.QResizeEvent) -> None:
@@ -1005,6 +1116,68 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._zoom_label.setText(f"zoom: {int(self._view.transform().m11()*100):d}%")
         # ズームに応じて細かすぎるグリッドは抑制（必要なら間引きロジックを強化）
         self._rebuild_grid()
+
+
+class NewCellSpaceDialog(QtWidgets.QDialog):
+    """新しいセル空間作成ダイアログ"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("New Cell Space")
+        self.setModal(True)
+        
+        layout = QtWidgets.QFormLayout(self)
+        
+        # 幅設定
+        self._width_spin = QtWidgets.QSpinBox()
+        self._width_spin.setRange(1, 10000)
+        self._width_spin.setValue(100)
+        layout.addRow("Width:", self._width_spin)
+        
+        # 高さ設定
+        self._height_spin = QtWidgets.QSpinBox()
+        self._height_spin.setRange(1, 10000)
+        self._height_spin.setValue(100)
+        layout.addRow("Height:", self._height_spin)
+        
+        # ボタン
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addRow(buttons)
+        
+        self.resize(250, 120)
+    
+    def get_size(self):
+        return self._width_spin.value(), self._height_spin.value()
+
+
+class FillPatternDialog(QtWidgets.QDialog):
+    """セル値設定ダイアログ"""
+    def __init__(self, current_value, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Fill Pattern")
+        self.setModal(True)
+        
+        layout = QtWidgets.QFormLayout(self)
+        
+        # セル値設定
+        self._value_spin = QtWidgets.QSpinBox()
+        self._value_spin.setRange(-128, 127)  # int8の範囲
+        self._value_spin.setValue(current_value)
+        layout.addRow("Cell Value:", self._value_spin)
+        
+        # ボタン
+        buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addRow(buttons)
+        
+        self.resize(200, 100)
+    
+    def get_value(self):
+        return self._value_spin.value()
 
 
 class RuleViewerWindow(QtWidgets.QMainWindow):
