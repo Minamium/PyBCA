@@ -1,5 +1,5 @@
 - id: 101
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -52,7 +52,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 102
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -105,7 +105,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 103
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -158,7 +158,7 @@
         y: 1
       state: !OccupiedBy 2
 - id: 104
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -211,7 +211,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 105
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -264,7 +264,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 106
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -319,7 +319,7 @@
 
 
 - id: 107
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -372,7 +372,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 108
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -425,7 +425,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 109
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -480,7 +480,7 @@
 
 
 - id: 110
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -533,7 +533,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 111
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
@@ -586,7 +586,7 @@
         y: 1
       state: !OccupiedBy 1
 - id: 112
-  probability: 0.1
+  probability: 0.01
   rule:
     prev:
     - coord:
