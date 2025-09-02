@@ -222,12 +222,36 @@ def load_transition_rules_yaml(path: str) -> List[TransitionRule]:
 
     _Loader.add_constructor("!OccupiedBy", _occupied_by)
 
-    # ---- YAML読込 ----
+    # ---- YAML読込（Anchors & Aliases対応、後方互換性保持）----
     with open(path, "r", encoding="utf-8") as f:
-        doc = yaml.load(f, Loader=_Loader)
+        full_doc = yaml.load(f, Loader=_Loader)
+
+    # 後方互換性を保持した形式判定
+    if isinstance(full_doc, list):
+        # 従来形式: 直接ルールリスト
+        doc = full_doc
+    elif isinstance(full_doc, dict):
+        # 新形式: Anchors定義を含む辞書形式
+        # ルールリストを抽出（キー名は柔軟に対応）
+        doc = None
+        for key, value in full_doc.items():
+            if isinstance(value, list) and value and isinstance(value[0], dict) and 'id' in value[0]:
+                doc = value
+                break
+        
+        if doc is None:
+            # Anchors定義のみでルールが見つからない場合の処理
+            # ファイル全体を再解析してルール部分を探す
+            doc = [item for item in full_doc.values() if isinstance(item, list)]
+            if doc:
+                doc = doc[0]
+            else:
+                raise ValueError("ルールリストが見つかりません")
+    else:
+        raise ValueError("rule.yaml のトップレベルはルールのリストまたは辞書である必要があります")
 
     if not isinstance(doc, list):
-        raise ValueError("rule.yaml のトップレベルはルールのリストである必要があります")
+        raise ValueError("ルールデータがリスト形式ではありません")
 
     rules = []
 

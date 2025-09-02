@@ -1,0 +1,652 @@
+# 定数定義とルール
+constants:
+  join_err_0_input: &join_err_0_input 0.001
+  join_err_1_input: &join_err_1_input 0.002
+
+rules:
+- id: 101
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 102
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 103
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+
+
+- id: 104
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 105
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 106
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+
+
+
+
+- id: 107
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 108
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+- id: 109
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+
+
+
+
+- id: 110
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 111
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+- id: 112
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: Vacant
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
