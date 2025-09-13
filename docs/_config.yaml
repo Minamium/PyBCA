@@ -1,6 +1,13 @@
 # docs/_config.yml
 title: PyBCA
 description: PyBCA docs / Brownian Circuit Language (BCL)
-remote_theme: pages-themes/midnight@v0.2.0
-plugins:
-  - jekyll-remote-theme
+remote_theme: just-the-docs/just-the-docs
+
+# オプション（お好みで）
+search_enabled: true        # サイト内検索（標準は true）
+color_scheme: nil           # "dark" も可。まずはデフォでOK
+logo:                       # ロゴ画像があれば /docs/assets/images/logo.png を置く
+  src: /assets/images/logo.png
+aux_links:                  # ヘッダー右上の外部リンク
+  GitHub:
+    - https://github.com/Minamium/PyBCA
