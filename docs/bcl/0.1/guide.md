@@ -1,7 +1,7 @@
 回路宣言の構文を説明
 まだ実態がないので、チュートリアルとして構文の解説を書きながら開発してみる。
 
-# Brownian circuits Language(BCL)
+# Brownian Circuits Language(BCL)
 ブラウン回路アーキテクチャをテキストベースで記述するためのフレームワーク.
 
 ## 構文

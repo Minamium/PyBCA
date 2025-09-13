@@ -1,4 +1,4 @@
-# PyBCA ドキュメント目次
+# PyBCA ドキュメント
 (このパッケージは開発中です!仕様は変更される場合があります!)
 
 - BCAシミュレータクラスのチュートリアル: [PyBCA/PyBCA_guide.md](PyBCA/PyBCA_guide.md)
