@@ -1,11 +1,15 @@
+# docs/_config.yml
 title: PyBCA
 description: PyBCA docs / Brownian Circuit Language (BCL)
-remote_theme: just-the-docs/just-the-docs
 
-# オプション（安全なものだけ）
+# テーマは“remote_theme”でOK。できればバージョン固定推奨
+remote_theme: just-the-docs/just-the-docs@v0.6.0
+
 search_enabled: true
+
+# 既定は light、ボタンで dark と切替可能にする
 color_scheme: light
-color_scheme_supports_mode: dark
+color_scheme_toggle: true
 
 aux_links:
   "GitHub": https://github.com/Minamium/PyBCA
