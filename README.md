@@ -7,6 +7,12 @@ git clone https://github.com/Minamium/PyBCA.git
 pip install -e ./PyBCA
 ```
 
+## Documentation
+
+- Docs Top: [docs/index.md](docs/index.md)
+- BCL Guide (v0.1): [docs/bcl/0.1/guide.md](docs/bcl/0.1/guide.md)
+
+
 # 開発方針メモ
 
 2次元のブラウン回路の動作をシミュレートするセルオートマトン. 
