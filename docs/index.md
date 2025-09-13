@@ -8,7 +8,7 @@
 - GUItoolsのチュートリアル
 付属のGUIツールのチュートリアルを書く
 
-- BCL(仮称)チュートリアル: [BCL/0.1/guide.md](BCL/0.1/guide.md)
+- BCL(仮称)チュートリアル: [bcl/0.1/guide.md](bcl/0.1/guide.md)
 まだ実態がないので、チュートリアルとして構文の解説を書きながら開発してみる。
 
 # PyBCA Documentation(EN)
