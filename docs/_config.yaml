@@ -4,8 +4,9 @@ remote_theme: just-the-docs/just-the-docs
 
 # オプション（安全なものだけ）
 search_enabled: true
-color_scheme: nil   # 必要なら "dark"
-color_scheme_supports_mode: dark # ダーク・ライトモード切り替えボタンを有効化
+color_scheme: light
+color_scheme_supports_mode: dark
+
 aux_links:
   "GitHub": https://github.com/Minamium/PyBCA
 aux_links_new_tab: true
