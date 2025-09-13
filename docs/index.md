@@ -1,3 +1,8 @@
+---
+title: PyBCA / BCL Docs
+nav_order: 1
+---
+
 # PyBCA ドキュメント
 (このパッケージは開発中です!仕様は変更される場合があります!)
 

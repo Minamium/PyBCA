@@ -1,3 +1,8 @@
+---
+title: BCL Guide (v0.1)
+nav_order: 10
+---
+
 # Brownian Circuits Language(BCL)
 ブラウン回路アーキテクチャをテキストベースで記述するためのフレームワーク.
 
