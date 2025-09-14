@@ -4,23 +4,34 @@ nav_order: 10
 ---
 
 # Brownian Circuits Language(BCL)
+
 ブラウン回路アーキテクチャをテキストベースで記述するためのフレームワーク.
 
-## 回路宣言1
+素子より任意の回路モジュールを構成, そのI/Oをつなげて回路を構築する. 回路モジュール内でのみ絶対座標を意識して, モジュール同士の接続と回路構築は相対座標記述でできるように.
+
+## Global input / output の定義
+
+input / output の定義. 
+
+定義した回路モジュールのIOをつなげる.
 
 ```bcl
 
-example:100
+input: x_in, y_in
+output: z_out
 
 ```
 
-example
+## 回路モジュール宣言
 
-## 回路宣言2
+定義する回路モジュールのname, ID, sizeを宣言する.
 
 ```bcl
 
-example:200
+construct info(name: "Module_A", ID: 0, Glid_size: 10*10){
+    module_input: a, b
+    module_output: c
+}
 
 ```
 
