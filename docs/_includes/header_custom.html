@@ -1,0 +1,22 @@
+<button id="theme-toggle" class="btn" type="button">Dark</button>
+<script>
+(function () {
+  const KEY = 'jtd-theme';
+  const btn = document.getElementById('theme-toggle');
+
+  function setTheme(t) {
+    jtd.setTheme(t);              // Just the Docs が用意する切替API
+    localStorage.setItem(KEY, t); // 次回訪問時に復元
+    btn.textContent = (t === 'dark') ? 'Light' : 'Dark';
+  }
+
+  // 起動時に保存値を反映（なければ light 扱い）
+  const saved = localStorage.getItem(KEY);
+  if (saved) setTheme(saved);
+
+  btn.addEventListener('click', () => {
+    const cur = localStorage.getItem(KEY) || 'light';
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+})();
+</script>
