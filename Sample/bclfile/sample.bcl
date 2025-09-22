@@ -1,0 +1,7 @@
+coord.define(origin, 0, 0)
+coord.define(input, origin.x, origin.y)
+
+place.signal_line(input.x, input.y)
+place.signal_line(input.x, input.y+1)
+place.signal_line(input.x, input.y+2)
+place.token(input.x, input.y+3)
