@@ -1,0 +1,10 @@
+version: '0.1'
+meta:
+  generator: BCLCompiler
+  note: WIP skeleton; replace with real IR later
+grid:
+  width: 0
+  height: 0
+wires: []
+events: []
+initial_tokens: []
