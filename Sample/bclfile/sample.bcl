@@ -1,7 +1,12 @@
 coord.define(origin, 0, 0)
-coord.define(input, origin.x, origin.y)
+coord.define(input, 20, 10)
 
-place.signal_line(input.x, input.y)
-place.signal_line(input.x, input.y+1)
-place.signal_line(input.x, input.y+2)
-place.token(input.x, input.y+3)
+element Line(io_a){
+    place.signal_line(io_a.x, io_a.y)
+    place.signal_line(io_a.x, io_a.y+1)
+    place.signal_line(io_a.x, io_a.y+2)
+    place.signal_line(io_a.x, io_a.y+3)
+}
+
+place.Line(L1, io_a[input.x+1, input.y])
+place.recycle_bin(input.x+1, input.y-1)
