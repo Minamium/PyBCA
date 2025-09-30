@@ -36,7 +36,9 @@ def build_palette(states: List[int]) -> Dict[int, Tuple[int, int, int]]:
         0: (255, 255, 255),
         1: (180, 180, 180),
         2: (0, 0, 0),
-        -1: (255, 0, 0)
+        -1: (255, 0, 0),
+        3: (0, 255, 0),
+        4: (255, 255, 0)
     }
     for s in states:
         if s not in pal:
