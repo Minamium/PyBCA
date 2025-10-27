@@ -18,7 +18,7 @@ if __name__ == "__main__":
     print("[TEST] BCA_Simulator initialization")
     print("-"*60)
 
-    cellspace_path = "Sample/Cellspace/Join_err/P2_join.yaml"
+    cellspace_path = "Sample/Cellspace/Join_err/P0_join.yaml"
     rule_paths = [
         "Sample/rule/base-rule.yaml",
         "Sample/rule/Join_fork.yaml"
@@ -52,9 +52,9 @@ if __name__ == "__main__":
     print(simulator.spatial_event_arrays_tensor)
     print(simulator.state_conversions_tensor)
 
-    simulator.set_ParallelTrial(1)
+    simulator.set_ParallelTrial(100)
     #print(simulator.TCHW)
-    simulator.run_steps(steps=1000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=250)
+    simulator.run_steps(steps=500, global_prob=1.0, seed=1, debug=False, debug_per_trial=False, state_gate_enable=False)
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)

@@ -1,6 +1,6 @@
 # 定数定義とルール
 constants:
-  join_err_0_input: &join_err_0_input 0.001
+  join_err_0_input: &join_err_0_input 0.002
   join_err_1_input: &join_err_1_input 0.002
   fork_err_0_input: &fork_err_0_input 0.002
   
@@ -166,7 +166,6 @@ rules:
         y: 0
       state: !OccupiedBy 2
 
-# Fork
 - id: 204
   rule:
     prev:
