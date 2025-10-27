@@ -1,0 +1,60 @@
+- coord:
+    x: 5
+    y: 0
+  value: 1
+- coord:
+    x: 1
+    y: 1
+  value: 1
+- coord:
+    x: 4
+    y: 1
+  value: 1
+- coord:
+    x: 5
+    y: 1
+  value: 1
+- coord:
+    x: 6
+    y: 1
+  value: 1
+- coord:
+    x: 0
+    y: 2
+  value: 2
+- coord:
+    x: 1
+    y: 2
+  value: 1
+- coord:
+    x: 2
+    y: 2
+  value: 1
+- coord:
+    x: 3
+    y: 2
+  value: 5
+- coord:
+    x: 5
+    y: 2
+  value: 1
+- coord:
+    x: 1
+    y: 3
+  value: 1
+- coord:
+    x: 4
+    y: 3
+  value: 1
+- coord:
+    x: 5
+    y: 3
+  value: 1
+- coord:
+    x: 6
+    y: 3
+  value: 1
+- coord:
+    x: 5
+    y: 4
+  value: 1
