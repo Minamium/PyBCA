@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print(simulator.spatial_event_arrays_tensor)
     print(simulator.state_conversions_tensor)
 
-    simulator.set_ParallelTrial(100)
+    simulator.set_ParallelTrial(50_000)
     #print(simulator.TCHW)
     simulator.run_steps(steps=500, global_prob=1.0, seed=1, debug=False, debug_per_trial=False, state_gate_enable=False)
 
