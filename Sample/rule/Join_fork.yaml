@@ -2,6 +2,8 @@
 constants:
   join_err_0_input: &join_err_0_input 0.001
   join_err_1_input: &join_err_1_input 0.002
+  fork_err_0_input: &fork_err_0_input 0.002
+  
 
 
 # 大域状態リセット
@@ -176,6 +178,44 @@ rules:
         x: -1
         y: 0
       state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+
+- id: 205
+  probability: *fork_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
     - coord:
         x: 1
         y: 1
