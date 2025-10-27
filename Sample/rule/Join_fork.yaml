@@ -3,6 +3,15 @@ constants:
   join_err_0_input: &join_err_0_input 0.001
   join_err_1_input: &join_err_1_input 0.002
 
+
+# 大域状態リセット
+conv:
+  - prev: 4  
+    next: 3
+  - prev: 6
+    next: 5
+
+# Join
 rules:
 - id: 200
   rule:
@@ -155,6 +164,7 @@ rules:
         y: 0
       state: !OccupiedBy 2
 
+# Fork
 - id: 204
   rule:
     prev:

@@ -339,6 +339,130 @@ def load_transition_rules_yaml(path: str) -> List[TransitionRule]:
 
     return rules
 
+@dataclass
+class StateConversion:
+    """状態変換定義（複数変換対応）"""
+    prev_state: int
+    next_state: int
+
+
+def load_state_conversions_from_yaml(path: str) -> List[StateConversion]:
+    """
+    YAMLファイルから conv セクションを読み込む（複数変換対応）
+    
+    YAML形式:
+        conv:
+          - prev: 1
+            next: 0
+          - prev: 2
+            next: 0
+    
+    Args:
+        path: 遷移規則YAMLファイルのパス
+    
+    Returns:
+        StateConversionオブジェクトのリスト
+        convセクションがない場合は空リスト
+    
+    Raises:
+        ValueError: conv セクションの形式が不正な場合
+    """
+    import re
+    from yaml import SafeLoader
+    
+    # ---- YAMLローダ: !OccupiedBy N をそのまま int(N) にする ----
+    class _Loader(SafeLoader):
+        pass
+
+    def _occupied_by(loader, node):
+        value = loader.construct_scalar(node)
+        try:
+            return int(value)
+        except Exception:
+            m = re.search(r"-?\d+", str(value))
+            return int(m.group(0)) if m else 0
+
+    _Loader.add_constructor("!OccupiedBy", _occupied_by)
+    
+    # ---- YAML読込 ----
+    with open(path, "r", encoding="utf-8") as f:
+        full_doc = yaml.load(f, Loader=_Loader)
+    
+    # convセクションが存在しない場合は空リストを返す（後方互換性）
+    if not isinstance(full_doc, dict) or "conv" not in full_doc:
+        return []
+    
+    conv_data = full_doc["conv"]
+    
+    # conv セクションはリスト形式であることを期待
+    if not isinstance(conv_data, list):
+        raise ValueError("conv section must be a list of {prev: int, next: int}")
+    
+    conversions = []
+    
+    for item in conv_data:
+        if not isinstance(item, dict):
+            print(f"Warning: conv item is not a dict, skipping: {item}")
+            continue
+        
+        prev_state = item.get("prev")
+        next_state = item.get("next")
+        
+        # 必須フィールドチェック
+        if prev_state is None or next_state is None:
+            print(f"Warning: conv item missing 'prev' or 'next', skipping: {item}")
+            continue
+        
+        # int型に変換してStateConversionを作成
+        try:
+            conversions.append(StateConversion(
+                prev_state=int(prev_state),
+                next_state=int(next_state)
+            ))
+        except (ValueError, TypeError) as e:
+            print(f"Warning: invalid conv item values, skipping: {item}, error: {e}")
+            continue
+    
+    return conversions
+
+def load_multiple_state_conversions(rule_file_paths: List[str]) -> np.ndarray:
+    """
+    複数の遷移規則ファイルからconvセクションを読み込み、numpy配列として返す
+    
+    Args:
+        rule_file_paths: 遷移規則YAMLファイルのパスリスト
+    
+    Returns:
+        状態変換配列 (N, 2) 形状
+        N: 変換数, 2: [prev_state, next_state]
+        convセクションがどのファイルにもない場合は (0, 2) の空配列
+    """
+    import os
+    all_conversions = []
+    
+    # 複数ファイルから変換を読み込み
+    for rule_path in rule_file_paths:
+        if os.path.exists(rule_path):
+            conversions = load_state_conversions_from_yaml(rule_path)
+            all_conversions.extend(conversions)
+        else:
+            raise FileNotFoundError(f"遷移規則ファイルが見つかりません: {rule_path}")
+    
+    # numpy配列に変換
+    if not all_conversions:
+        # 変換がない場合は空配列を返す
+        return np.zeros((0, 2), dtype=np.int8)
+    
+    # [N, 2] 形状: [[prev_0, next_0], [prev_1, next_1], ...]
+    num_conversions = len(all_conversions)
+    conv_array = np.zeros((num_conversions, 2), dtype=np.int8)
+    
+    for i, conv in enumerate(all_conversions):
+        conv_array[i, 0] = conv.prev_state
+        conv_array[i, 1] = conv.next_state
+    
+    return conv_array
+
 def load_multiple_transition_rules_to_numpy(rule_file_paths: List[str]) -> np.ndarray:
     """
     複数の遷移規則ファイルを読み込み、統合されたnumpy配列として返す（確率情報なし）

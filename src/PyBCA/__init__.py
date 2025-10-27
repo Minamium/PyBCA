@@ -9,6 +9,9 @@ from .lib import (
     get_rule_ids_from_files,
     extract_cellspace_and_offset,
     has_offset_info,
+    StateConversion,
+    load_state_conversions_from_yaml,
+    load_multiple_state_conversions,
 
     load_special_events_from_file,
     convert_events_to_array_coordinates,
@@ -27,6 +30,9 @@ __all__ = [
     'get_rule_ids_from_files',
     'extract_cellspace_and_offset',
     'has_offset_info',
+    'StateConversion',
+    'load_state_conversions_from_yaml',
+    'load_multiple_state_conversions',
 
     'load_special_events_from_file',
     'convert_events_to_array_coordinates',

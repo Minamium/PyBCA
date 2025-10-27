@@ -24,6 +24,9 @@ class BCA_Simulator:
         # 遷移規則読み込み
         self.rule_ids = lib.get_rule_ids_from_files(rule_paths)
         self.rule_arrays, self.rule_probs = lib.load_multiple_transition_rules_with_probability(rule_paths)
+        
+        # 状態変換（conv）読み込み
+        self.state_conversions = lib.load_multiple_state_conversions(rule_paths)
 
         # 特殊イベント読み込み
         if spatial_event_filePath is not None:
@@ -57,6 +60,11 @@ class BCA_Simulator:
             self.spatial_event_arrays_tensor = torch.from_numpy(self.spatial_event_arrays).to(self.device)
         else:
             self.spatial_event_arrays_tensor = None
+
+        if self.state_conversions is not None:
+            self.state_conversions_tensor = torch.from_numpy(self.state_conversions).to(self.device)
+        else:
+            self.state_conversions_tensor = None
 
         # デバイス情報を表示
         device_info = f"Device: {self.cellspace_tensor.device}"
@@ -100,7 +108,15 @@ class BCA_Simulator:
     
 
     # 任意ステップ数だけセル空間を更新する
-    def run_steps(self, steps: int, global_prob: float, seed: int = 0, debug: bool = False, debug_per_trial: bool = False):
+    def run_steps(self, 
+                   steps: int, 
+                   global_prob: float, 
+                   seed: int = 0, 
+                   debug: bool = False, 
+                   debug_per_trial: bool = False,
+                   state_gate_enable: bool = False,
+                   state_gate_interval: int = 500
+                   ):
         print(f"Run steps: {steps}")
         for i in range(steps):
             print(f"Step {i}")
@@ -114,6 +130,10 @@ class BCA_Simulator:
                 debug=debug,
                 debug_per_trial=debug_per_trial
             )
+
+            # 大域状態ゲートの適用
+            if state_gate_enable and (i % state_gate_interval == 0):
+                self.apply_state_gates()
 
             # 特殊イベントの適用
             self.apply_spatial_events()
@@ -313,6 +333,40 @@ class BCA_Simulator:
             for t, e in zip(t_idx.tolist(), e_idx.tolist()):
                 self.event_history[t][names_kept[e]].append(step)
 
+    # 大域状態ゲート
+    def apply_state_gates(self):
+        # TCHWテンソル全てのセルに対して、対応する変換を並列に高速に適用する
+        conv = getattr(self, "state_conversions_tensor", None)
+        if conv is None or conv.numel() == 0:
+            return
+        if not hasattr(self, "TCHW"):
+            raise RuntimeError("call set_ParallelTrial() first.")
+
+        # 形状・型チェック
+        if conv.ndim != 2 or conv.shape[1] != 2:
+            raise ValueError("state_conversions_tensor は shape=(M,2) の (prev,next) である必要があります。")
+        # int8 正規化
+        conv = conv.to(device=self.device, dtype=torch.int8)  # [M,2]
+
+        # --- ルックアップテーブル（LUT）構築: -128..127 → -128..127 ---
+        # 恒等マップから、prev に対応する値だけ next へ上書き
+        lut = torch.arange(-128, 128, dtype=torch.int16, device=self.device).to(torch.int8)  # [256]
+        prev_idx = (conv[:, 0].to(torch.int16) + 128).to(torch.int64)  # prev+128
+        next_val = conv[:, 1].to(torch.int8)
+        lut.index_copy_(0, prev_idx, next_val)  # 同じ prev が複数あれば後勝ち
+
+        # --- 適用（同時置換・1パス） ---
+        cs  = self.TCHW[:, 0]                                    # [T,H,W] int8
+        idx = (cs.to(torch.int16) + 128).to(torch.int64)         # [T,H,W]
+        new_cs = lut[idx]                                        # [T,H,W] int8
+
+        changed = (new_cs != cs)
+        if changed.any():
+            self.TCHW[:, 0] = torch.where(changed, new_cs, cs)
+            if hasattr(self, "TCHW_applied"):
+                self.TCHW_applied[:, 0] |= changed
+
+        return
 ###################################
 
     # 遷移規則マッチング

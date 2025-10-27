@@ -1,11 +1,6 @@
-from .cli_simClass import BCA_Simulator
-
-try:
-    # パッケージとして使用される場合
-    from . import lib
-except ImportError:
-    # 直接実行される場合
-    import lib
+# PyBCAはeditable installされているので絶対インポートを使用
+from PyBCA.cli_simClass import BCA_Simulator
+from PyBCA import lib, load_state_conversions_from_yaml
 
 import torch, sys
 torch.set_printoptions(
@@ -17,15 +12,20 @@ torch.set_printoptions(
 
 if __name__ == "__main__":
     print("PyBCA CUDA Simulator Debug Mode")
+    print("="*60)
+    
+    # === BCA_Simulator初期化テスト ===
+    print("[TEST] BCA_Simulator initialization")
+    print("-"*60)
 
-    cellspace_path = "SampleCP/C-Join.yaml"
+    cellspace_path = "Sample/Cellspace/JF-C-join.yaml"
     rule_paths = [
-        "src/PyBCA/rule/base-rule.yaml",
-        "src/PyBCA/rule/C-Join_err-rule.yaml"
+        "Sample/rule/base-rule.yaml",
+        "Sample/rule/Join_fork.yaml"
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="SampleCP/C-Joinerrdetect.py")
+                              spatial_event_filePath="Sample/Specialevent/C-Joinerrdetect.py")
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -50,10 +50,11 @@ if __name__ == "__main__":
     #print(simulator.rule_arrays_tensor)
     #print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
+    print(simulator.state_conversions_tensor)
 
-    simulator.set_ParallelTrial(50_000)
+    simulator.set_ParallelTrial(1)
     #print(simulator.TCHW)
-    simulator.run_steps(50, global_prob=0.1, seed=1, debug=False, debug_per_trial=False)
+    simulator.run_steps(steps=500, global_prob=0.1, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=250)
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
     #simulator.debug()
     #print(simulator.TCHW)
-    #simulator.save_final_state(0, "tested1.yaml")
+    simulator.save_final_state(0, "tested1.yaml")
     #simulator.save_final_state(1, "tested2.yaml")
     #simulator.save_final_state(2, "tested3.yaml")
 
