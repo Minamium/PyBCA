@@ -1,0 +1,60 @@
+- coord:
+    x: 44
+    y: 47
+  value: 1
+- coord:
+    x: 43
+    y: 48
+  value: 1
+- coord:
+    x: 44
+    y: 48
+  value: 1
+- coord:
+    x: 45
+    y: 48
+  value: 1
+- coord:
+    x: 48
+    y: 48
+  value: 1
+- coord:
+    x: 44
+    y: 49
+  value: 1
+- coord:
+    x: 46
+    y: 49
+  value: 3
+- coord:
+    x: 47
+    y: 49
+  value: 1
+- coord:
+    x: 48
+    y: 49
+  value: 1
+- coord:
+    x: 49
+    y: 49
+  value: 1
+- coord:
+    x: 43
+    y: 50
+  value: 1
+- coord:
+    x: 44
+    y: 50
+  value: 1
+- coord:
+    x: 45
+    y: 50
+  value: 1
+- coord:
+    x: 48
+    y: 50
+  value: 1
+- coord:
+    x: 44
+    y: 51
+  value: 1

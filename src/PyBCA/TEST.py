@@ -18,14 +18,14 @@ if __name__ == "__main__":
     print("[TEST] BCA_Simulator initialization")
     print("-"*60)
 
-    cellspace_path = "Sample/Cellspace/JF-C-join.yaml"
+    cellspace_path = "Sample/Cellspace/Join_err/P2_join.yaml"
     rule_paths = [
         "Sample/rule/base-rule.yaml",
         "Sample/rule/Join_fork.yaml"
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="Sample/Specialevent/C-Joinerrdetect.py")
+                              spatial_event_filePath="Sample/Specialevent/Join_detect.py")
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -47,14 +47,14 @@ if __name__ == "__main__":
 
     # PyTorchテンソルの表示
     print(simulator.cellspace_tensor)
-    #print(simulator.rule_arrays_tensor)
+    print(simulator.rule_arrays_tensor)
     #print(simulator.rule_probs_tensor)
     print(simulator.spatial_event_arrays_tensor)
     print(simulator.state_conversions_tensor)
 
     simulator.set_ParallelTrial(1)
     #print(simulator.TCHW)
-    simulator.run_steps(steps=500, global_prob=0.1, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=250)
+    simulator.run_steps(steps=1000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=250)
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)
