@@ -170,11 +170,13 @@ class BCLCompiler:
         """
         最小構文：
           - coord.define(name,x,y)
-          - place.signal_line(ax, ay)   # ax, ay は整数 or name.{x|y}[±N]
-          - place.token(ax, ay)
+          - place.signal_line(ax, ay)   # value=1
+          - place.token(ax, ay)         # value=2
           - place.recycle_bin(ax, ay)   # value=-1
-          - element <Name>(Param) { ... }                              # ← 追加
-          - place.<Name>(Inst, Param[expr_x, expr_y])                  # ← 追加
+          - place.cell(ax, ay, value)   # 任意のvalue
+          - element <Name>(Param) { ... }
+          - place.<Name>(Inst, Param[expr_x, expr_y])
+        ax, ay, value は整数 or name.{x|y}[±N] 形式
         """
         if source_text is not None:
             self.source_text = source_text
@@ -194,6 +196,7 @@ class BCLCompiler:
         re_sig     = re.compile(r"^\s*place\.signal_line\s*\(\s*([^,]+)\s*,\s*([^)]+)\)\s*$")
         re_token   = re.compile(r"^\s*place\.token\s*\(\s*([^,]+)\s*,\s*([^)]+)\)\s*$")
         re_recycle = re.compile(r"^\s*place\.recycle_bin\s*\(\s*([^,]+)\s*,\s*([^)]+)\)\s*$")
+        re_cell    = re.compile(r"^\s*place\.cell\s*\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\)\s*$")
 
         for raw in flat_lines:
             line = raw.split("#", 1)[0].strip()
@@ -230,6 +233,15 @@ class BCLCompiler:
                 x = self._eval_value(ax)
                 y = self._eval_value(ay)
                 self._placements.append({"coord": {"x": x, "y": y}, "value": -1})
+                continue
+
+            m = re_cell.match(line)
+            if m:
+                ax, ay, av = m.group(1), m.group(2), m.group(3)
+                x = self._eval_value(ax)
+                y = self._eval_value(ay)
+                v = self._eval_value(av)
+                self._placements.append({"coord": {"x": x, "y": y}, "value": v})
                 continue
 
             raise SyntaxError(f"Unsupported line: {raw}")

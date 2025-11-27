@@ -1,0 +1,14 @@
+element Line(io_a){
+    place.signal_line(io_a.x, io_a.y)
+    place.signal_line(io_a.x, io_a.y+1)
+    place.signal_line(io_a.x, io_a.y+2)
+    place.signal_line(io_a.x, io_a.y+3)
+}
+
+element Join(io_a){
+    place.cell(io_a.x, io_a.y, 3)
+}
+
+element fork(io_a){
+    place.cell(io_a.x, io_a.y, 4)
+}
