@@ -22,6 +22,7 @@ import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from .compiler import BCLCompiler, CompileResult
+from .rule_editor import RuleEditorWindow
 
 
 # ========= 定数・列挙型 =========
@@ -262,6 +263,9 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         # ソース編集中フラグ
         self._source_updating = False
         
+        # Rule Editorウィンドウ参照
+        self._rule_editor_window: Optional[RuleEditorWindow] = None
+        
         # UI構築
         self._build_ui()
         self._build_menu()
@@ -462,6 +466,12 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         act_line.triggered.connect(lambda: self._set_tool(EditTool.LINE))
         self._tool_group.addAction(act_line)
         tools_menu.addAction(act_line)
+        
+        tools_menu.addSeparator()
+        
+        act_rule_editor = QtGui.QAction("Rule Editor...", self)
+        act_rule_editor.triggered.connect(self._open_rule_editor)
+        tools_menu.addAction(act_rule_editor)
 
     def _build_toolbar(self):
         """ツールバー構築"""
@@ -1713,6 +1723,14 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
     def _action_set_anchor_mode(self):
         """アンカーポイント設定モードに入る"""
         self._status.showMessage("Click on canvas to set anchor point (origin for element)")
+
+    def _open_rule_editor(self):
+        """Rule Editorを開く"""
+        if self._rule_editor_window is None or not self._rule_editor_window.isVisible():
+            self._rule_editor_window = RuleEditorWindow(self)
+        self._rule_editor_window.show()
+        self._rule_editor_window.raise_()
+        self._rule_editor_window.activateWindow()
 
     def _start_element_creation(self):
         """element作成モードを開始"""
