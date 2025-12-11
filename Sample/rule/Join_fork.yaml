@@ -1,19 +1,14 @@
-# 定数定義とルール
 constants:
   join_err_0_input: &join_err_0_input 0.005
   join_err_1_input: &join_err_1_input 0.1
   fork_err_0_input: &fork_err_0_input 0.005
-  
 
-
-# 大域状態リセット
 conv:
-  - prev: 4  
+  - prev: 4
     next: 3
   - prev: 6
     next: 5
 
-# Join
 rules:
 - id: 200
   rule:
@@ -23,10 +18,6 @@ rules:
         y: -1
       state: !OccupiedBy 2
     - coord:
-        x: -1
-        y: 1
-      state: !OccupiedBy 2
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 3
@@ -34,14 +25,14 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
     next:
     - coord:
         x: -1
         y: -1
-      state: !OccupiedBy 1
-    - coord:
-        x: -1
-        y: 1
       state: !OccupiedBy 1
     - coord:
         x: 0
@@ -51,6 +42,10 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
 
 - id: 201
   probability: *join_err_1_input
@@ -61,10 +56,6 @@ rules:
         y: -1
       state: !OccupiedBy 1
     - coord:
-        x: -1
-        y: 1
-      state: !OccupiedBy 2
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 3
@@ -72,14 +63,14 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
     next:
     - coord:
         x: -1
         y: -1
-      state: !OccupiedBy 1
-    - coord:
-        x: -1
-        y: 1
       state: !OccupiedBy 1
     - coord:
         x: 0
@@ -89,6 +80,10 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
 
 - id: 202
   probability: *join_err_1_input
@@ -99,10 +94,6 @@ rules:
         y: -1
       state: !OccupiedBy 2
     - coord:
-        x: -1
-        y: 1
-      state: !OccupiedBy 1
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 3
@@ -110,14 +101,14 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
     next:
     - coord:
         x: -1
         y: -1
-      state: !OccupiedBy 1
-    - coord:
-        x: -1
-        y: 1
       state: !OccupiedBy 1
     - coord:
         x: 0
@@ -127,6 +118,10 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
 
 - id: 203
   probability: *join_err_0_input
@@ -137,10 +132,6 @@ rules:
         y: -1
       state: !OccupiedBy 1
     - coord:
-        x: -1
-        y: 1
-      state: !OccupiedBy 1
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 3
@@ -148,14 +139,14 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 1
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
     next:
     - coord:
         x: -1
         y: -1
-      state: !OccupiedBy 1
-    - coord:
-        x: -1
-        y: 1
       state: !OccupiedBy 1
     - coord:
         x: 0
@@ -165,6 +156,10 @@ rules:
         x: 1
         y: 0
       state: !OccupiedBy 2
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
 
 - id: 204
   rule:
@@ -178,13 +173,13 @@ rules:
         y: 0
       state: !OccupiedBy 2
     - coord:
-        x: 1
-        y: 1
-      state: !OccupiedBy 1
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 5
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
     next:
     - coord:
         x: 1
@@ -195,13 +190,13 @@ rules:
         y: 0
       state: !OccupiedBy 1
     - coord:
-        x: 1
-        y: 1
-      state: !OccupiedBy 2
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 6
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
 
 - id: 205
   probability: *fork_err_0_input
@@ -216,13 +211,13 @@ rules:
         y: 0
       state: !OccupiedBy 1
     - coord:
-        x: 1
-        y: 1
-      state: !OccupiedBy 1
-    - coord:
         x: 0
         y: 0
       state: !OccupiedBy 5
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
     next:
     - coord:
         x: 1
@@ -233,6 +228,648 @@ rules:
         y: 0
       state: !OccupiedBy 1
     - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+
+- id: 206
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 207
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 208
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 209
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 210
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 211
+  probability: *fork_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+
+######################################################
+
+# 左向きJoin (右向きのx反転)
+- id: 212
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 213
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 214
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+- id: 215
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+
+# 左向きFork (右向きのx反転)
+- id: 216
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+
+- id: 217
+  probability: *fork_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 0
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+
+# 下向きJoin (上向きのy反転)
+- id: 218
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+
+- id: 219
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+
+- id: 220
+  probability: *join_err_1_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+
+- id: 221
+  probability: *join_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 3
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: 0
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 4
+    - coord:
+        x: -1
+        y: -1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: -1
+      state: !OccupiedBy 1
+
+# 下向きFork (上向きのy反転)
+- id: 222
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 2
+    next:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
         x: 1
         y: 1
       state: !OccupiedBy 2
@@ -240,3 +877,45 @@ rules:
         x: 0
         y: 0
       state: !OccupiedBy 6
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+
+- id: 223
+  probability: *fork_err_0_input
+  rule:
+    prev:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 1
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 5
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1
+    next:
+    - coord:
+        x: -1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 1
+        y: 1
+      state: !OccupiedBy 2
+    - coord:
+        x: 0
+        y: 0
+      state: !OccupiedBy 6
+    - coord:
+        x: 0
+        y: -1
+      state: !OccupiedBy 1

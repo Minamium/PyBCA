@@ -138,6 +138,18 @@ class CanvasView(QtWidgets.QGraphicsView):
         self._zoom = 1.0
         self._panning = False
         self._pan_start = QtCore.QPoint()
+    
+    def set_zoom(self, zoom: float):
+        """ズームレベルを設定"""
+        factor = zoom / self._zoom
+        self._zoom = zoom
+        self.resetTransform()
+        self.scale(zoom, zoom)
+        self.zoomChanged.emit(self._zoom)
+    
+    def center_on_point(self, x: float, y: float):
+        """指定座標を中央に表示"""
+        self.centerOn(x, y)
 
     def dragEnterEvent(self, event: QtGui.QDragEnterEvent) -> None:
         if event.mimeData().hasText():
@@ -215,10 +227,18 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("BCL Editor")
         
         # 内部状態
-        self._arr: np.ndarray = np.zeros((50, 50), dtype=np.int8)
+        self._arr: np.ndarray = np.zeros((1000, 1000), dtype=np.int8)
         self._current_file: Optional[str] = None
         self._modified = False
         self._brush_value = 1
+        
+        # 仮想座標系: 配列の(0,0)が仮想座標(_origin_x, _origin_y)に対応
+        # 初期状態では配列の中央(500,500)が仮想座標(0,0)になる
+        self._origin_x = -500  # 仮想座標の原点X（配列0が対応する仮想X）
+        self._origin_y = -500  # 仮想座標の原点Y（配列0が対応する仮想Y）
+        
+        # ズーム基準倍率（この倍率を100%として表示）
+        self._zoom_base = 18.0  # 実際の18倍を100%として扱う
         
         # ツール状態
         self._current_tool = EditTool.POINT
@@ -277,6 +297,12 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         # 初期表示
         self._update_canvas()
         self._update_bcl_source()
+        
+        # 初期ズームを基準倍率(18倍)に設定し、仮想座標(0,0)を中央に表示
+        self._view.set_zoom(self._zoom_base)
+        # 配列座標での(0,0)に対応する位置（仮想座標の原点）
+        center_ax, center_ay = self._virtual_to_array(0, 0)
+        self._view.center_on_point(center_ax, center_ay)
         
         self.resize(1400, 900)
 
@@ -511,6 +537,81 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         self._custom_spin.valueChanged.connect(self._on_custom_value_changed)
         toolbar.addWidget(self._custom_spin)
 
+    # ========= 座標変換と動的配列拡張 =========
+    
+    def _virtual_to_array(self, vx: int, vy: int) -> Tuple[int, int]:
+        """仮想座標→配列座標"""
+        ax = vx - self._origin_x
+        ay = vy - self._origin_y
+        return ax, ay
+    
+    def _array_to_virtual(self, ax: int, ay: int) -> Tuple[int, int]:
+        """配列座標→仮想座標"""
+        vx = ax + self._origin_x
+        vy = ay + self._origin_y
+        return vx, vy
+    
+    def _ensure_capacity(self, vx: int, vy: int, margin: int = 20):
+        """仮想座標(vx, vy)が配列内に収まるよう必要なら拡張"""
+        ax, ay = self._virtual_to_array(vx, vy)
+        h, w = self._arr.shape
+        
+        need_expand = False
+        new_origin_x, new_origin_y = self._origin_x, self._origin_y
+        expand_left = expand_right = expand_top = expand_bottom = 0
+        
+        # 左方向への拡張が必要
+        if ax < 0:
+            expand_left = -ax + margin
+            need_expand = True
+        # 右方向への拡張が必要
+        if ax >= w:
+            expand_right = ax - w + 1 + margin
+            need_expand = True
+        # 上方向への拡張が必要
+        if ay < 0:
+            expand_top = -ay + margin
+            need_expand = True
+        # 下方向への拡張が必要
+        if ay >= h:
+            expand_bottom = ay - h + 1 + margin
+            need_expand = True
+        
+        if not need_expand:
+            return
+        
+        # 新しい配列サイズ
+        new_h = h + expand_top + expand_bottom
+        new_w = w + expand_left + expand_right
+        new_arr = np.zeros((new_h, new_w), dtype=np.int8)
+        
+        # 既存データをコピー
+        new_arr[expand_top:expand_top + h, expand_left:expand_left + w] = self._arr
+        
+        # 原点を更新（左・上に拡張した分だけシフト）
+        self._origin_x -= expand_left
+        self._origin_y -= expand_top
+        self._arr = new_arr
+        
+        # キャンバス更新
+        self._update_canvas()
+    
+    def _set_cell(self, vx: int, vy: int, value: int):
+        """仮想座標でセルを設定（必要なら配列を拡張）"""
+        self._ensure_capacity(vx, vy)
+        ax, ay = self._virtual_to_array(vx, vy)
+        h, w = self._arr.shape
+        if 0 <= ay < h and 0 <= ax < w:
+            self._arr[ay, ax] = value
+    
+    def _get_cell(self, vx: int, vy: int) -> int:
+        """仮想座標でセル値を取得（範囲外は0）"""
+        ax, ay = self._virtual_to_array(vx, vy)
+        h, w = self._arr.shape
+        if 0 <= ay < h and 0 <= ax < w:
+            return int(self._arr[ay, ax])
+        return 0
+
     # ========= キャンバス更新 =========
     
     def _update_canvas(self):
@@ -566,18 +667,19 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         covered_cells = set()
         h, w = self._arr.shape
         
-        for elem_name, x, y, inst_id in self._element_placements:
+        for elem_name, ax, ay, inst_id in self._element_placements:
             elem = self._find_element_by_name(elem_name)
             if elem is None:
                 continue
             
-            # place.Element構文を生成
+            # 仮想座標に変換してplace.Element構文を生成
+            vx, vy = self._array_to_virtual(ax, ay)
             inst_name = f"{elem_name}_{inst_id}"
-            lines.append(f"place.{elem_name}({inst_name}, {elem.param}[{x}, {y}])")
+            lines.append(f"place.{elem_name}({inst_name}, {elem.param}[{vx}, {vy}])")
             
-            # このelementがカバーするセル座標を計算
+            # このelementがカバーするセル座標を計算（配列座標）
             try:
-                placements = self._expand_element(elem, x, y)
+                placements = self._expand_element(elem, ax, ay)
                 for px, py, _ in placements:
                     if 0 <= py < h and 0 <= px < w:
                         covered_cells.add((px, py))
@@ -587,19 +689,21 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         return lines, covered_cells
 
     def _array_to_placement_lines(self, exclude_cells: set = None) -> List[str]:
-        """numpy配列からplace.cell行を生成（exclude_cellsは除外）"""
+        """numpy配列からplace.cell行を生成（仮想座標で出力、exclude_cellsは除外）"""
         if exclude_cells is None:
             exclude_cells = set()
         
         lines = []
         h, w = self._arr.shape
-        for y in range(h):
-            for x in range(w):
-                if (x, y) in exclude_cells:
+        for ay in range(h):
+            for ax in range(w):
+                if (ax, ay) in exclude_cells:
                     continue
-                v = int(self._arr[y, x])
+                v = int(self._arr[ay, ax])
                 if v != 0:  # 0は省略
-                    lines.append(f"place.cell({x}, {y}, {v})")
+                    # 仮想座標に変換して出力
+                    vx, vy = self._array_to_virtual(ax, ay)
+                    lines.append(f"place.cell({vx}, {vy}, {v})")
         return lines
 
     # ========= イベント処理 =========
@@ -629,28 +733,31 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
     def _handle_mouse_move(self, event) -> bool:
         """マウス移動処理。イベントを消費した場合はTrueを返す"""
         pos = self._view.mapToScene(event.position().toPoint())
-        x, y = int(pos.x()), int(pos.y())
+        ax, ay = int(pos.x()), int(pos.y())  # 配列座標
         h, w = self._arr.shape
+        
+        # 仮想座標に変換
+        vx, vy = self._array_to_virtual(ax, ay)
         
         # element作成モード中のドラッグ → プレビュー表示
         if self._element_creation_mode and self._is_dragging and self._drag_start:
             sx, sy = self._drag_start
-            self._update_rect_preview(sx, sy, x, y)
+            self._update_rect_preview(sx, sy, ax, ay)
             return True  # イベントを消費
         
-        if 0 <= y < h and 0 <= x < w:
-            v = self._arr[y, x]
-            self._status.showMessage(f"({x}, {y}) = {v}")
+        if 0 <= ay < h and 0 <= ax < w:
+            v = self._arr[ay, ax]
+            self._status.showMessage(f"Virtual: ({vx}, {vy}) = {v}  [Array: ({ax}, {ay})]")
         else:
-            self._status.showMessage("")
+            self._status.showMessage(f"Virtual: ({vx}, {vy}) [outside]")
         
         # ドラッグ中のプレビュー更新
         if self._is_dragging and self._drag_start:
             sx, sy = self._drag_start
             if self._current_tool == EditTool.RECT:
-                self._update_rect_preview(sx, sy, x, y)
+                self._update_rect_preview(sx, sy, ax, ay)
             elif self._current_tool == EditTool.LINE:
-                self._update_line_preview(sx, sy, x, y)
+                self._update_line_preview(sx, sy, ax, ay)
         
         return False  # 通常のマウス移動はイベントを消費しない
 
@@ -872,17 +979,17 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         """element配置を削除（キャンバスとBCLソースから）"""
         elem_name, ex, ey, inst_id = placement
         
-        # キャンバスからelementを消去（呼び出し元で処理するためコメントアウト）
-        # elem = self._find_element_by_name(elem_name)
-        # if elem:
-        #     try:
-        #         cells = self._expand_element(elem, ex, ey)
-        #         for cx, cy, _ in cells:
-        #             h, w = self._arr.shape
-        #             if 0 <= cy < h and 0 <= cx < w:
-        #                 self._arr[cy, cx] = 0
-        #     except Exception:
-        #         pass
+        # キャンバスからelementの全セルを消去
+        elem = self._find_element_by_name(elem_name)
+        if elem:
+            try:
+                cells = self._expand_element(elem, ex, ey)
+                for cx, cy, _ in cells:
+                    h, w = self._arr.shape
+                    if 0 <= cy < h and 0 <= cx < w:
+                        self._arr[cy, cx] = 0
+            except Exception:
+                pass
         
         # element配置履歴から削除
         if placement in self._element_placements:
@@ -901,29 +1008,33 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         
         self._status.showMessage(f"Removed element: {inst_name}")
 
-    def _remove_place_cell(self, x: int, y: int):
-        """place.cell行を削除"""
+    def _remove_place_cell(self, ax: int, ay: int):
+        """place.cell行を削除（配列座標を受け取り、仮想座標で検索）"""
         if self._raw_bcl_source:
-            # place.cell(x, y, v) の行を削除
+            vx, vy = self._array_to_virtual(ax, ay)
+            # place.cell(vx, vy, v) の行を削除（負の座標も対応）
             pattern = re.compile(
-                rf"^\s*place\.cell\s*\(\s*{x}\s*,\s*{y}\s*,\s*\d+\s*\)\s*$",
+                rf"^\s*place\.cell\s*\(\s*{vx}\s*,\s*{vy}\s*,\s*-?\d+\s*\)\s*$",
                 re.MULTILINE
             )
             self._raw_bcl_source = pattern.sub("", self._raw_bcl_source)
 
-    def _add_place_cell(self, x: int, y: int, value: int):
-        """place.cell行を追加（既存があれば更新）"""
+    def _add_place_cell(self, ax: int, ay: int, value: int):
+        """place.cell行を追加（配列座標を受け取り、仮想座標で出力）"""
         # まず既存の行を削除
-        self._remove_place_cell(x, y)
+        self._remove_place_cell(ax, ay)
+        
+        # 仮想座標に変換
+        vx, vy = self._array_to_virtual(ax, ay)
         
         # 新しい行を追加
-        new_line = f"place.cell({x}, {y}, {value})"
+        new_line = f"place.cell({vx}, {vy}, {value})"
         if self._raw_bcl_source:
             self._raw_bcl_source = self._raw_bcl_source.rstrip() + "\n" + new_line + "\n"
         else:
             # 新規の場合はヘッダーと共に
             header = "# BCL File generated by BCL Editor\n"
-            header += f"# Canvas size: {self._arr.shape[1]}x{self._arr.shape[0]}\n\n"
+            header += "# Virtual coordinate system (origin at center)\n\n"
             header += "# === Cell Placements ===\n"
             self._raw_bcl_source = header + new_line + "\n"
 
@@ -987,7 +1098,9 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             self._preview_line = None
 
     def _on_zoom_changed(self, z: float):
-        self._zoom_label.setText(f"Zoom: {int(z * 100)}%")
+        # 基準倍率に対する相対値として表示（18倍を100%として表示）
+        relative_zoom = z / self._zoom_base * 100
+        self._zoom_label.setText(f"Zoom: {int(relative_zoom)}%")
         self._rebuild_grid()
 
     def _on_brush_changed(self, index: int):
@@ -1322,11 +1435,11 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
                     # セルごとにプレビュー矩形を作成
                     rect_item = QtWidgets.QGraphicsRectItem(px, py, 1, 1)
                     
-                    # 値に応じた色（半透明）
+                    # 値に応じた色（不透明）+ 黄色枠でハイライト
                     color = self._get_preview_color(pv)
                     rect_item.setBrush(QtGui.QBrush(color))
-                    rect_item.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-                    rect_item.setOpacity(0.6)
+                    pen = QtGui.QPen(QtGui.QColor(255, 255, 0), 0.1)  # 黄色枠
+                    rect_item.setPen(pen)
                     rect_item.setZValue(100)  # グリッドより上
                     
                     self._scene.addItem(rect_item)
@@ -1501,10 +1614,13 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
 
     def _action_new(self):
         """新規作成"""
-        dialog = ResizeDialog(50, 50, self)
+        dialog = ResizeDialog(100, 100, self)
         if dialog.exec() == QtWidgets.QDialog.Accepted:
             w, h = dialog.get_size()
             self._arr = np.zeros((h, w), dtype=np.int8)
+            # 原点を中央に設定（仮想座標(0,0)が配列中央になる）
+            self._origin_x = -w // 2
+            self._origin_y = -h // 2
             self._current_file = None
             self._modified = False
             # element配置履歴とソースをクリア
@@ -1563,10 +1679,13 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(self, "Error", f"Failed to load BCL:\n{e}")
 
     def _ir_to_array(self, ir: CompileResult) -> np.ndarray:
-        """CompileResult(YAML dict)からnumpy配列を構築"""
+        """CompileResult(YAML dict)からnumpy配列を構築し、原点を設定"""
         placements = ir.yaml_dict
         if not placements:
-            return np.zeros((50, 50), dtype=np.int8)
+            # 空の場合は初期状態に戻す
+            self._origin_x = -50
+            self._origin_y = -50
+            return np.zeros((100, 100), dtype=np.int8)
         
         xs = [p["coord"]["x"] for p in placements]
         ys = [p["coord"]["y"] for p in placements]
@@ -1574,20 +1693,24 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         min_x, max_x = min(xs), max(xs)
         min_y, max_y = min(ys), max(ys)
         
-        # マージンを追加
-        margin = 5
+        # マージンを追加（周囲に余白を確保）
+        margin = 20
         w = max_x - min_x + 1 + margin * 2
         h = max_y - min_y + 1 + margin * 2
         
         arr = np.zeros((h, w), dtype=np.int8)
-        off_x = -min_x + margin
-        off_y = -min_y + margin
+        
+        # 原点を設定: 配列の(0,0)が仮想座標(min_x - margin, min_y - margin)に対応
+        self._origin_x = min_x - margin
+        self._origin_y = min_y - margin
         
         for p in placements:
-            x = p["coord"]["x"] + off_x
-            y = p["coord"]["y"] + off_y
+            # 仮想座標から配列座標に変換
+            vx, vy = p["coord"]["x"], p["coord"]["y"]
+            ax = vx - self._origin_x
+            ay = vy - self._origin_y
             v = p["value"]
-            arr[y, x] = v
+            arr[ay, ax] = v
         
         return arr
 
