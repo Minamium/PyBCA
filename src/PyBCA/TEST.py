@@ -2,7 +2,7 @@
 from PyBCA.cli_simClass import BCA_Simulator
 from PyBCA import lib, load_state_conversions_from_yaml
 
-import torch, sys
+import torch, sys, time
 torch.set_printoptions(
     threshold=sys.maxsize,   # 省略せず全部出す
     linewidth=200,           # 1行の最大幅
@@ -18,14 +18,14 @@ if __name__ == "__main__":
     print("[TEST] BCA_Simulator initialization")
     print("-"*60)
 
-    cellspace_path = "Sample/Cellspace/Join_err/P0_join.yaml"
+    cellspace_path = "Sample/Cellspace/BNN.yaml"
     rule_paths = [
         "Sample/rule/base-rule.yaml",
         "Sample/rule/Join_fork.yaml"
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="Sample/Specialevent/Join_detect.py")
+                              spatial_event_filePath="Sample/Specialevent/BNN_event.py")
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -52,9 +52,11 @@ if __name__ == "__main__":
     print(simulator.spatial_event_arrays_tensor)
     print(simulator.state_conversions_tensor)
 
-    simulator.set_ParallelTrial(50_000)
+    simulator.set_ParallelTrial(1)
     #print(simulator.TCHW)
-    simulator.run_steps(steps=500, global_prob=1.0, seed=1, debug=False, debug_per_trial=False, state_gate_enable=False)
+    timer = time.time()
+    simulator.run_steps(steps=80_000, global_prob=1.0, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=300)
+    print(f"Time: {time.time() - timer}")
 
     #print("After Apllied run_steps, TCHW")
     #print(simulator.TCHW)
