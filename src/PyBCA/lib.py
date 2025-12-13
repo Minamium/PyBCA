@@ -559,59 +559,119 @@ def get_rule_ids_from_files(rule_file_paths: List[str]) -> List[int]:
 def load_special_events_from_file(event_file_path: str) -> np.ndarray:
     """
     特殊イベント定義ファイル(.py)から特殊イベントを読み込む
-    
+
+    互換性:
+      - 旧形式: (name, ref_coord, ref_state, write_coord, write_state)  [len=5]
+        -> np.ndarray shape=(M,6) dtype=int32
+           [ref_x, ref_y, ref_state, write_x, write_y, write_state]
+      - 拡張形式: (name, ref_coord, ref_state, write_coord, write_state, prob, start_step, end_step) [len=8]
+        -> np.ndarray shape=(M,9) dtype=float32（prob を含むため）
+           [ref_x, ref_y, ref_state, write_x, write_y, write_state, prob, start_step, end_step]
+
     Args:
         event_file_path: 特殊イベント定義Pythonファイルのパス
-    
+
     Returns:
-        特殊イベントのnumpy配列 (M, 6) int32
-        [ref_x, ref_y, ref_state, write_x, write_y, write_state] の形式
-        空の場合は shape=(0, 6) の配列を返す
+        旧形式のみの場合: (M,6) int32
+        拡張形式を含む場合: (M,9) float32
+        空の場合は旧形式互換として shape=(0, 6) int32 を返す
     """
     import os
-    
+
     if not os.path.exists(event_file_path):
         raise FileNotFoundError(f"特殊イベントファイルが見つかりません: {event_file_path}")
-    
-    # Pythonファイルを動的に実行してeventsを取得
+
     spec = {}
     try:
-        with open(event_file_path, 'r', encoding='utf-8') as f:
+        with open(event_file_path, "r", encoding="utf-8") as f:
             exec(f.read(), spec)
-        
-        if 'events' not in spec:
+
+        if "events" not in spec:
             raise ValueError(f"'events'変数が見つかりません: {event_file_path}")
-        
-        events = spec['events']
+
+        events = spec["events"]
         if not isinstance(events, list):
             raise ValueError(f"'events'はリストである必要があります: {event_file_path}")
-        
-        # イベント形式の検証とnumpy配列への変換
+
         if len(events) == 0:
+            # 旧仕様互換: 空は (0,6) int32
             return np.zeros((0, 6), dtype=np.int32)
-        
+
+        # 拡張形式が含まれるか判定（混在可）
+        has_extended = False
+        for i, event in enumerate(events):
+            if not isinstance(event, tuple):
+                raise ValueError(
+                    f"イベント{i}の形式が不正です。タプルである必要があります。"
+                )
+            if len(event) == 8:
+                has_extended = True
+            elif len(event) == 5:
+                pass
+            else:
+                raise ValueError(
+                    f"イベント{i}の形式が不正です。"
+                    f"(name, ref_coord, ref_state, write_coord, write_state) もしくは "
+                    f"(name, ref_coord, ref_state, write_coord, write_state, prob, start_step, end_step) の形式である必要があります"
+                )
+
         event_array = []
         for i, event in enumerate(events):
-            if not isinstance(event, tuple) or len(event) != 5:
-                raise ValueError(f"イベント{i}の形式が不正です。(name, ref_coord, ref_state, write_coord, write_state)の形式である必要があります")
-            
-            name, ref_coord, ref_state, write_coord, write_state = event
-            # ref_coord, write_coord は (x, y) のタプルと仮定
+            if len(event) == 5:
+                name, ref_coord, ref_state, write_coord, write_state = event
+                prob = 1.0
+                start_step = -1
+                end_step = -1
+            else:
+                name, ref_coord, ref_state, write_coord, write_state, prob, start_step, end_step = event
+
+            # ref_coord, write_coord は (x, y)
             if not (isinstance(ref_coord, tuple) and len(ref_coord) == 2):
                 raise ValueError(f"イベント{i}のref_coordは(x, y)のタプルである必要があります")
             if not (isinstance(write_coord, tuple) and len(write_coord) == 2):
                 raise ValueError(f"イベント{i}のwrite_coordは(x, y)のタプルである必要があります")
-            
-            # [ref_x, ref_y, ref_state, write_x, write_y, write_state] の形式で配列に追加
-            event_array.append([
-                ref_coord[0], ref_coord[1], ref_state,
-                write_coord[0], write_coord[1], write_state
-            ])
-        
-        return np.array(event_array, dtype=np.int32)
-        
+
+            # prob の検証（拡張時のみ意味を持つが、混在でも常に検証）
+            try:
+                prob_f = float(prob)
+            except Exception:
+                raise ValueError(f"イベント{i}のprobは数値である必要があります")
+            if not (0.0 <= prob_f <= 1.0):
+                raise ValueError(f"イベント{i}のprobは[0,1]である必要があります: prob={prob_f}")
+
+            # step範囲の検証
+            try:
+                start_i = int(start_step)
+                end_i = int(end_step)
+            except Exception:
+                raise ValueError(f"イベント{i}のstart_step/end_stepは整数である必要があります")
+            # -1 は無制限として許可。それ以外は start<=end を要求
+            if (start_i >= 0) and (end_i >= 0) and (start_i > end_i):
+                raise ValueError(
+                    f"イベント{i}のstep範囲が不正です: start_step={start_i} > end_step={end_i}"
+                )
+
+            row6 = [
+                int(ref_coord[0]), int(ref_coord[1]), int(ref_state),
+                int(write_coord[0]), int(write_coord[1]), int(write_state),
+            ]
+
+            if has_extended:
+                row9 = row6 + [prob_f, float(start_i), float(end_i)]
+                event_array.append(row9)
+            else:
+                event_array.append(row6)
+
+        if has_extended:
+            return np.array(event_array, dtype=np.float32)
+        else:
+            return np.array(event_array, dtype=np.int32)
+
     except Exception as e:
-        raise RuntimeError(f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}")
+        raise RuntimeError(
+            f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}"
+        )
+
 
 def convert_events_to_array_coordinates(events: np.ndarray, min_x: int, min_y: int) -> np.ndarray:
     """
@@ -640,34 +700,50 @@ def convert_events_to_array_coordinates(events: np.ndarray, min_x: int, min_y: i
 def get_event_names_from_file(event_file_path: str) -> List[str]:
     """
     特殊イベント定義ファイルからイベント名のリストを取得
-    
+
+    対応形式:
+      - (name, ref_coord, ref_state, write_coord, write_state)  [len=5]
+      - (name, ref_coord, ref_state, write_coord, write_state, prob, start_step, end_step) [len=8]
+
     Args:
         event_file_path: 特殊イベント定義Pythonファイルのパス
-    
+
     Returns:
         イベント名のリスト
     """
-    # load_special_events_from_file は numpy 配列を返すが、
-    # イベント名は元の Python ファイルから直接取得する必要がある
     import os
-    
+
     if not os.path.exists(event_file_path):
         raise FileNotFoundError(f"特殊イベントファイルが見つかりません: {event_file_path}")
-    
+
     spec = {}
     try:
-        with open(event_file_path, 'r', encoding='utf-8') as f:
+        with open(event_file_path, "r", encoding="utf-8") as f:
             exec(f.read(), spec)
-        
-        if 'events' not in spec:
+
+        if "events" not in spec:
             raise ValueError(f"'events'変数が見つかりません: {event_file_path}")
-        
-        events = spec['events']
+
+        events = spec["events"]
         if not isinstance(events, list):
             raise ValueError(f"'events'はリストである必要があります: {event_file_path}")
-        
-        return [event[0] for event in events]  # name部分を抽出
-        
-    except Exception as e:
-        raise RuntimeError(f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}")
 
+        names: List[str] = []
+        for i, event in enumerate(events):
+            if not isinstance(event, tuple):
+                raise ValueError(f"イベント{i}の形式が不正です。タプルである必要があります。")
+            if len(event) not in (5, 8):
+                raise ValueError(
+                    f"イベント{i}の形式が不正です。len=5 もしくは len=8 のタプルである必要があります。"
+                )
+            name = event[0]
+            if not isinstance(name, str):
+                raise ValueError(f"イベント{i}のnameは文字列である必要があります。")
+            names.append(name)
+
+        return names
+
+    except Exception as e:
+        raise RuntimeError(
+            f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}"
+        )

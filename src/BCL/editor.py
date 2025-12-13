@@ -39,6 +39,8 @@ class EditAction:
     """Undo/Redo用の編集アクション"""
     before: np.ndarray
     after: np.ndarray
+    before_bcl: str = ""
+    after_bcl: str = ""
     description: str = ""
 
 
@@ -273,12 +275,23 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         self._selection_rect: Optional[Tuple[int, int, int, int]] = None
         self._selection_item: Optional[QtWidgets.QGraphicsRectItem] = None
         
+        # クリップボード（コピー/ペースト用）: BCL行リストと選択範囲（仮想座標）
+        self._clipboard_bcl_lines: List[str] = []
+        self._clipboard_virt_rect: Optional[Tuple[int, int, int, int]] = None  # (vx1, vy1, vx2, vy2)
+        
         # アンカーポイント（element作成用基準点）
         self._anchor_point: Optional[Tuple[int, int]] = None
         self._anchor_item: Optional[QtWidgets.QGraphicsEllipseItem] = None
         
         # element作成モード
         self._element_creation_mode = False
+        
+        # コピー/移動モード
+        self._copy_move_mode = False
+        self._copy_move_phase = 0  # 0: 未開始, 1: 範囲選択中, 2: 移動先指定中
+        self._copy_move_is_cut = False  # True: 移動（カット）, False: コピー
+        self._copy_move_preview_items: List[QtWidgets.QGraphicsRectItem] = []
+        self._last_mouse_array_pos: Optional[Tuple[int, int]] = None  # 最後のマウス位置（配列座標）
         
         # ソース編集中フラグ
         self._source_updating = False
@@ -365,6 +378,11 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         self._new_element_btn = QtWidgets.QPushButton("New Element...")
         self._new_element_btn.clicked.connect(self._start_element_creation)
         element_layout.addWidget(self._new_element_btn)
+        
+        # Copy/Moveボタン
+        self._copy_move_btn = QtWidgets.QPushButton("Copy/Move Region...")
+        self._copy_move_btn.clicked.connect(self._start_copy_move_mode)
+        element_layout.addWidget(self._copy_move_btn)
         
         # 使い方ラベル
         hint_label = QtWidgets.QLabel("Drag element to canvas to place")
@@ -456,6 +474,28 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         act_clear = QtGui.QAction("Clear All", self)
         act_clear.triggered.connect(self._action_clear)
         edit_menu.addAction(act_clear)
+        
+        edit_menu.addSeparator()
+        
+        act_copy = QtGui.QAction("Copy Selection", self)
+        act_copy.setShortcut("Ctrl+C")
+        act_copy.triggered.connect(self._action_copy)
+        edit_menu.addAction(act_copy)
+        
+        act_cut = QtGui.QAction("Cut Selection", self)
+        act_cut.setShortcut("Ctrl+X")
+        act_cut.triggered.connect(self._action_cut)
+        edit_menu.addAction(act_cut)
+        
+        act_paste = QtGui.QAction("Paste", self)
+        act_paste.setShortcut("Ctrl+V")
+        act_paste.triggered.connect(self._action_paste)
+        edit_menu.addAction(act_paste)
+        
+        act_delete = QtGui.QAction("Delete Selection", self)
+        act_delete.setShortcut("Delete")
+        act_delete.triggered.connect(self._action_delete_selection)
+        edit_menu.addAction(act_delete)
         
         edit_menu.addSeparator()
         
@@ -739,6 +779,21 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         # 仮想座標に変換
         vx, vy = self._array_to_virtual(ax, ay)
         
+        # マウス位置を記録（Ctrl+Vペースト用）
+        self._last_mouse_array_pos = (ax, ay)
+        
+        # コピー/移動モード中のプレビュー
+        if self._copy_move_mode:
+            if self._copy_move_phase == 1 and self._is_dragging and self._drag_start:
+                # フェーズ1: ドラッグ中の選択範囲プレビュー
+                sx, sy = self._drag_start
+                self._update_rect_preview(sx, sy, ax, ay)
+                return True
+            elif self._copy_move_phase == 2:
+                # フェーズ2: 配置先プレビュー
+                self._update_copy_move_preview(ax, ay)
+                return True
+        
         # element作成モード中のドラッグ → プレビュー表示
         if self._element_creation_mode and self._is_dragging and self._drag_start:
             sx, sy = self._drag_start
@@ -767,6 +822,10 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         x, y = int(pos.x()), int(pos.y())
         h, w = self._arr.shape
         
+        # コピー/移動モード中の処理
+        if self._copy_move_mode:
+            return self._handle_copy_move_click(x, y)
+        
         # element作成モード中の処理
         if self._element_creation_mode:
             # 選択範囲が設定済みの場合、範囲内クリックでアンカー設定
@@ -793,6 +852,7 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         
         if self._current_tool == EditTool.POINT:
             before = self._arr.copy()
+            before_bcl = self._raw_bcl_source
             old_val = self._arr[y, x]
             self._arr[y, x] = self._brush_value
             
@@ -803,7 +863,7 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             elif self._brush_value != 0:
                 self._add_place_cell(x, y, self._brush_value)
             
-            self._push_undo(before, f"Paint ({x},{y})")
+            self._push_undo(before, f"Paint ({x},{y})", before_bcl)
             self._modified = True
             self._update_canvas()
             self._update_bcl_source()
@@ -819,6 +879,32 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
 
     def _handle_left_release(self, event) -> bool:
         """左クリック解放"""
+        # コピー/移動モード中のドラッグ終了 → 選択範囲を確定
+        if self._copy_move_mode and self._copy_move_phase == 1 and self._is_dragging and self._drag_start:
+            pos = self._view.mapToScene(event.position().toPoint())
+            ex, ey = int(pos.x()), int(pos.y())
+            sx, sy = self._drag_start
+            h, w = self._arr.shape
+            
+            ex = max(0, min(w - 1, ex))
+            ey = max(0, min(h - 1, ey))
+            
+            x1, x2 = min(sx, ex), max(sx, ex)
+            y1, y2 = min(sy, ey), max(sy, ey)
+            
+            self._selection_rect = (x1, y1, x2, y2)
+            self._update_selection_display()
+            self._clear_preview()
+            self._is_dragging = False
+            self._drag_start = None
+            
+            vx1, vy1 = self._array_to_virtual(x1, y1)
+            vx2, vy2 = self._array_to_virtual(x2, y2)
+            self._status.showMessage(
+                f"Selected ({vx1},{vy1})-({vx2},{vy2}). "
+                f"Click INSIDE to Move, OUTSIDE to Copy")
+            return True
+        
         # element作成モード中のドラッグ終了 → 選択範囲を確定
         if self._element_creation_mode and self._is_dragging and self._drag_start:
             pos = self._view.mapToScene(event.position().toPoint())
@@ -852,6 +938,7 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         ey = max(0, min(h - 1, ey))
         
         before = self._arr.copy()
+        before_bcl = self._raw_bcl_source
         
         if self._current_tool == EditTool.RECT:
             x1, x2 = min(sx, ex), max(sx, ex)
@@ -867,31 +954,33 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
                 self._status.showMessage(f"Selected ({x1},{y1})-({x2},{y2}). Shift+Click to set anchor, Ctrl+Shift+E to create element.")
                 return True
             
-            # 0に設定 = 消しゴム操作の場合、BCLソースからも削除
+            # 0に設定 = 消しゴム操作の場合、BCLソースから該当範囲の行を削除
             if self._brush_value == 0:
-                for cy in range(y1, y2 + 1):
-                    for cx in range(x1, x2 + 1):
-                        if before[cy, cx] != 0:
-                            self._handle_cell_erase(cx, cy)
+                vx1, vy1 = self._array_to_virtual(x1, y1)
+                vx2, vy2 = self._array_to_virtual(x2, y2)
+                vx_min, vx_max = min(vx1, vx2), max(vx1, vx2)
+                vy_min, vy_max = min(vy1, vy2), max(vy1, vy2)
+                self._remove_bcl_lines_in_rect(vx_min, vy_min, vx_max, vy_max)
+                self._rebuild_array_from_bcl()
             # 0以外に設定する場合、place.cell行を追加
             elif self._brush_value != 0:
                 for cy in range(y1, y2 + 1):
                     for cx in range(x1, x2 + 1):
                         self._add_place_cell(cx, cy, self._brush_value)
+                self._arr[y1:y2+1, x1:x2+1] = self._brush_value
             
-            self._arr[y1:y2+1, x1:x2+1] = self._brush_value
-            self._push_undo(before, f"Fill rect ({x1},{y1})-({x2},{y2})")
+            self._push_undo(before, f"Fill rect ({x1},{y1})-({x2},{y2})", before_bcl)
         
         elif self._current_tool == EditTool.LINE:
-            # 0に設定 = 消しゴム操作の場合、先にBCLソースから削除
+            # 0に設定 = 消しゴム操作の場合、線上のセルに対応するBCL行を削除
             if self._brush_value == 0:
-                self._erase_line_cells(sx, sy, ex, ey, before)
+                self._erase_line_cells_bcl(sx, sy, ex, ey)
+                self._rebuild_array_from_bcl()
             # 0以外に設定する場合、place.cell行を追加
             elif self._brush_value != 0:
                 self._add_line_cells(sx, sy, ex, ey)
-            
-            self._draw_line(sx, sy, ex, ey, self._brush_value)
-            self._push_undo(before, f"Line ({sx},{sy})-({ex},{ey})")
+                self._draw_line(sx, sy, ex, ey, self._brush_value)
+            self._push_undo(before, f"Line ({sx},{sy})-({ex},{ey})", before_bcl)
         
         self._is_dragging = False
         self._drag_start = None
@@ -924,7 +1013,7 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
                 y0 += sy
 
     def _erase_line_cells(self, x0: int, y0: int, x1: int, y1: int, before: np.ndarray):
-        """線上のセルに対して消しゴム処理"""
+        """線上のセルに対して消しゴム処理（旧実装、互換性のため残す）"""
         dx = abs(x1 - x0)
         dy = abs(y1 - y0)
         sx = 1 if x0 < x1 else -1
@@ -945,6 +1034,60 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             if e2 < dx:
                 err += dx
                 y0 += sy
+    
+    def _erase_line_cells_bcl(self, ax0: int, ay0: int, ax1: int, ay1: int):
+        """線上のセルに対応するBCL行を削除（BCLソースベース）"""
+        # 線上のセル座標を収集
+        cells_to_erase = []
+        dx = abs(ax1 - ax0)
+        dy = abs(ay1 - ay0)
+        sx = 1 if ax0 < ax1 else -1
+        sy = 1 if ay0 < ay1 else -1
+        err = dx - dy
+        x0, y0 = ax0, ay0
+        
+        while True:
+            vx, vy = self._array_to_virtual(x0, y0)
+            cells_to_erase.append((vx, vy))
+            if x0 == ax1 and y0 == ay1:
+                break
+            e2 = 2 * err
+            if e2 > -dy:
+                err -= dy
+                x0 += sx
+            if e2 < dx:
+                err += dx
+                y0 += sy
+        
+        # BCLソースから該当するplace.cell行とplace.<Element>行を削除
+        lines = self._raw_bcl_source.splitlines()
+        new_lines = []
+        
+        re_cell = re.compile(r'^\s*place\.cell\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$')
+        re_elem = re.compile(r'^\s*place\.([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]\s*\)\s*$')
+        
+        cells_set = set(cells_to_erase)
+        
+        for line in lines:
+            stripped = line.strip()
+            keep = True
+            
+            m = re_cell.match(stripped)
+            if m:
+                cx, cy = int(m.group(1)), int(m.group(2))
+                if (cx, cy) in cells_set:
+                    keep = False
+            
+            m = re_elem.match(stripped)
+            if m:
+                ex, ey = int(m.group(4)), int(m.group(5))
+                if (ex, ey) in cells_set:
+                    keep = False
+            
+            if keep:
+                new_lines.append(line)
+        
+        self._raw_bcl_source = "\n".join(new_lines)
 
     def _handle_cell_erase(self, x: int, y: int):
         """セルを消した時の処理（element配置またはplace.cellを削除）"""
@@ -1124,11 +1267,15 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
 
     # ========= Undo/Redo =========
     
-    def _push_undo(self, before: np.ndarray, description: str = ""):
-        """Undo履歴に追加"""
+    def _push_undo(self, before: np.ndarray, description: str = "", before_bcl: str = None):
+        """Undo履歴に追加（配列とBCLソースの両方を保存）"""
+        if before_bcl is None:
+            before_bcl = ""  # 古い呼び出しとの互換性
         action = EditAction(
             before=before.copy(),
             after=self._arr.copy(),
+            before_bcl=before_bcl,
+            after_bcl=self._raw_bcl_source,
             description=description
         )
         self._undo_stack.append(action)
@@ -1144,6 +1291,9 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         action = self._undo_stack.pop()
         self._redo_stack.append(action)
         self._arr = action.before.copy()
+        # BCLソースも復元
+        if action.before_bcl:
+            self._raw_bcl_source = action.before_bcl
         self._modified = True
         self._update_canvas()
         self._update_bcl_source()
@@ -1157,6 +1307,9 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         action = self._redo_stack.pop()
         self._undo_stack.append(action)
         self._arr = action.after.copy()
+        # BCLソースも復元
+        if action.after_bcl:
+            self._raw_bcl_source = action.after_bcl
         self._modified = True
         self._update_canvas()
         self._update_bcl_source()
@@ -1175,11 +1328,13 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         bcl_text = self._source_edit.toPlainText()
         try:
             before = self._arr.copy()
+            before_bcl = self._raw_bcl_source
             comp = BCLCompiler()
             comp.parse(bcl_text)
             ir = comp.lower_to_ir()
             self._arr = self._ir_to_array(ir)
-            self._push_undo(before, "Apply BCL")
+            self._raw_bcl_source = bcl_text
+            self._push_undo(before, "Apply BCL", before_bcl)
             self._modified = True
             self._update_canvas()
             
@@ -1338,13 +1493,15 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
                 x_expr = m.group(4).strip()
                 y_expr = m.group(5).strip()
                 
-                # 座標を解決
+                # 座標を解決（仮想座標）
                 try:
-                    x = self._eval_coord_expr(x_expr, coord_syms)
-                    y = self._eval_coord_expr(y_expr, coord_syms)
+                    vx = self._eval_coord_expr(x_expr, coord_syms)
+                    vy = self._eval_coord_expr(y_expr, coord_syms)
+                    # 配列座標に変換して保存
+                    ax, ay = self._virtual_to_array(vx, vy)
                     
-                    # element配置履歴に追加
-                    self._element_placements.append((elem_name, x, y, self._next_instance_id))
+                    # element配置履歴に追加（配列座標で保存）
+                    self._element_placements.append((elem_name, ax, ay, self._next_instance_id))
                     self._next_instance_id += 1
                 except Exception:
                     pass
@@ -1473,10 +1630,10 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         r, g, b = palette.get(value, (200, 200, 100))
         return QtGui.QColor(r, g, b, 255)  # 完全不透明
 
-    def _on_element_dropped(self, element_name: str, x: int, y: int):
-        """elementをキャンバスにドロップして配置"""
+    def _on_element_dropped(self, element_name: str, ax: int, ay: int):
+        """elementをキャンバスにドロップして配置（ax, ayは配列座標）"""
         h, w = self._arr.shape
-        if not (0 <= y < h and 0 <= x < w):
+        if not (0 <= ay < h and 0 <= ax < w):
             self._status.showMessage(f"Drop position out of bounds")
             return
         
@@ -1492,31 +1649,33 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             # element定義をファイルに追加
             self._add_library_element_to_file(elem)
         
-        # elementを展開してセル配置
+        # elementを展開してセル配置（配列座標で処理）
         try:
             before = self._arr.copy()
-            placements = self._expand_element(elem, x, y)
+            before_bcl = self._raw_bcl_source
+            placements = self._expand_element(elem, ax, ay)
             
             for px, py, pv in placements:
                 if 0 <= py < h and 0 <= px < w:
                     self._arr[py, px] = pv
             
-            # element配置履歴に追加
+            # element配置履歴に追加（配列座標で保存）
             inst_id = self._next_instance_id
-            self._element_placements.append((element_name, x, y, inst_id))
+            self._element_placements.append((element_name, ax, ay, inst_id))
             self._next_instance_id += 1
             
-            # BCLソースに追記
+            # 仮想座標に変換してBCLソースに追記
+            vx, vy = self._array_to_virtual(ax, ay)
             inst_name = f"{element_name}_{inst_id}"
-            new_line = f"place.{element_name}({inst_name}, {elem.param}[{x}, {y}])"
+            new_line = f"place.{element_name}({inst_name}, {elem.param}[{vx}, {vy}])"
             if self._raw_bcl_source:
                 self._raw_bcl_source = self._raw_bcl_source.rstrip() + "\n" + new_line + "\n"
             
-            self._push_undo(before, f"Place {elem.name} at ({x},{y})")
+            self._push_undo(before, f"Place {elem.name} at ({vx},{vy})", before_bcl)
             self._modified = True
             self._update_canvas()
             self._update_bcl_source()
-            self._status.showMessage(f"Placed {elem.name} at ({x}, {y})")
+            self._status.showMessage(f"Placed {elem.name} at ({vx}, {vy})")
         except Exception as e:
             QtWidgets.QMessageBox.warning(self, "Element Expansion Error", str(e))
 
@@ -1679,13 +1838,16 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(self, "Error", f"Failed to load BCL:\n{e}")
 
     def _ir_to_array(self, ir: CompileResult) -> np.ndarray:
-        """CompileResult(YAML dict)からnumpy配列を構築し、原点を設定"""
+        """CompileResult(YAML dict)からnumpy配列を構築し、原点を設定（1000x1000固定）"""
+        # 固定サイズ
+        target_w, target_h = 1000, 1000
+        
         placements = ir.yaml_dict
         if not placements:
-            # 空の場合は初期状態に戻す
-            self._origin_x = -50
-            self._origin_y = -50
-            return np.zeros((100, 100), dtype=np.int8)
+            # 空の場合は1000x1000で初期化
+            self._origin_x = -target_w // 2
+            self._origin_y = -target_h // 2
+            return np.zeros((target_h, target_w), dtype=np.int8)
         
         xs = [p["coord"]["x"] for p in placements]
         ys = [p["coord"]["y"] for p in placements]
@@ -1693,16 +1855,17 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         min_x, max_x = min(xs), max(xs)
         min_y, max_y = min(ys), max(ys)
         
-        # マージンを追加（周囲に余白を確保）
-        margin = 20
-        w = max_x - min_x + 1 + margin * 2
-        h = max_y - min_y + 1 + margin * 2
+        # データの中心を計算
+        center_x = (min_x + max_x) // 2
+        center_y = (min_y + max_y) // 2
         
-        arr = np.zeros((h, w), dtype=np.int8)
+        # 1000x1000の配列を作成し、データの中心が配列の中心になるように原点を設定
+        arr = np.zeros((target_h, target_w), dtype=np.int8)
         
-        # 原点を設定: 配列の(0,0)が仮想座標(min_x - margin, min_y - margin)に対応
-        self._origin_x = min_x - margin
-        self._origin_y = min_y - margin
+        # 原点を設定: 配列の中心(500,500)が仮想座標(center_x, center_y)に対応
+        # つまり配列の(0,0)が仮想座標(center_x - 500, center_y - 500)に対応
+        self._origin_x = center_x - target_w // 2
+        self._origin_y = center_y - target_h // 2
         
         for p in placements:
             # 仮想座標から配列座標に変換
@@ -1710,7 +1873,9 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             ax = vx - self._origin_x
             ay = vy - self._origin_y
             v = p["value"]
-            arr[ay, ax] = v
+            # 範囲内のみ配置
+            if 0 <= ax < target_w and 0 <= ay < target_h:
+                arr[ay, ax] = v
         
         return arr
 
@@ -1809,17 +1974,37 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.critical(self, "Error", f"Failed to export:\n{e}")
 
     def _action_resize(self):
-        """キャンバスサイズ変更"""
+        """キャンバスサイズ変更（中心を維持）"""
         h, w = self._arr.shape
         dialog = ResizeDialog(w, h, self)
         if dialog.exec() == QtWidgets.QDialog.Accepted:
             new_w, new_h = dialog.get_size()
             new_arr = np.zeros((new_h, new_w), dtype=np.int8)
             
-            # 既存データをコピー
-            copy_h = min(h, new_h)
-            copy_w = min(w, new_w)
-            new_arr[:copy_h, :copy_w] = self._arr[:copy_h, :copy_w]
+            # 中心を維持するためのオフセット計算
+            # 旧配列の中心と新配列の中心の差分
+            offset_x = (new_w - w) // 2
+            offset_y = (new_h - h) // 2
+            
+            # 既存データを新配列の中央に配置
+            # コピー元の範囲（旧配列内）
+            src_x1 = max(0, -offset_x)
+            src_y1 = max(0, -offset_y)
+            src_x2 = min(w, new_w - offset_x)
+            src_y2 = min(h, new_h - offset_y)
+            
+            # コピー先の範囲（新配列内）
+            dst_x1 = max(0, offset_x)
+            dst_y1 = max(0, offset_y)
+            dst_x2 = dst_x1 + (src_x2 - src_x1)
+            dst_y2 = dst_y1 + (src_y2 - src_y1)
+            
+            if src_x2 > src_x1 and src_y2 > src_y1:
+                new_arr[dst_y1:dst_y2, dst_x1:dst_x2] = self._arr[src_y1:src_y2, src_x1:src_x2]
+            
+            # 原点を調整（配列が左上に拡張された分だけシフト）
+            self._origin_x -= offset_x
+            self._origin_y -= offset_y
             
             self._arr = new_arr
             self._modified = True
@@ -1833,12 +2018,13 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             before = self._arr.copy()
+            before_bcl = self._raw_bcl_source
             self._arr.fill(0)
             # element配置履歴もクリア
             self._element_placements.clear()
             # BCLソースを再生成
             self._raw_bcl_source = ""
-            self._push_undo(before, "Clear All")
+            self._push_undo(before, "Clear All", before_bcl)
             self._modified = True
             self._update_canvas()
             self._update_bcl_source()
@@ -2064,6 +2250,375 @@ class BCLEditorWindow(QtWidgets.QMainWindow):
         if self._selection_item:
             self._scene.removeItem(self._selection_item)
             self._selection_item = None
+
+    # ========= コピー/ペースト/移動機能（BCLソースベース） =========
+    
+    def _action_copy(self):
+        """選択範囲のBCL行をクリップボードにコピー"""
+        if self._selection_rect is None:
+            self._status.showMessage("No selection to copy")
+            return
+        
+        # BCLベースでコピー
+        self._copy_selection_to_clipboard_bcl()
+        
+        if self._clipboard_virt_rect:
+            vx1, vy1, vx2, vy2 = self._clipboard_virt_rect
+            self._status.showMessage(
+                f"Copied {len(self._clipboard_bcl_lines)} BCL lines "
+                f"from ({vx1},{vy1}) to ({vx2},{vy2})")
+    
+    def _action_cut(self):
+        """選択範囲をカット（コピーしてBCL行を削除）"""
+        if self._selection_rect is None:
+            self._status.showMessage("No selection to cut")
+            return
+        
+        # まずコピー
+        self._action_copy()
+        
+        if not self._clipboard_bcl_lines:
+            return
+        
+        # 選択範囲のBCL行を削除
+        vx1, vy1, vx2, vy2 = self._clipboard_virt_rect
+        
+        before = self._arr.copy()
+        before_bcl = self._raw_bcl_source
+        self._remove_bcl_lines_in_rect(vx1, vy1, vx2, vy2)
+        self._rebuild_array_from_bcl()
+        
+        self._push_undo(before, f"Cut ({vx1},{vy1})-({vx2},{vy2})", before_bcl)
+        self._modified = True
+        self._update_canvas()
+        self._update_bcl_source()
+        self._status.showMessage(f"Cut {len(self._clipboard_bcl_lines)} BCL lines")
+    
+    def _action_paste(self):
+        """クリップボードのBCL行をペースト"""
+        if not self._clipboard_bcl_lines:
+            self._status.showMessage("Nothing to paste")
+            return
+        
+        # ペースト位置を決定（優先順位: マウス位置 > アンカー > 選択範囲左上 > 元の位置）
+        if self._last_mouse_array_pos is not None:
+            ax, ay = self._last_mouse_array_pos
+        elif self._anchor_point is not None:
+            ax, ay = self._anchor_point
+        elif self._selection_rect is not None:
+            ax, ay = self._selection_rect[0], self._selection_rect[1]
+        elif self._clipboard_virt_rect is not None:
+            # 元の位置に戻す
+            vx_min, vy_min, _, _ = self._clipboard_virt_rect
+            ax, ay = self._virtual_to_array(vx_min, vy_min)
+        else:
+            self._status.showMessage("No paste position specified")
+            return
+        
+        # BCLベースでペースト（コピーモード）
+        self._copy_move_is_cut = False
+        self._paste_clipboard_bcl_at(ax, ay)
+    
+    def _action_delete_selection(self):
+        """選択範囲のBCL行を削除"""
+        if self._selection_rect is None:
+            self._status.showMessage("No selection to delete")
+            return
+        
+        x1, y1, x2, y2 = self._selection_rect
+        
+        # 仮想座標に変換
+        vx1, vy1 = self._array_to_virtual(x1, y1)
+        vx2, vy2 = self._array_to_virtual(x2, y2)
+        vx_min, vx_max = min(vx1, vx2), max(vx1, vx2)
+        vy_min, vy_max = min(vy1, vy2), max(vy1, vy2)
+        
+        before = self._arr.copy()
+        before_bcl = self._raw_bcl_source
+        self._remove_bcl_lines_in_rect(vx_min, vy_min, vx_max, vy_max)
+        self._rebuild_array_from_bcl()
+        
+        self._push_undo(before, f"Delete ({vx_min},{vy_min})-({vx_max},{vy_max})", before_bcl)
+        self._modified = True
+        self._update_canvas()
+        self._update_bcl_source()
+        self._clear_selection()
+        self._status.showMessage(f"Deleted BCL lines in ({vx_min},{vy_min})-({vx_max},{vy_max})")
+
+    # ========= コピー/移動モード（BCLソースベース） =========
+    
+    def _start_copy_move_mode(self):
+        """コピー/移動モードを開始"""
+        self._copy_move_mode = True
+        self._copy_move_phase = 1  # 範囲選択フェーズ
+        self._copy_move_btn.setText("Cancel Copy/Move")
+        self._copy_move_btn.clicked.disconnect()
+        self._copy_move_btn.clicked.connect(self._cancel_copy_move_mode)
+        
+        self._clear_selection()
+        self._clear_copy_move_preview()
+        self._clipboard_bcl_lines = []
+        self._clipboard_virt_rect = None
+        
+        self._status.showMessage("Phase 1: Drag to select region to copy/move")
+    
+    def _cancel_copy_move_mode(self):
+        """コピー/移動モードをキャンセル"""
+        self._copy_move_mode = False
+        self._copy_move_phase = 0
+        self._copy_move_btn.setText("Copy/Move Region...")
+        self._copy_move_btn.clicked.disconnect()
+        self._copy_move_btn.clicked.connect(self._start_copy_move_mode)
+        
+        self._clear_selection()
+        self._clear_copy_move_preview()
+        self._is_dragging = False
+        self._drag_start = None
+        self._status.showMessage("Copy/Move cancelled")
+    
+    def _handle_copy_move_click(self, x: int, y: int) -> bool:
+        """コピー/移動モード中のクリック処理（配列座標x, y）"""
+        h, w = self._arr.shape
+        
+        if self._copy_move_phase == 1:
+            # フェーズ1: 範囲選択中
+            if self._selection_rect is None:
+                # ドラッグ開始
+                self._drag_start = (x, y)
+                self._is_dragging = True
+                return True
+            else:
+                # 選択範囲が確定済み → フェーズ2へ移行
+                # 選択範囲内クリックで移動モード、範囲外クリックでコピーモード
+                x1, y1, x2, y2 = self._selection_rect
+                if x1 <= x <= x2 and y1 <= y <= y2:
+                    # 範囲内クリック → 移動（カット）モードでフェーズ2へ
+                    self._copy_move_is_cut = True
+                    self._copy_selection_to_clipboard_bcl()
+                    self._copy_move_phase = 2
+                    self._status.showMessage(f"Phase 2: Click to place (Move mode - {len(self._clipboard_bcl_lines)} lines)")
+                else:
+                    # 範囲外クリック → コピーモードでフェーズ2へ
+                    self._copy_move_is_cut = False
+                    self._copy_selection_to_clipboard_bcl()
+                    self._copy_move_phase = 2
+                    self._status.showMessage(f"Phase 2: Click to place (Copy mode - {len(self._clipboard_bcl_lines)} lines)")
+                return True
+        
+        elif self._copy_move_phase == 2:
+            # フェーズ2: 配置先指定
+            if not self._clipboard_bcl_lines:
+                self._cancel_copy_move_mode()
+                return True
+            
+            # クリック位置にペースト
+            self._paste_clipboard_bcl_at(x, y)
+            
+            # モード終了
+            self._cancel_copy_move_mode()
+            return True
+        
+        return False
+    
+    def _copy_selection_to_clipboard_bcl(self):
+        """選択範囲内のBCL行をクリップボードにコピー"""
+        if self._selection_rect is None:
+            return
+        
+        ax1, ay1, ax2, ay2 = self._selection_rect
+        
+        # 仮想座標に変換
+        vx1, vy1 = self._array_to_virtual(ax1, ay1)
+        vx2, vy2 = self._array_to_virtual(ax2, ay2)
+        
+        # 範囲を正規化
+        vx_min, vx_max = min(vx1, vx2), max(vx1, vx2)
+        vy_min, vy_max = min(vy1, vy2), max(vy1, vy2)
+        
+        self._clipboard_virt_rect = (vx_min, vy_min, vx_max, vy_max)
+        self._clipboard_bcl_lines = []
+        
+        # BCLソースから該当する行を抽出
+        lines = self._raw_bcl_source.splitlines()
+        
+        # place.cell(x, y, v) パターン
+        re_cell = re.compile(r'^\s*place\.cell\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$')
+        # place.<Element>(inst, param[x, y]) パターン
+        re_elem = re.compile(r'^\s*place\.([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]\s*\)\s*$')
+        
+        for line in lines:
+            stripped = line.strip()
+            
+            # place.cell行をチェック
+            m = re_cell.match(stripped)
+            if m:
+                cx, cy, cv = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                if vx_min <= cx <= vx_max and vy_min <= cy <= vy_max:
+                    self._clipboard_bcl_lines.append(stripped)
+                continue
+            
+            # place.<Element>行をチェック
+            m = re_elem.match(stripped)
+            if m:
+                ex, ey = int(m.group(4)), int(m.group(5))
+                if vx_min <= ex <= vx_max and vy_min <= ey <= vy_max:
+                    self._clipboard_bcl_lines.append(stripped)
+                continue
+    
+    def _paste_clipboard_bcl_at(self, ax: int, ay: int):
+        """クリップボードのBCL行を指定位置にペースト（配列座標ax, ay）"""
+        if not self._clipboard_bcl_lines or self._clipboard_virt_rect is None:
+            return
+        
+        # 配列座標を仮想座標に変換
+        vx, vy = self._array_to_virtual(ax, ay)
+        
+        # オフセット計算（クリップボードの左上からの差分）
+        vx_min, vy_min, vx_max, vy_max = self._clipboard_virt_rect
+        dx = vx - vx_min
+        dy = vy - vy_min
+        
+        before_bcl = self._raw_bcl_source
+        before_arr = self._arr.copy()
+        
+        # 移動モードの場合、元の行を削除
+        if self._copy_move_is_cut:
+            self._remove_bcl_lines_in_rect(vx_min, vy_min, vx_max, vy_max)
+        
+        # 座標をオフセットして新しい行を生成
+        new_lines = []
+        re_cell = re.compile(r'^place\.cell\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)$')
+        re_elem = re.compile(r'^place\.([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]\s*\)$')
+        
+        for line in self._clipboard_bcl_lines:
+            m = re_cell.match(line)
+            if m:
+                cx, cy, cv = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                new_lines.append(f"place.cell({cx + dx}, {cy + dy}, {cv})")
+                continue
+            
+            m = re_elem.match(line)
+            if m:
+                elem_name = m.group(1)
+                inst_name = m.group(2)
+                param_name = m.group(3)
+                ex, ey = int(m.group(4)), int(m.group(5))
+                # インスタンス名を新しく生成
+                new_inst = f"{elem_name}_{self._next_instance_id}"
+                self._next_instance_id += 1
+                new_lines.append(f"place.{elem_name}({new_inst}, {param_name}[{ex + dx}, {ey + dy}])")
+                continue
+        
+        # BCLソースに追加
+        if new_lines:
+            self._raw_bcl_source = self._raw_bcl_source.rstrip() + "\n" + "\n".join(new_lines) + "\n"
+        
+        # BCLソースから配列を再生成
+        self._rebuild_array_from_bcl()
+        
+        action_name = "Move" if self._copy_move_is_cut else "Copy"
+        self._push_undo(before_arr, f"{action_name} {len(new_lines)} lines to ({vx},{vy})", before_bcl)
+        self._modified = True
+        self._update_canvas()
+        self._update_bcl_source()
+        self._status.showMessage(f"{action_name}d {len(new_lines)} BCL lines to ({vx},{vy})")
+    
+    def _remove_bcl_lines_in_rect(self, vx_min: int, vy_min: int, vx_max: int, vy_max: int):
+        """指定範囲内のBCL行を削除"""
+        lines = self._raw_bcl_source.splitlines()
+        new_lines = []
+        
+        re_cell = re.compile(r'^\s*place\.cell\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$')
+        re_elem = re.compile(r'^\s*place\.([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]\s*\)\s*$')
+        
+        for line in lines:
+            stripped = line.strip()
+            keep = True
+            
+            m = re_cell.match(stripped)
+            if m:
+                cx, cy = int(m.group(1)), int(m.group(2))
+                if vx_min <= cx <= vx_max and vy_min <= cy <= vy_max:
+                    keep = False
+            
+            m = re_elem.match(stripped)
+            if m:
+                ex, ey = int(m.group(4)), int(m.group(5))
+                if vx_min <= ex <= vx_max and vy_min <= ey <= vy_max:
+                    keep = False
+            
+            if keep:
+                new_lines.append(line)
+        
+        self._raw_bcl_source = "\n".join(new_lines)
+    
+    def _rebuild_array_from_bcl(self):
+        """BCLソースから配列を再生成"""
+        # 配列をクリア
+        self._arr.fill(0)
+        
+        # BCLソースを解析して配列に反映
+        lines = self._raw_bcl_source.splitlines()
+        
+        re_cell = re.compile(r'^\s*place\.cell\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$')
+        re_elem = re.compile(r'^\s*place\.([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\[\s*(-?\d+)\s*,\s*(-?\d+)\s*\]\s*\)\s*$')
+        
+        h, w = self._arr.shape
+        
+        for line in lines:
+            stripped = line.strip()
+            
+            # place.cell行
+            m = re_cell.match(stripped)
+            if m:
+                vx, vy, v = int(m.group(1)), int(m.group(2)), int(m.group(3))
+                ax, ay = self._virtual_to_array(vx, vy)
+                if 0 <= ax < w and 0 <= ay < h:
+                    self._arr[ay, ax] = v
+                continue
+            
+            # place.<Element>行
+            m = re_elem.match(stripped)
+            if m:
+                elem_name = m.group(1)
+                ex, ey = int(m.group(4)), int(m.group(5))
+                ax, ay = self._virtual_to_array(ex, ey)
+                
+                # element定義を探して展開
+                elem = self._find_element_by_name(elem_name)
+                if elem:
+                    placements = self._expand_element(elem, ax, ay)
+                    for px, py, pv in placements:
+                        if 0 <= px < w and 0 <= py < h:
+                            self._arr[py, px] = pv
+                continue
+    
+    def _clear_copy_move_preview(self):
+        """コピー/移動プレビューをクリア"""
+        for item in self._copy_move_preview_items:
+            self._scene.removeItem(item)
+        self._copy_move_preview_items.clear()
+    
+    def _update_copy_move_preview(self, ax: int, ay: int):
+        """コピー/移動プレビューを更新（配列座標ax, ay）"""
+        self._clear_copy_move_preview()
+        
+        if not self._clipboard_bcl_lines or self._clipboard_virt_rect is None:
+            return
+        
+        # クリップボードの仮想座標範囲からサイズを計算
+        vx_min, vy_min, vx_max, vy_max = self._clipboard_virt_rect
+        cw = vx_max - vx_min + 1
+        ch = vy_max - vy_min + 1
+        
+        # プレビュー矩形を描画
+        rect = self._scene.addRect(
+            ax, ay, cw, ch,
+            QtGui.QPen(QtGui.QColor(0, 255, 0), 0.1, QtCore.Qt.DashLine),
+            QtGui.QBrush(QtGui.QColor(0, 255, 0, 30))
+        )
+        rect.setZValue(95)
+        self._copy_move_preview_items.append(rect)
 
 
 # ========= ダイアログ =========

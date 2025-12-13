@@ -176,10 +176,8 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
         self._rule_file_paths = []
         
         # シミュレーション設定
-        self._sim_steps = 1
         self._sim_global_prob = 1.0
         self._sim_seed = 1
-        self._sim_parallel_trials = 1
         self._sim_device = "cpu"  # デバイス設定
         self._current_step = 0  # 現在のステップ数
         # 状態ゲート設定
@@ -741,10 +739,10 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             return
         
         dialog = SimulationConfigDialog(
-            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self._sim_device,
+            self._sim_global_prob, self._sim_seed, self._sim_device,
             self._sim_state_gate_enable, self._sim_state_gate_interval, self)
         if dialog.exec() == QtWidgets.QDialog.Accepted:
-            self._sim_steps, self._sim_global_prob, self._sim_seed, self._sim_parallel_trials, self._sim_device, \
+            self._sim_global_prob, self._sim_seed, self._sim_device, \
             self._sim_state_gate_enable, self._sim_state_gate_interval = dialog.get_values()
             
             # BCA_Simulatorインスタンスを作成
@@ -753,17 +751,21 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                     cellspace_path=self._cellspace_file_path,
                     rule_paths=self._rule_file_paths,
                     device=self._sim_device,
-                    spatial_event_filePath=self._event_file_path
+                    spatial_event_filePath=self._event_file_path,
+                    gui_mode=True
                 )
                 
                 # テンソル割り当て
                 self._bca_simulator.Allocate_torch_Tensors_on_Device()
                 
+                # GUIモードでは並列試行数は1固定
+                self._bca_simulator.set_ParallelTrial(1)
+                
                 # デバッグ情報を収集
                 debug_info = self._collect_simulator_debug_info()
                 
                 self._status.showMessage(
-                    f"Simulation configured: steps={self._sim_steps}, prob={self._sim_global_prob}, "
+                    f"Simulation configured: prob={self._sim_global_prob}, "
                     f"seed={self._sim_seed}, device={self._sim_device}, "
                     f"state_gate={'ON' if self._sim_state_gate_enable else 'OFF'}, BCA_Simulator ready")
                 
@@ -774,7 +776,6 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
                     f"Rules: {len(self._rule_file_paths)} files\n"
                     f"Events: {'Yes' if self._event_file_path else 'None'}\n"
                     f"Device: {self._sim_device}\n"
-                    f"Steps: {self._sim_steps}\n"
                     f"Global Probability: {self._sim_global_prob}\n"
                     f"Seed: {self._sim_seed}\n"
                     f"State Gate: {'Enabled' if self._sim_state_gate_enable else 'Disabled'}\n"
@@ -834,30 +835,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             return
         
         try:
-            # 初回実行時のみ平行試行数を設定
-            if self._current_step == 0:
-                self._bca_simulator.set_ParallelTrial(self._sim_parallel_trials)
-            
-            # 1ステップだけ実行
-            self._bca_simulator.run_steps(
-                steps=1,
+            # 1ステップ実行（stepメソッドが_current_stepを管理）
+            result_array = self._bca_simulator.step(
                 global_prob=self._sim_global_prob,
-                seed=self._sim_seed + self._current_step,
+                seed=self._sim_seed,
                 debug=False,
                 debug_per_trial=False,
-                state_gate_enable=False,  # GUI側で制御するため無効化
+                state_gate_enable=self._sim_state_gate_enable,
                 state_gate_interval=self._sim_state_gate_interval
             )
             
-            # GUI側で状態ゲートを適用
-            if self._sim_state_gate_enable and (self._current_step % self._sim_state_gate_interval == 0):
-                self._bca_simulator.apply_state_gates()
-            
-            self._current_step += 1
-            
-            # シミュレーション結果をGUIに反映
-            result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
-            result_array = result_tensor.cpu().numpy()
+            self._current_step = self._bca_simulator._current_step
             
             # デバッグ: テンソル形状を確認
             original_shape = self._bca_simulator.cellspace_tensor.shape
@@ -894,10 +882,6 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
             self._status.showMessage(f"Continuous run stopped at step {self._current_step}")
         else:
             # 開始
-            # 初回実行時のみ平行試行数を設定
-            if self._current_step == 0:
-                self._bca_simulator.set_ParallelTrial(self._sim_parallel_trials)
-            
             self._timer.start(self._step_interval)
             self._is_running = True
             self._a_run_continuous.setText("Stop Continuous Run")
@@ -918,33 +902,17 @@ class CellSpaceWindow(QtWidgets.QMainWindow):
     def _timer_step(self) -> None:
         """タイマーによる自動ステップ実行"""
         try:
-            # 1ステップだけ実行
-            self._bca_simulator.run_steps(
-                steps=1,
+            # 1ステップ実行（stepメソッドが_current_stepを管理）
+            result_array = self._bca_simulator.step(
                 global_prob=self._sim_global_prob,
-                seed=self._sim_seed + self._current_step,
+                seed=self._sim_seed,
                 debug=False,
                 debug_per_trial=False,
-                state_gate_enable=False,  # GUI側で制御するため無効化
+                state_gate_enable=self._sim_state_gate_enable,
                 state_gate_interval=self._sim_state_gate_interval
             )
             
-            # GUI側で状態ゲートを適用
-            if self._sim_state_gate_enable and (self._current_step % self._sim_state_gate_interval == 0):
-                self._bca_simulator.apply_state_gates()
-            
-            self._current_step += 1
-            
-            # シミュレーション結果をGUIに反映
-            result_tensor = self._bca_simulator.TCHW[0, 0]  # [H, W]
-            result_array = result_tensor.cpu().numpy()
-            
-            # デバッグ: テンソル形状を確認
-            original_shape = self._bca_simulator.cellspace_tensor.shape
-            result_shape = result_array.shape
-            print(f"Debug: Original cellspace shape: {original_shape}")
-            print(f"Debug: Result array shape: {result_shape}")
-            print(f"Debug: Shape match: {original_shape == result_shape}")
+            self._current_step = self._bca_simulator._current_step
             
             # 表示を更新
             self.set_array(result_array)
@@ -1343,18 +1311,12 @@ class RuleViewerWindow(QtWidgets.QMainWindow):
 
 class SimulationConfigDialog(QtWidgets.QDialog):
     """シミュレーション設定ダイアログ"""
-    def __init__(self, steps, global_prob, seed, parallel_trials, device, state_gate_enable, state_gate_interval, parent=None):
+    def __init__(self, global_prob, seed, device, state_gate_enable, state_gate_interval, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Simulation Configuration")
         self.setModal(True)
         
         layout = QtWidgets.QFormLayout(self)
-        
-        # Steps
-        self._steps_spin = QtWidgets.QSpinBox()
-        self._steps_spin.setRange(1, 10000)
-        self._steps_spin.setValue(steps)
-        layout.addRow("Steps:", self._steps_spin)
         
         # Global Probability
         self._prob_spin = QtWidgets.QDoubleSpinBox()
@@ -1369,12 +1331,6 @@ class SimulationConfigDialog(QtWidgets.QDialog):
         self._seed_spin.setRange(1, 999999)
         self._seed_spin.setValue(seed)
         layout.addRow("Seed:", self._seed_spin)
-        
-        # Parallel Trials
-        self._trials_spin = QtWidgets.QSpinBox()
-        self._trials_spin.setRange(1, 10)
-        self._trials_spin.setValue(parallel_trials)
-        layout.addRow("Parallel Trials:", self._trials_spin)
         
         # Device
         self._device_combo = QtWidgets.QComboBox()
@@ -1408,7 +1364,7 @@ class SimulationConfigDialog(QtWidgets.QDialog):
         buttons.rejected.connect(self.reject)
         layout.addRow(buttons)
         
-        self.resize(350, 280)
+        self.resize(350, 220)
     
     def _on_state_gate_toggled(self, checked):
         """状態ゲート有効化チェックボックスのトグル処理"""
@@ -1416,10 +1372,8 @@ class SimulationConfigDialog(QtWidgets.QDialog):
     
     def get_values(self):
         return (
-            self._steps_spin.value(),
             self._prob_spin.value(),
             self._seed_spin.value(),
-            self._trials_spin.value(),
             self._device_combo.currentText(),
             self._state_gate_check.isChecked(),
             self._state_gate_interval_spin.value()

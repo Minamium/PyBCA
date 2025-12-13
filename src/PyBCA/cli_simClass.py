@@ -15,7 +15,8 @@ class BCA_Simulator:
                  cellspace_path: str,
                  rule_paths: List[str],
                  device: str = "cuda",
-                 spatial_event_filePath: str | None = None
+                 spatial_event_filePath: str | None = None,
+                 gui_mode: bool = False
                  ):
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
@@ -42,12 +43,14 @@ class BCA_Simulator:
         # 乱数生成器
         self.rng = torch.Generator(device=self.device)
 
+        # GUIモード設定
+        self.gui_mode = gui_mode
+        self._current_step = 0
+
         # 畳み込み有効化
         torch.backends.cudnn.benchmark = True
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
-
-        
 
     def Allocate_torch_Tensors_on_Device(self):
         # PyTorchテンソルにnumpy配列を転送
@@ -105,8 +108,42 @@ class BCA_Simulator:
             self.event_history = [{name: [] for name in names} for _ in range(parallel_trial)]
         else:
             self.event_history = None
-    
 
+    # ステップ実行関数
+    def step(self, 
+             global_prob: float, 
+             seed: int = 0, 
+             debug: bool = False, 
+             debug_per_trial: bool = False,
+             state_gate_enable: bool = False,
+             state_gate_interval: int = 500
+            ):
+        print(f"Step {self._current_step}")
+        ###################
+        # 乱数生成器の定義  #
+        ###################
+        self.rng.manual_seed(self._current_step + 65536 + seed)
+        self.update_cellspace(
+                global_prob=global_prob,
+                debug=debug,
+                debug_per_trial=debug_per_trial
+                )
+
+        # 大域状態ゲートの適用
+        if state_gate_enable and (self._current_step % state_gate_interval == 0):
+            self.apply_state_gates()
+
+        # 特殊イベントの適用
+        self.apply_spatial_events()
+
+        # インクリメント
+        self._current_step += 1
+
+        if self.gui_mode:
+            return self.TCHW[0, 0].cpu().numpy()
+        return None
+
+    
     # 任意ステップ数だけセル空間を更新する
     def run_steps(self, 
                    steps: int, 
@@ -119,24 +156,14 @@ class BCA_Simulator:
                    ):
         print(f"Run steps: {steps}")
         for i in range(steps):
-            print(f"Step {i}")
-            self._current_step = i
-            ###################
-            # 乱数生成器の定義  #
-            ###################
-            self.rng.manual_seed(i + 65536 + seed)
-            self.update_cellspace(
-                global_prob=global_prob,
-                debug=debug,
-                debug_per_trial=debug_per_trial
-            )
+            self.step(global_prob,
+                       seed,
+                       debug,
+                       debug_per_trial,
+                       state_gate_enable,
+                       state_gate_interval
+                       )
 
-            # 大域状態ゲートの適用
-            if state_gate_enable and (i % state_gate_interval == 0):
-                self.apply_state_gates()
-
-            # 特殊イベントの適用
-            self.apply_spatial_events()
 
     ###################################
     # セル空間を更新する関数を定義する
@@ -244,37 +271,69 @@ class BCA_Simulator:
     # 特殊イベントを適用する
     def apply_spatial_events(self) -> None:
         """
-        lib.load_special_events_from_file() の形式に準拠:
-          1行 = [ref_x, ref_y, ref_state, write_x, write_y, write_state]（global座標, X→Y）
-        (ref_x,ref_y) が ref_state のとき (write_x,write_y) に write_state を確定書き込み。
-        全 trial に同一内容を適用。完全ベクトル化。競合なし前提。
+        1行 = [ref_x, ref_y, ref_state, write_x, write_y, write_state, (prob), (start_step), (end_step)]
+        - prob は省略可（省略時 1.0）
+        - start_step/end_step は省略可（省略時 -1,-1=常時）
+        - (ref_x,ref_y) が ref_state のとき (write_x,write_y) に write_state を書き込み
+        - prob は trial ごと独立に判定（必要なら共有判定にも変更可）
         """
         ev = getattr(self, "spatial_event_arrays_tensor", None)
         if ev is None or ev.numel() == 0:
             return
 
-        # T, H, W が無いと何もできない
         assert hasattr(self, "TCHW"), "call set_ParallelTrial() first."
         T, _, H, W = self.TCHW.shape
 
         device = self.device
-        ev = ev.to(device=device, dtype=torch.int64)
+        ev = ev.to(device=device)
 
-        # !!! ここがポイント: X→Y の順で読む !!!
-        pre_x_g, pre_y_g = ev[:, 0], ev[:, 1]
-        pre_v            = ev[:, 2].to(torch.int8)
-        pst_x_g, pst_y_g = ev[:, 3], ev[:, 4]
-        pst_v            = ev[:, 5].to(torch.int8)
+        # 必須6列
+        if ev.ndim != 2 or ev.shape[1] < 6:
+            raise ValueError("spatial_event_arrays_tensor は shape=(E,6以上) が必要です。")
 
-        # global -> local（オフセットは X と Y をそれぞれ引く）
+        # !!! X→Y の順で読む !!!
+        pre_x_g = ev[:, 0].to(torch.int64)
+        pre_y_g = ev[:, 1].to(torch.int64)
+        pre_v   = ev[:, 2].to(torch.int8)
+        pst_x_g = ev[:, 3].to(torch.int64)
+        pst_y_g = ev[:, 4].to(torch.int64)
+        pst_v   = ev[:, 5].to(torch.int8)
+
+        # 追加列: prob / start_step / end_step（後方互換）
+        if ev.shape[1] >= 7:
+            prob = ev[:, 6].to(torch.float32).clamp_(0.0, 1.0)
+        else:
+            prob = torch.ones((ev.shape[0],), device=device, dtype=torch.float32)
+
+        if ev.shape[1] >= 9:
+            start_step = ev[:, 7].to(torch.int64)
+            end_step   = ev[:, 8].to(torch.int64)
+        else:
+            start_step = torch.full((ev.shape[0],), -1, device=device, dtype=torch.int64)
+            end_step   = torch.full((ev.shape[0],), -1, device=device, dtype=torch.int64)
+
+        # step 範囲でイベントを無効化（-1 は無制限）
+        step = getattr(self, "_current_step", None)
+        if step is None:
+            step_keep = torch.ones((ev.shape[0],), device=device, dtype=torch.bool)
+        else:
+            s_ok = (start_step < 0) | (step >= start_step)
+            e_ok = (end_step   < 0) | (step <= end_step)
+            step_keep = (s_ok & e_ok)
+
+        if not step_keep.any():
+            return
+
+        # global -> local
         pre_x = pre_x_g - self.offset_x
         pre_y = pre_y_g - self.offset_y
         pst_x = pst_x_g - self.offset_x
         pst_y = pst_y_g - self.offset_y
 
-        # 画面内だけ採用
+        # 画面内だけ + step範囲だけ採用
         keep = (pre_x >= 0) & (pre_x < W) & (pre_y >= 0) & (pre_y < H) & \
-               (pst_x >= 0) & (pst_x < W) & (pst_y >= 0) & (pst_y < H)
+               (pst_x >= 0) & (pst_x < W) & (pst_y >= 0) & (pst_y < H) & step_keep
+
         if not keep.any():
             return
 
@@ -284,18 +343,34 @@ class BCA_Simulator:
         pst_x = pst_x[keep].to(torch.int64)
         pst_y = pst_y[keep].to(torch.int64)
         pst_v = pst_v[keep]
+        prob  = prob[keep]  # [E]
+
+        E = pre_x.shape[0]
+        if E == 0:
+            return
 
         # 線形Index化（行優先: y*W + x）
         pre_lin = pre_y * W + pre_x       # [E]
         pst_lin = pst_y * W + pst_x       # [E]
 
-        # (T×E) で条件判定
-        cs_flat    = self.TCHW[:, 0].reshape(T, H * W)                         # [T, H*W] int8 (ビュー)
+        cs_flat    = self.TCHW[:, 0].reshape(T, H * W)                         # [T, H*W] int8
         cur_pre_TE = cs_flat.gather(1, pre_lin.view(1, -1).expand(T, -1))      # [T, E]
         cond_TE    = (cur_pre_TE == pre_v.view(1, -1).expand(T, -1))           # [T, E] bool
         if not cond_TE.any():
-            if getattr(self, "_debug_spatial_events", False):
-                print("[events] no match: kept", keep.sum().item())
+            return
+
+        # --- イベント確率ゲート（trial ごと独立）---
+        if torch.all(prob == 1):
+            gate_TE = torch.ones((T, E), device=device, dtype=torch.bool)
+        elif torch.all(prob == 0):
+            gate_TE = torch.zeros((T, E), device=device, dtype=torch.bool)
+        else:
+            gen = getattr(self, "rng_event", self.rng)
+            rnd = torch.rand((T, E), device=device, generator=gen)            # [T,E]
+            gate_TE = (rnd < prob.view(1, -1).expand(T, -1))
+
+        cond_TE = (cond_TE & gate_TE)
+        if not cond_TE.any():
             return
 
         # 条件を満たす (t,e) を抽出し、(t*HW + pst_lin[e]) へ書き込み
@@ -305,33 +380,20 @@ class BCA_Simulator:
         dst   = (t_idx.to(torch.int64) * (H * W) + pst_lin[e_idx]).to(torch.int64)
         wvals = pst_v[e_idx]                       # int8
 
-        # self.TCHW をインプレース更新（ビューに対する index_copy_）
         cs_all = self.TCHW[:, 0].reshape(T * H * W)   # int8, ビュー
         cs_all.index_copy_(0, dst, wvals)
 
-        # 適用フラグ（任意）
         if hasattr(self, "TCHW_applied"):
             applied_all = self.TCHW_applied[:, 0].reshape(T * H * W)
             applied_all.index_fill_(0, dst, True)
 
-        if getattr(self, "_debug_spatial_events", False):
-            print(f"[events] total={ev.shape[0]}, kept={keep.sum().item()}, hits={hit.shape[0]}")
-            print("  sample(local):",
-                  list(zip(pre_x.tolist()[:3], pre_y.tolist()[:3], pre_v.tolist()[:3],
-                           pst_x.tolist()[:3], pst_y.tolist()[:3], pst_v.tolist()[:3])))
-
-        # 既存：hit, t_idx, e_idx を算出済み
-        # names を keep マスクに合わせて整列
+        # event_history 記録（発火したものだけ）
         if getattr(self, "event_history", None) is not None:
-            # GPUの keep をCPU boolsへ
-            keep_list = keep.detach().to('cpu').tolist()
+            keep_list = keep.detach().to("cpu").tolist()
             names_kept = [n for n, k in zip(self.spatial_event_names, keep_list) if k]
-
-        step = getattr(self, "_current_step", None)
-        if step is not None and hit.shape[0] > 0:
-            # (t,e) ごとに発火ステップを記録
-            for t, e in zip(t_idx.tolist(), e_idx.tolist()):
-                self.event_history[t][names_kept[e]].append(step)
+            if step is not None and hit.shape[0] > 0:
+                for t, e in zip(t_idx.tolist(), e_idx.tolist()):
+                    self.event_history[t][names_kept[e]].append(step)
 
     # 大域状態ゲート
     def apply_state_gates(self):
@@ -670,7 +732,7 @@ class BCA_Simulator:
         deduplicate: bool = False,            # Trueなら各(eventのsteps)を集合化→昇順
         return_df: bool = True,               # TrueならDataFrameを返す（jsonl_trials系は保存が主目的）
         parquet_compression: str = "snappy"   # "snappy" | "zstd" など
-    ):
+        ):
         """
         event_history を保存/変換するユーティリティ。
 
