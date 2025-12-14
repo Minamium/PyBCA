@@ -55,7 +55,7 @@ if __name__ == "__main__":
     simulator.set_ParallelTrial(1)
     #print(simulator.TCHW)
     timer = time.time()
-    simulator.run_steps(steps=80_000, global_prob=1.0, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=300)
+    simulator.run_steps(steps=80_000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=300)
     print(f"Time: {time.time() - timer}")
 
     #print("After Apllied run_steps, TCHW")

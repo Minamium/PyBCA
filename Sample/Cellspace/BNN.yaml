@@ -1072,22 +1072,6 @@
   value: 1
 - coord:
     x: 15
-    y: -26
-  value: 1
-- coord:
-    x: 15
-    y: -27
-  value: 1
-- coord:
-    x: 16
-    y: -27
-  value: 1
-- coord:
-    x: 15
-    y: -28
-  value: 1
-- coord:
-    x: 15
     y: -23
   value: 1
 - coord:
@@ -1205,14 +1189,6 @@
 - coord:
     x: 19
     y: -34
-  value: 1
-- coord:
-    x: 17
-    y: -27
-  value: 1
-- coord:
-    x: 19
-    y: -27
   value: 1
 - coord:
     x: 6
@@ -2699,30 +2675,6 @@
     y: -26
   value: 1
 - coord:
-    x: 63
-    y: -28
-  value: 1
-- coord:
-    x: 63
-    y: -27
-  value: 1
-- coord:
-    x: 59
-    y: -27
-  value: 1
-- coord:
-    x: 60
-    y: -27
-  value: 1
-- coord:
-    x: 61
-    y: -27
-  value: 1
-- coord:
-    x: 62
-    y: -27
-  value: 1
-- coord:
     x: 72
     y: -27
   value: 1
@@ -3827,26 +3779,6 @@
     y: -33
   value: 1
 - coord:
-    x: 19
-    y: -28
-  value: 1
-- coord:
-    x: 20
-    y: -28
-  value: 1
-- coord:
-    x: 18
-    y: -28
-  value: 1
-- coord:
-    x: 18
-    y: -27
-  value: 1
-- coord:
-    x: 18
-    y: -26
-  value: 1
-- coord:
     x: 63
     y: -38
   value: 1
@@ -3917,18 +3849,6 @@
 - coord:
     x: 59
     y: -29
-  value: 1
-- coord:
-    x: 58
-    y: -28
-  value: 1
-- coord:
-    x: 59
-    y: -28
-  value: 1
-- coord:
-    x: 60
-    y: -28
   value: 1
 - coord:
     x: 60
@@ -4378,3 +4298,75 @@
     x: 70
     y: -34
   value: 2
+- coord:
+    x: 61
+    y: -26
+  value: 1
+- coord:
+    x: 62
+    y: -26
+  value: 1
+- coord:
+    x: 59
+    y: -28
+  value: 1
+- coord:
+    x: 59
+    y: -26
+  value: 1
+- coord:
+    x: 58
+    y: -27
+  value: 1
+- coord:
+    x: 59
+    y: -27
+  value: 1
+- coord:
+    x: 60
+    y: -27
+  value: 1
+- coord:
+    x: 60
+    y: -25
+  value: 1
+- coord:
+    x: 15
+    y: -26
+  value: 1
+- coord:
+    x: 16
+    y: -26
+  value: 1
+- coord:
+    x: 17
+    y: -26
+  value: 1
+- coord:
+    x: 19
+    y: -26
+  value: 1
+- coord:
+    x: 19
+    y: -28
+  value: 1
+- coord:
+    x: 19
+    y: -27
+  value: 1
+- coord:
+    x: 18
+    y: -27
+  value: 1
+- coord:
+    x: 18
+    y: -26
+  value: 1
+- coord:
+    x: 18
+    y: -25
+  value: 1
+- coord:
+    x: 20
+    y: -27
+  value: 1
