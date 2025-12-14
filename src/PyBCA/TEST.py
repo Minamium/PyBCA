@@ -25,7 +25,8 @@ if __name__ == "__main__":
     ]
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
-                              spatial_event_filePath="Sample/Specialevent/BNN_event.py")
+                              spatial_event_filePath="Sample/Specialevent/BNN_event.py",
+                              use_tqdm=True)
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示

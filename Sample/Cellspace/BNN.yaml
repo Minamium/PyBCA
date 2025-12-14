@@ -3524,18 +3524,10 @@
   value: 1
 - coord:
     x: 12
-    y: -34
-  value: 2
-- coord:
-    x: 12
     y: -38
   value: 2
 - coord:
     x: 10
-    y: -38
-  value: 2
-- coord:
-    x: 14
     y: -38
   value: 2
 - coord:
@@ -3791,10 +3783,6 @@
     y: -38
   value: 2
 - coord:
-    x: 64
-    y: -38
-  value: 2
-- coord:
     x: 61
     y: -38
   value: 1
@@ -3911,19 +3899,7 @@
     y: -47
   value: 1
 - coord:
-    x: 66
-    y: -34
-  value: 2
-- coord:
     x: 70
-    y: -38
-  value: 2
-- coord:
-    x: 62
-    y: -38
-  value: 2
-- coord:
-    x: 16
     y: -38
   value: 2
 - coord:
@@ -3991,19 +3967,7 @@
     y: -42
   value: 1
 - coord:
-    x: 10
-    y: -34
-  value: 2
-- coord:
-    x: 64
-    y: -34
-  value: 2
-- coord:
     x: 8
-    y: -34
-  value: 2
-- coord:
-    x: 62
     y: -34
   value: 2
 - coord:
@@ -4283,18 +4247,6 @@
     y: 16
   value: 1
 - coord:
-    x: 14
-    y: -34
-  value: 2
-- coord:
-    x: 16
-    y: -34
-  value: 2
-- coord:
-    x: 68
-    y: -34
-  value: 2
-- coord:
     x: 70
     y: -34
   value: 2
@@ -4369,4 +4321,52 @@
 - coord:
     x: 20
     y: -27
+  value: 1
+- coord:
+    x: 14
+    y: -38
+  value: 1
+- coord:
+    x: 16
+    y: -38
+  value: 1
+- coord:
+    x: 14
+    y: -34
+  value: 1
+- coord:
+    x: 16
+    y: -34
+  value: 1
+- coord:
+    x: 12
+    y: -34
+  value: 1
+- coord:
+    x: 10
+    y: -34
+  value: 1
+- coord:
+    x: 62
+    y: -34
+  value: 1
+- coord:
+    x: 64
+    y: -34
+  value: 1
+- coord:
+    x: 66
+    y: -34
+  value: 1
+- coord:
+    x: 68
+    y: -34
+  value: 1
+- coord:
+    x: 64
+    y: -38
+  value: 1
+- coord:
+    x: 62
+    y: -38
   value: 1

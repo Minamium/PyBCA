@@ -8,6 +8,7 @@ except ImportError:
 import torch
 import torch.nn.functional as F 
 from typing import List
+from tqdm import tqdm
 
 # クラス定義
 class BCA_Simulator:
@@ -16,7 +17,8 @@ class BCA_Simulator:
                  rule_paths: List[str],
                  device: str = "cuda",
                  spatial_event_filePath: str | None = None,
-                 gui_mode: bool = False
+                 gui_mode: bool = False,
+                 use_tqdm: bool = False
                  ):
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
@@ -46,6 +48,9 @@ class BCA_Simulator:
         # GUIモード設定
         self.gui_mode = gui_mode
         self._current_step = 0
+
+        # tqdm
+        self.use_tqdm = use_tqdm
 
         # 畳み込み有効化
         torch.backends.cudnn.benchmark = True
@@ -118,7 +123,9 @@ class BCA_Simulator:
              state_gate_enable: bool = False,
              state_gate_interval: int = 500
             ):
-        print(f"Step {self._current_step}")
+        if not self.use_tqdm:
+            print(f"Step {self._current_step}")
+        
         ###################
         # 乱数生成器の定義  #
         ###################
@@ -154,8 +161,12 @@ class BCA_Simulator:
                    state_gate_enable: bool = False,
                    state_gate_interval: int = 500
                    ):
-        print(f"Run steps: {steps}")
-        for i in range(steps):
+        if self.use_tqdm:
+            iterator = tqdm(range(steps), desc="Simulation", unit="step")
+        else:
+            print(f"Run steps: {steps}")
+            iterator = range(steps)
+        for _ in iterator:
             self.step(global_prob,
                        seed,
                        debug,
