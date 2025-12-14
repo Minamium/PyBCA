@@ -1,7 +1,7 @@
 constants:
-  join_err_0_input: &join_err_0_input 0.0001
-  join_err_1_input: &join_err_1_input 0.0005
-  fork_err_0_input: &fork_err_0_input 0.0001
+  join_err_0_input: &join_err_0_input 0.0
+  join_err_1_input: &join_err_1_input 0.0
+  fork_err_0_input: &fork_err_0_input 0.0
 
 conv:
   - prev: 4
