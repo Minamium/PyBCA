@@ -60,7 +60,7 @@ if __name__ == "__main__":
     #print(simulator.spatial_event_arrays_tensor)
     #print(simulator.state_conversions_tensor)
 
-    simulator.set_ParallelTrial(1)
+    simulator.set_ParallelTrial(500)
     #print(simulator.TCHW)
     print(simulator.rule_probs_tensor)
     timer = time.time()

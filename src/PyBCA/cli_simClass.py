@@ -780,42 +780,60 @@ class BCA_Simulator:
         
         print()
 
+    # イベント発火履歴を保存
     def save_event_histry_for_dataframe(
         self,
         path: str | None = None,
         format: str = "parquet",              # "parquet" | "csv" | "jsonl" | "yaml" | "jsonl_trials" | "jsonl_trials_dict"
         deduplicate: bool = False,            # Trueなら各(eventのsteps)を集合化→昇順
         return_df: bool = True,               # TrueならDataFrameを返す（jsonl_trials系は保存が主目的）
-        parquet_compression: str = "snappy"   # "snappy" | "zstd" など
+        parquet_compression: str = "snappy",  # "snappy" | "zstd" など
+        save_meta: bool = True,               # Trueなら確率sweep等のメタデータを保存/埋め込み
+        meta_key: str = "bca_meta",           # parquet schema metadata に埋め込むキー名
+        save_meta_sidecar: bool = True,       # Trueなら _meta.json も別途保存（特にparquet読み出しが楽になる）
+        meta_sidecar_path: str | None = None  # sidecar保存先を明示したい場合
         ):
         """
-        event_history を保存/変換するユーティリティ。
+        event_history を保存/変換するユーティリティ（確率sweepメタデータ対応版）。
 
         event_history 仕様:
           self.event_history: List[Dict[str, List[int]]]
             └ 各trialについて { event_name: [fired_steps...] } の辞書
-        追加対応:
-          - format="jsonl_trials": 1 trial = 1行。{"trial":t,"events":[["name",[...]], ...]}
-          - format="jsonl_trials_dict": 1 trial = 1行。{"trial":t,"events":{"name":[...], ...}}
 
-        既存:
+        既存フォーマット:
           - "parquet"/"csv"/"jsonl"/"yaml" はフラット表 (trial,event,step)
+          - "jsonl_trials": 1 trial = 1行。{"trial":t,"events":[["name",[...]], ...]}
+          - "jsonl_trials_dict": 1 trial = 1行。{"trial":t,"events":{"name":[...], ...}}
 
-        注意:
-          - deduplicate=True のとき各イベントの step を set→昇順にします
-          - "jsonl_trials"系は保存が主目的。return_df=Trueでもフラット表を返します
+        メタデータ（save_meta=True）:
+          - trial_constant_sweep（aliasごとのbase/delta）
+          - alias -> rule_ids / rule_indices 対応
+          - aliasごとの prob_by_trial（trialごとの確率列）
+          - rule_ids と base確率（再現性のため）
+
+        埋め込み方法:
+          - csv/yaml: 先頭に # コメントとしてメタを埋め込み
+          - jsonl系: 1行目に {"__meta__": meta} を追加
+          - parquet: 可能なら schema metadata に埋め込み（pyarrow利用時）
         """
         if getattr(self, "event_history", None) is None:
             raise RuntimeError("event_history がありません。set_ParallelTrial() と run_steps() の後に呼んでください。")
 
-        import os, json
+        import os
+        import json
+        from datetime import datetime
         import pandas as pd
 
-        # ---- フラット表（既存互換; DataFrame作成用）----
+        # -----------------------------
+        # 1) フラット表（既存互換）
+        # -----------------------------
         rows = []
         for t, edict in enumerate(self.event_history):
             for name, steps in edict.items():
-                steps_iter = sorted(set(int(s) for s in steps)) if deduplicate else (int(s) for s in steps)
+                if deduplicate:
+                    steps_iter = sorted(set(int(s) for s in steps))
+                else:
+                    steps_iter = (int(s) for s in steps)
                 for s in steps_iter:
                     rows.append({"trial": int(t), "event": str(name), "step": int(s)})
 
@@ -824,23 +842,135 @@ class BCA_Simulator:
             df.sort_values(["trial", "event", "step"], inplace=True, kind="mergesort")
             df.reset_index(drop=True, inplace=True)
         else:
+            # 空でも型を整えておく（可能なら）
             try:
                 df = df.astype({"trial": "int64", "event": "string", "step": "int64"})
             except Exception:
                 pass
 
-        # 保存不要ならここで返す
+        # -----------------------------
+        # 2) メタデータ構築（確率sweep中心）
+        # -----------------------------
+        meta = None
+        if save_meta:
+            def _clamp01(x: float) -> float:
+                x = float(x)
+                if x < 0.0:
+                    return 0.0
+                if x > 1.0:
+                    return 1.0
+                return x
+
+            T = int(getattr(self, "parallel_trial", len(self.event_history)))
+            meta = {
+                "meta_version": 1,
+                "created_at": datetime.now().isoformat(timespec="seconds"),
+                "class": "BCA_Simulator",
+                "parallel_trial": T,
+                "current_step": int(getattr(self, "_current_step", -1)),
+                "device": str(getattr(self, "device", "")),
+                "offset_x": int(getattr(self, "offset_x", 0)),
+                "offset_y": int(getattr(self, "offset_y", 0)),
+            }
+
+            # rule_ids と base確率（再現性・解析のため）
+            rule_ids_list = None
+            try:
+                rule_ids_list = [int(x) for x in getattr(self, "rule_ids", [])]
+            except Exception:
+                rule_ids_list = None
+            meta["rule_ids"] = rule_ids_list
+
+            # base確率（読み込んだもの）をできるだけ取得
+            base_probs_list = None
+            if hasattr(self, "rule_probs_base_tensor"):
+                try:
+                    base_probs_list = [float(x) for x in self.rule_probs_base_tensor.detach().cpu().tolist()]
+                except Exception:
+                    base_probs_list = None
+            elif hasattr(self, "rule_probs"):
+                try:
+                    base_probs_list = [float(x) for x in list(self.rule_probs)]
+                except Exception:
+                    base_probs_list = None
+            meta["rule_probs_base"] = base_probs_list
+
+            # sweep 情報（aliasごと）
+            sweep_cfg = getattr(self, "trial_constant_sweep", None)
+            if sweep_cfg is not None:
+                sweep_out = {}
+                for alias, cfg in sweep_cfg.items():
+                    base = float(cfg.get("base", 0.0))
+                    delta = float(cfg.get("delta", 0.0))
+                    prob_by_trial = [_clamp01(base + (tt * delta)) for tt in range(T)]
+
+                    # alias -> ルール対応（ids/indices を両方入れる）
+                    rule_ids = None
+                    if hasattr(self, "const_rule_ids"):
+                        try:
+                            rule_ids = [int(x) for x in self.const_rule_ids.get(alias, [])]
+                        except Exception:
+                            rule_ids = None
+
+                    rule_indices = None
+                    if hasattr(self, "const_rule_indices"):
+                        try:
+                            rule_indices = [int(x) for x in self.const_rule_indices.get(alias, [])]
+                        except Exception:
+                            rule_indices = None
+
+                    sweep_out[str(alias)] = {
+                        "base": base,
+                        "delta": delta,
+                        "prob_by_trial": prob_by_trial,
+                        "rule_ids": rule_ids,
+                        "rule_indices": rule_indices,
+                    }
+
+                meta["probability_sweep"] = sweep_out
+            else:
+                meta["probability_sweep"] = None
+
+            # DataFrame側にもattrsとして保持（メモリ上の解析に便利）
+            try:
+                df.attrs[meta_key] = meta
+            except Exception:
+                pass
+
+        # -----------------------------
+        # 3) 保存しないなら返す
+        # -----------------------------
         if path is None:
             return df if return_df else None
 
         fmt = format.lower()
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
 
-        # ---- 追加: 1 trial = 1行 の JSONL 出力（ペア配列 or dict）----
+        # sidecar meta 保存先（必要なら）
+        if save_meta and save_meta_sidecar:
+            if meta_sidecar_path is not None:
+                meta_path = meta_sidecar_path
+            else:
+                root, _ext = os.path.splitext(path)
+                meta_path = root + "_meta.json"
+            os.makedirs(os.path.dirname(meta_path) or ".", exist_ok=True)
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+        # メタデータ文字列（コメント用／先頭行用）
+        meta_pretty_lines = None
+        if save_meta and meta is not None:
+            meta_pretty = json.dumps(meta, ensure_ascii=False, indent=2, sort_keys=True)
+            meta_pretty_lines = meta_pretty.splitlines()
+
+        # -----------------------------
+        # 4) 出力（フォーマット別）
+        # -----------------------------
         if fmt in ("jsonl_trials", "jsonl_trials_dict"):
-            # 全イベント名を揃えたい場合は self.event_names を使用、無ければ union(keys)
-            if hasattr(self, "event_names") and self.event_names:
-                all_names = list(self.event_names)
+            # jsonl_trials系：1行目にメタ行、その後にtrial行
+            # 全イベント名を揃えたい場合は spatial_event_names を使用、無ければ union(keys)
+            if hasattr(self, "spatial_event_names") and self.spatial_event_names is not None:
+                all_names = list(self.spatial_event_names)
             else:
                 name_set = set()
                 for ed in self.event_history:
@@ -848,17 +978,17 @@ class BCA_Simulator:
                 all_names = sorted(name_set)
 
             with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta is not None:
+                    f.write(json.dumps({"__meta__": meta}, ensure_ascii=False) + "\n")
+
                 for t, edict in enumerate(self.event_history):
-                    # イベントごとの steps を準備（存在しないイベントは空リスト）
                     def _steps_list(v):
                         arr = list(map(int, v)) if v is not None else []
                         return sorted(set(arr)) if deduplicate else arr
 
                     if fmt == "jsonl_trials":
-                        # 期待例: ["core_input_1",[...]], ...
                         events_payload = [[name, _steps_list(edict.get(name, []))] for name in all_names]
                     else:
-                        # dict 版
                         events_payload = {name: _steps_list(edict.get(name, [])) for name in all_names}
 
                     rec = {"trial": int(t), "events": events_payload}
@@ -866,24 +996,61 @@ class BCA_Simulator:
 
             return df if return_df else path
 
-        # ---- 既存のフラット表フォーマット出力 ----
         if fmt == "parquet":
-            try:
-                df.to_parquet(path, index=False, compression=parquet_compression)
-            except Exception as e:
-                raise RuntimeError("to_parquet失敗（pandas/pyarrow/fastparquetが必要）: %s" % e)
+            # parquet：pyarrowが使えるなら schema metadata に埋め込み
+            # 使えない場合は通常保存 + sidecar（上で保存済み）
+            wrote_with_meta = False
+            if save_meta and meta is not None:
+                try:
+                    import pyarrow as pa
+                    import pyarrow.parquet as pq
+
+                    table = pa.Table.from_pandas(df, preserve_index=False)
+                    md = dict(table.schema.metadata or {})
+                    md[str(meta_key).encode("utf-8")] = json.dumps(meta, ensure_ascii=False).encode("utf-8")
+                    table = table.replace_schema_metadata(md)
+
+                    pq.write_table(table, path, compression=parquet_compression)
+                    wrote_with_meta = True
+                except Exception:
+                    wrote_with_meta = False
+
+            if not wrote_with_meta:
+                # 従来方式
+                try:
+                    df.to_parquet(path, index=False, compression=parquet_compression)
+                except Exception as e:
+                    raise RuntimeError("to_parquet失敗（pandas/pyarrow/fastparquetが必要）: %s" % e)
+
         elif fmt == "csv":
-            df.to_csv(path, index=False)
+            # csv：先頭に # コメントとしてメタを埋め込み
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta_pretty_lines is not None:
+                    for line in meta_pretty_lines:
+                        f.write("# " + line + "\n")
+                df.to_csv(f, index=False)
+
         elif fmt == "jsonl":
-            df.to_json(path, orient="records", lines=True, force_ascii=False)
+            # jsonl：1行目にメタ行、その後にレコード行
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta is not None:
+                    f.write(json.dumps({"__meta__": meta}, ensure_ascii=False) + "\n")
+                df.to_json(f, orient="records", lines=True, force_ascii=False)
+
         elif fmt == "yaml":
+            # yaml：先頭に # コメントとしてメタを埋め込み（データ構造は従来のlist-of-dictsのまま）
             try:
                 import yaml
             except ImportError as e:
                 raise RuntimeError("YAML出力には PyYAML が必要です（pip install pyyaml）。") from e
+
+            records = df.to_dict(orient="records")
             with open(path, "w", encoding="utf-8") as f:
-                import pandas as pd
-                yaml.safe_dump(df.to_dict(orient="records"), f, allow_unicode=True, sort_keys=False)
+                if save_meta and meta_pretty_lines is not None:
+                    for line in meta_pretty_lines:
+                        f.write("# " + line + "\n")
+                yaml.safe_dump(records, f, allow_unicode=True, sort_keys=False)
+
         else:
             raise ValueError("format は parquet/csv/jsonl/yaml/jsonl_trials/jsonl_trials_dict のいずれかです。")
 
