@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
 import yaml
 import torch
-
+import re
 
 # yamlセル空間ファイルをnumpy配列に変換する
 def load_cell_space_yaml_to_numpy(path: str, progress_callback=None, include_offset=True) -> np.ndarray:
@@ -747,3 +747,32 @@ def get_event_names_from_file(event_file_path: str) -> List[str]:
         raise RuntimeError(
             f"特殊イベントファイルの読み込みに失敗しました: {event_file_path}\nエラー: {str(e)}"
         )
+
+def get_probability_alias_rule_ids(rule_file_paths: List[str]) -> Dict[str, List[int]]:
+    """
+    YAMLを生テキスト走査して
+      - id: <int>
+      - probability: *<alias>
+    を対応付け、alias名 -> rule_idのリストを返す。
+
+    注意:
+      - probability が数値直書きの場合は対象外
+      - probability 行が無いルールは対象外（=デフォルト1.0や他処理で扱う）
+    """
+    id_re   = re.compile(r"^\s*-\s*id:\s*([0-9]+)\s*$")
+    prob_re = re.compile(r"^\s*probability:\s*\*([A-Za-z_][A-Za-z0-9_]*)\s*$")
+
+    out: Dict[str, List[int]] = {}
+    for path in rule_file_paths:
+        current_id = None
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                m = id_re.match(line)
+                if m:
+                    current_id = int(m.group(1))
+                    continue
+                m = prob_re.match(line)
+                if m and current_id is not None:
+                    alias = m.group(1)
+                    out.setdefault(alias, []).append(current_id)
+    return out

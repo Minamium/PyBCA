@@ -26,7 +26,13 @@ if __name__ == "__main__":
     
     simulator = BCA_Simulator(cellspace_path, rule_paths, device="cpu",
                               spatial_event_filePath="Sample/Specialevent/BNN_event.py",
-                              use_tqdm=True)
+                              use_tqdm=True,
+                              trial_constant_sweep = {
+                                  "join_err_0_input": {"base": 0.0,    "delta": 0.000001},
+                                  "join_err_1_input": {"base": 0.0,    "delta": 0.00001},
+                                  "fork_err_0_input": {"base": 0.0,    "delta": 0.000001},
+                              }
+                              )
 
     import numpy as np
     # np.set_printoptions(threshold=np.inf, linewidth=10**9)  # 全要素表示
@@ -47,14 +53,16 @@ if __name__ == "__main__":
     #simulator.rule_probs_tensor[0] = 0.1
 
     # PyTorchテンソルの表示
-    print(simulator.cellspace_tensor)
+    #print(simulator.cellspace_tensor)
     print(simulator.rule_arrays_tensor)
+    print(simulator.const_rule_ids)
     #print(simulator.rule_probs_tensor)
-    print(simulator.spatial_event_arrays_tensor)
-    print(simulator.state_conversions_tensor)
+    #print(simulator.spatial_event_arrays_tensor)
+    #print(simulator.state_conversions_tensor)
 
     simulator.set_ParallelTrial(1)
     #print(simulator.TCHW)
+    print(simulator.rule_probs_tensor)
     timer = time.time()
     simulator.run_steps(steps=80_000, global_prob=0.5, seed=1, debug=False, debug_per_trial=False, state_gate_enable=True, state_gate_interval=300)
     print(f"Time: {time.time() - timer}")

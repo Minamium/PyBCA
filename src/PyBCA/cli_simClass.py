@@ -18,7 +18,8 @@ class BCA_Simulator:
                  device: str = "cuda",
                  spatial_event_filePath: str | None = None,
                  gui_mode: bool = False,
-                 use_tqdm: bool = False
+                 use_tqdm: bool = False,
+                 trial_constant_sweep: dict[str, dict[str, float]] | None = None
                  ):
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
@@ -27,6 +28,9 @@ class BCA_Simulator:
         # 遷移規則読み込み
         self.rule_ids = lib.get_rule_ids_from_files(rule_paths)
         self.rule_arrays, self.rule_probs = lib.load_multiple_transition_rules_with_probability(rule_paths)
+        self.const_rule_ids = lib.get_probability_alias_rule_ids(rule_paths)
+
+        self.trial_constant_sweep = trial_constant_sweep
         
         # 状態変換（conv）読み込み
         self.state_conversions = lib.load_multiple_state_conversions(rule_paths)
@@ -57,12 +61,27 @@ class BCA_Simulator:
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
 
+        # ルールID -> ルールindex（rule_arrays の並び）を作る
+        self.rule_id_to_index = {int(rid): i for i, rid in enumerate(self.rule_ids)}
+
+        # alias -> rule_index list に変換
+        self.const_rule_indices = {}
+        for alias, ids in self.const_rule_ids.items():
+            idxs = []
+            for rid in ids:
+                if rid not in self.rule_id_to_index:
+                    raise ValueError(f"rule_id {rid} (alias={alias}) not found in loaded rule_ids.")
+                idxs.append(self.rule_id_to_index[rid])
+            self.const_rule_indices[alias] = idxs
+
+
     def Allocate_torch_Tensors_on_Device(self):
         # PyTorchテンソルにnumpy配列を転送
         self.cellspace_tensor = torch.from_numpy(self.cellspace).to(self.device)
         #self.rule_ids_tensor = torch.from_numpy(self.rule_ids).to(self.device)
         self.rule_arrays_tensor = torch.from_numpy(self.rule_arrays).to(self.device)
-        self.rule_probs_tensor = torch.from_numpy(self.rule_probs).to(self.device)
+        self.rule_probs_base_tensor = torch.from_numpy(self.rule_probs).to(self.device, dtype=torch.float32).clamp_(0,1)
+        self.rule_probs_tensor = self.rule_probs_base_tensor.clone()
         
         if self.spatial_event_arrays is not None:
             self.spatial_event_arrays_tensor = torch.from_numpy(self.spatial_event_arrays).to(self.device)
@@ -113,6 +132,31 @@ class BCA_Simulator:
             self.event_history = [{name: [] for name in names} for _ in range(parallel_trial)]
         else:
             self.event_history = None
+
+        # --- trial ごとの確率 sweep を適用して rule_probs_tensor を [T,N] に差し替え ---
+        if self.trial_constant_sweep is not None:
+            T = self.parallel_trial
+            N = self.rule_arrays_tensor.shape[0]
+            base_probs = self.rule_probs_base_tensor.clone()  # [N] float32 device
+
+            # [T,N] を作る（cloneして書き換え可能に）
+            trial_probs = base_probs.view(1, N).expand(T, N).clone()
+
+            t = torch.arange(T, device=self.device, dtype=torch.float32)  # [T]
+
+            for alias, cfg in self.trial_constant_sweep.items():
+                if alias not in self.const_rule_indices:
+                    raise ValueError(f"alias '{alias}' not found in const_rule_indices (probability: *{alias}).")
+
+                base  = float(cfg.get("base", 0.0))
+                delta = float(cfg.get("delta", 0.0))
+                vals_T = (base + t * delta).clamp(0.0, 1.0)  # [T]
+
+                idxs = self.const_rule_indices[alias]
+                trial_probs[:, idxs] = vals_T.view(T, 1)  # broadcast
+
+            self.rule_probs_tensor = trial_probs  # [T,N]
+
 
     # ステップ実行関数
     def step(self, 
@@ -251,7 +295,7 @@ class BCA_Simulator:
         index_shuffle = perm
 
         ########################################
-        # シャッフル遷移規則配列の要素順にループを回す  #
+        # シャッフル遷移規則配列の要素順にループを回す #
         ########################################
         for i in range(N):
             # 遷移規則の取り出し
