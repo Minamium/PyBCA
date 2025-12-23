@@ -3,8 +3,8 @@ from PyBCA.cli_simClass import BCA_Simulator
 from PyBCA import lib, load_state_conversions_from_yaml
 
 parser = argparse.ArgumentParser(description="Join accuracy test")
-parser.add_argument("--join_err_0", type=float, default=0.01)
-parser.add_argument("--join_err_1", type=float, default=0.001)
+parser.add_argument("--join_err_0", type=float, default=1e-6)
+parser.add_argument("--join_err_1", type=float, default=1e-5)
 parser.add_argument("--trials", type=int, default=100_000)
 parser.add_argument("--steps", type=int, default=500)
 parser.add_argument("--global_prob", type=float, default=0.5)
