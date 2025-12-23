@@ -1,6 +1,3 @@
-
-
-
 from PyBCA.cli_simClass import BCA_Simulator
 from PyBCA import lib, load_state_conversions_from_yaml
 
