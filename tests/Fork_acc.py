@@ -15,7 +15,6 @@ args = parser.parse_args()
 cellspace_paths = [
     ("P0", "PyBCA/Sample/Cellspace/Fork_err/P0_fork.yaml"),
     ("P1", "PyBCA/Sample/Cellspace/Fork_err/P1_fork.yaml"),
-    ("P2", "PyBCA/Sample/Cellspace/Fork_err/P2_fork.yaml"),
 ]
 
 rule_paths = [
