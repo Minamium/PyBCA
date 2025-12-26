@@ -9,6 +9,7 @@ parser.add_argument("--steps", type=int, default=80_000)
 parser.add_argument("--global_prob", type=float, default=0.5)
 parser.add_argument("--state_gate_interval", type=int, default=500)
 parser.add_argument("--output_prefix", type=str, default="bnn")
+parser.add_argument("--event_num", type=int, default=1)
 args = parser.parse_args()
 
 cellspace_path = "PyBCA/Sample/Cellspace/BNN.yaml"
@@ -18,7 +19,7 @@ rule_paths = [
         ]
     
 simulator = BCA_Simulator(cellspace_path, rule_paths, device=args.device,
-                              spatial_event_filePath="PyBCA/Sample/Specialevent/BNN_event.py",
+                              spatial_event_filePath=f"PyBCA/Sample/Specialevent/BNN_event_{args.event_num}.py",
                               use_tqdm=True,
                               trial_constant_sweep = {
                                   "join_err_0_input": {"base": 0.0,    "delta": 0.000005},
