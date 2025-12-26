@@ -121,3 +121,4 @@ dmypy.json
 # デバッグ用テストファイル
 tested*.yaml
 *.jsonl
+*.json
