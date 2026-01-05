@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser(description="BCA-IP test")
 parser.add_argument("--device", type=str, default="cuda")
 parser.add_argument("--trials", type=int, default=1)
 parser.add_argument("--steps", type=int, default=2_000_000)
-parser.add_argument("--global_prob", type=float, default=0.5)
+parser.add_argument("--global_prob", type=float, default=1.0)
 parser.add_argument("--output_prefix", type=str, default="BCA-IP")
 args = parser.parse_args()
 
