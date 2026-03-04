@@ -5,10 +5,14 @@ nav_order: 25
 
 # Engine API (PyBCA)
 
-`Engine` は PyBCA のシミュレーション実行を統一する高水準 API です。
-`Config` に実行条件をまとめ、`Engine.run()` が `Result` を返します。
+`Engine` は PyBCA の実行エントリです。
+`Config` で条件を定義し、`Engine.run()` が `Result` を返します。
 
-このページは `Engine` と `Config` の使い方、引数の意味、出力の扱いをまとめます。
+実装基準:
+
+- `src/PyBCA/api/config.py`
+- `src/PyBCA/api/engine.py`
+- `src/PyBCA/api/result.py`
 
 ## Quick Start
 
@@ -29,112 +33,102 @@ result = Engine(cfg).run()
 print(result.current_step, result.elapsed_sec)
 ```
 
-`cellspace_path` と `rule_paths` は必須です。相対パスは実行カレントディレクトリ基準なので、必要に応じて絶対パス化してください。
-
 ## Config フィールド
 
-`Config` は dataclass です。主なフィールドと既定値は以下の通りです。
+| Field | Default | Notes |
+| --- | --- | --- |
+| `model` | `bca` | Enum: `bca` |
+| `scheme` | `default` | Enum: `default` |
+| `backend` | `torch` | Enum: `torch` |
+| `cellspace_path` | required | セル空間 YAML |
+| `rule_paths` | required | 1件以上必須 |
+| `device` | `cuda` | 例: `cpu`, `cuda` |
+| `trials` | `1` | `>=1` |
+| `steps` | `1` | `>=0` |
+| `global_prob` | `1.0` | `0.0-1.0` |
+| `seed` | `0` | int |
+| `spatial_event_file_path` | `None` | 特殊イベント `.py` |
+| `gui_mode` | `False` | 通常は `False` |
+| `use_tqdm` | `true` | `true` / `false` |
+| `trial_constant_sweep` | `None` | ルール確率の trial sweep |
+| `state_gate_enable` | `False` | 大域状態ゲート |
+| `state_gate_interval` | `500` | `>=1` |
+| `debug` | `False` | デバッグ出力 |
+| `debug_per_trial` | `False` | trial別デバッグ |
+| `log_level` | `info` | `debug/info/warning/error` |
+| `event_history_path` | `None` | 出力先 |
+| `event_history_format` | `jsonl_trials` | `jsonl_trials` など |
+| `event_history_deduplicate` | `True` | step重複除去 |
+| `event_history_return_df` | `False` | DataFrame返却 |
 
-| Field | Type | Default | Notes |
-| --- | --- | --- | --- |
-| model | str or Model | `bca` | 通常は `bca` 固定。|
-| scheme | str or Scheme | `default` | 通常は `default` 固定。|
-| backend | str or Backend | `torch` | 既定は PyTorch 実装。|
-| cellspace_path | str | required | セル空間 YAML。|
-| rule_paths | tuple or list | required | ルール YAML の配列。|
-| device | str | `cuda` | `cpu` も可。|
-| trials | int | `1` | 並列試行数。|
-| steps | int | `1` | 実行ステップ数。|
-| global_prob | float | `1.0` | 0.0-1.0。|
-| seed | int | `0` | 乱数シード。|
-| spatial_event_file_path | str or None | `None` | 特殊イベント定義 `.py`。|
-| gui_mode | bool | `False` | GUI向けフラグ。|
-| use_tqdm | str or UseTqdm | `true` | `true` または `false`。|
-| trial_constant_sweep | dict or None | `None` | ルール確率の trial sweep。|
-| state_gate_enable | bool | `False` | 大域状態ゲートの有効化。|
-| state_gate_interval | int | `500` | ゲート適用間隔。|
-| debug | bool | `False` | 追加デバッグ。|
-| debug_per_trial | bool | `False` | trial別デバッグ。|
-| log_level | str or LogLevel | `info` | `debug`/`info`/`warning`/`error`。|
-| event_history_path | str or None | `None` | `event_history` 出力先。|
-| event_history_format | str | `jsonl_trials` | `jsonl_trials` など。|
-| event_history_deduplicate | bool | `True` | ステップ重複除去。|
-| event_history_return_df | bool | `False` | DataFrame を返すか。|
+### Enum の別名
 
-### Path の取り扱い
+`Config.__post_init__` で以下の別名が許可されます。
 
-`cellspace_path` や `rule_paths` は `Config` が自動的に絶対パス化しません。
-CLI 以外の実行では `Path.resolve()` を使った絶対パス化が安全です。
+- `model`: `default -> bca`
+- `scheme`: `bca -> default`
+- `backend`: `pytorch -> torch`
+- `use_tqdm`: `1 -> true`, `0 -> false`
+- `log_level`: `warn -> warning`, `err -> error`
 
-```python
-from pathlib import Path
-from PyBCA.api import Config
+## バリデーション
 
-root = Path(__file__).resolve().parents[1]
+`Config` 生成時の制約:
 
-cfg = Config(
-    cellspace_path=str(root / "Sample" / "Cellspace" / "C-Join.yaml"),
-    rule_paths=(str(root / "Sample" / "rule" / "base-rule.yaml"),),
-)
-```
+- `cellspace_path` は必須
+- `rule_paths` は空不可
+- `trials >= 1`
+- `steps >= 0`
+- `global_prob in [0, 1]`
+- `state_gate_interval >= 1`
 
-## Engine の実行
+## Engine.run の挙動
 
-`Engine.run()` は以下の結果を返します。
+`Engine.run()` の処理順序:
 
-- `result.simulator`: 実際に走った `BCA_Simulator` インスタンス
-- `result.current_step`: 最終ステップ
-- `result.elapsed_sec`: 実行時間(秒)
-- `result.event_history`: 出力を要求した場合の履歴
-- `result.meta`: `Config` を含むメタ情報
+1. `build_state(config)` で `BCA_Simulator` 構築・テンソル確保・trial設定
+2. `steps > 0` の場合、stepper (`core/schemes/bca_default.py`) を `steps` 回実行
+3. `event_history_path` 指定時は `save_event_histry_for_dataframe(...)` を実行
+4. `Result` を返す
 
-```python
-from PyBCA.api import Engine, Config
+## Result
 
-cfg = Config(
-    cellspace_path="Sample/Cellspace/test.yaml",
-    rule_paths=("Sample/rule/base-rule.yaml",),
-    steps=8,
-    trials=2,
-    device="cpu",
-)
+`Result`（`src/PyBCA/api/result.py`）のフィールド:
 
-result = Engine(cfg).run()
-print(result.simulator.TCHW.shape)
-```
+- `simulator`
+- `current_step`
+- `elapsed_sec`
+- `event_history`
+- `meta`
 
 ## 特殊イベント
 
-`spatial_event_file_path` に `.py` を指定します。
-イベントファイルは `events` というリストを定義します。
-
-旧形式:
+`spatial_event_file_path` で `.py` を指定し、`events` リストを定義します。
 
 ```python
 events = [
-    ("name", (x, y), ref_state, (x2, y2), write_state),
+    ("name", (x, y), ref_state, (wx, wy), write_state),
 ]
 ```
 
-拡張形式:
+拡張形式（確率・有効ステップ範囲あり）:
 
 ```python
 events = [
-    ("name", (x, y), ref_state, (x2, y2), write_state, prob, start_step, end_step),
+    ("name", (x, y), ref_state, (wx, wy), write_state, prob, start_step, end_step),
 ]
 ```
 
 ## trial_constant_sweep
 
-`trial_constant_sweep` はルール確率を trial ごとに変化させます。
-ルール YAML 内で `probability: *alias` を使っている場合に有効です。
+YAML側で `probability: *alias` を使うルールに対して trial 別確率を入れられます。
 
 ```python
 cfg = Config(
     cellspace_path="Sample/Cellspace/BNN.yaml",
     rule_paths=("Sample/rule/base-rule.yaml", "Sample/rule/Join_fork.yaml"),
-    steps=15,
     trials=4,
+    steps=15,
     trial_constant_sweep={
         "join_err_0_input": {"base": 0.0, "delta": 0.001},
         "join_err_1_input": {"base": 0.0, "delta": 0.0005},
@@ -142,12 +136,9 @@ cfg = Config(
 )
 ```
 
-`base + trial_index * delta` が確率となり、0-1 へクランプされます。
-
 ## event_history 出力
 
-`event_history_path` を指定すると出力されます。
-`event_history_format` は以下に対応します。
+`event_history_path` 指定時に保存されます。
 
 - `jsonl_trials`
 - `jsonl_trials_dict`
@@ -170,9 +161,7 @@ cfg = Config(
 result = Engine(cfg).run()
 ```
 
-## 省略形 run
-
-`PyBCA.api.run` は `Config` または辞書を受け取って実行できます。
+## ショートカット API
 
 ```python
 from PyBCA.api import run
@@ -184,4 +173,19 @@ result = run({
     "trials": 1,
     "device": "cpu",
 })
+```
+
+## パス運用の注意
+
+`Config` はパスを自動補正しません。実運用では絶対パス化を推奨します。
+
+```python
+from pathlib import Path
+from PyBCA.api import Config
+
+root = Path(__file__).resolve().parents[1]
+cfg = Config(
+    cellspace_path=str(root / "Sample" / "Cellspace" / "C-Join.yaml"),
+    rule_paths=(str(root / "Sample" / "rule" / "base-rule.yaml"),),
+)
 ```
