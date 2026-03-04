@@ -1,6 +1,14 @@
 import argparse
+from pathlib import Path
+
 from PyBCA.cli_simClass import BCA_Simulator
-from PyBCA import lib, load_state_conversions_from_yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def sample_path(*parts: str) -> str:
+    return str((ROOT / "Sample" / Path(*parts)).resolve())
+
 
 parser = argparse.ArgumentParser(description="BNN test")
 parser.add_argument("--device", type=str, default="cuda")
@@ -12,35 +20,43 @@ parser.add_argument("--output_prefix", type=str, default="bnn")
 parser.add_argument("--event_num", type=int, default=1)
 args = parser.parse_args()
 
-cellspace_path = "PyBCA/Sample/Cellspace/BNN.yaml"
+cellspace_path = sample_path("Cellspace", "BNN.yaml")
 rule_paths = [
-        "PyBCA/Sample/rule/base-rule.yaml",
-        "PyBCA/Sample/rule/Join_fork.yaml"
-        ]
-    
-simulator = BCA_Simulator(cellspace_path, rule_paths, device=args.device,
-                              spatial_event_filePath=f"PyBCA/Sample/Specialevent/BNN_event_{args.event_num}.py",
-                              use_tqdm=True,
-                              trial_constant_sweep = {
-                                  "join_err_0_input": {"base": 0.0,    "delta": 0.000005},
-                                  "join_err_1_input": {"base": 0.0,    "delta": 0.000001},
-                                  "fork_err_0_input": {"base": 0.0,    "delta": 0.000005},
-                                 })
+    sample_path("rule", "base-rule.yaml"),
+    sample_path("rule", "Join_fork.yaml"),
+]
+
+event_path = sample_path("Specialevent", f"BNN_event_{args.event_num}.py")
+
+simulator = BCA_Simulator(
+    cellspace_path,
+    rule_paths,
+    device=args.device,
+    spatial_event_filePath=event_path,
+    use_tqdm=True,
+    trial_constant_sweep={
+        "join_err_0_input": {"base": 0.0, "delta": 0.000005},
+        "join_err_1_input": {"base": 0.0, "delta": 0.000001},
+        "fork_err_0_input": {"base": 0.0, "delta": 0.000005},
+    },
+)
 
 simulator.Allocate_torch_Tensors_on_Device()
 simulator.set_ParallelTrial(args.trials)
 
-steps = args.steps
+simulator.run_steps(
+    steps=args.steps,
+    global_prob=args.global_prob,
+    seed=1,
+    debug=False,
+    debug_per_trial=False,
+    state_gate_enable=True,
+    state_gate_interval=args.state_gate_interval,
+)
 
-simulator.run_steps(steps=steps, 
-                    global_prob=args.global_prob, 
-                    seed=1, 
-                    debug=False, 
-                    debug_per_trial=False, 
-                    state_gate_enable=True, 
-                    state_gate_interval=args.state_gate_interval)
-
-simulator.save_event_histry_for_dataframe(f"{args.output_prefix}.jsonl", 
-                                           format="jsonl_trials", 
-                                           deduplicate=True, 
-                                           return_df=False)
+simulator.save_event_histry_for_dataframe(
+    f"{args.output_prefix}.jsonl",
+    format="jsonl_trials",
+    deduplicate=True,
+    return_df=False,
+)
