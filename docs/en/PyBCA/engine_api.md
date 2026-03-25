@@ -9,6 +9,10 @@ nav_order: 12
 `Engine` is the current top-level execution API for PyBCA.
 Configuration lives in `Config`, and `Engine.run()` returns a `Result`.
 
+For the actual update order and conflict-resolution logic, see [Simulation Logic](simulation_logic.md).
+
+This page describes the externally visible contract of `Engine` and `Config` as public interfaces.
+
 Implementation references:
 
 - `src/PyBCA/api/config.py`

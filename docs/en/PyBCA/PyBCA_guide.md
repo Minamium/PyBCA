@@ -6,14 +6,14 @@ nav_order: 11
 
 # PyBCA Guide
 
-This guide is the main entry point for running PyBCA with the current implementation.
-For new code, use `PyBCA.api.Engine`. Treat the legacy API as a compatibility surface.
+This guide serves as an introductory document for configuring and running numerical experiments with PyBCA.
+It begins with the standard execution workflow and then points to the computation logic and API details.
 
 Related pages:
 
+- [Simulation Logic](simulation_logic.md)
 - [Engine API](engine_api.md)
 - [GUI Tools Guide](guitools_guide.md)
-- [Implementation Parity Audit](parity_audit.md)
 - [BCL Guide](../bcl/0.1/guide.md)
 
 ## 1. Package Layout
@@ -50,7 +50,7 @@ pip install PySide6
 
 If you run directly from the repository without installation, add `PYTHONPATH=src`.
 
-## 3. Recommended Workflow
+## 3. Standard Execution Procedure
 
 1. Prepare a CellSpace YAML file
 2. Provide one or more Rule YAML files
@@ -112,10 +112,27 @@ result = run(
 
 Dictionary input is still converted through `Config(**dict)`.
 
-## 6. Special Events And Event History
+## 6. Inputs And Outputs
 
-Set `spatial_event_file_path` to enable special events.
-Set `event_history_path` and `event_history_format` to export event histories.
+- CellSpace input:
+  `Config.cellspace_path`
+- Rule input:
+  `Config.rule_paths`
+- Special Event input:
+  `Config.spatial_event_file_path`
+- event history output:
+  `Config.event_history_path`, `Config.event_history_format`
+
+Common output formats:
+
+- `jsonl_trials`
+- `jsonl_trials_dict`
+- `jsonl`
+- `csv`
+- `yaml`
+- `parquet`
+
+## 7. Special Events And Event History
 
 ```python
 from PyBCA.api import Config, Engine
@@ -144,7 +161,7 @@ Strict behavior:
 - therefore `Result.event_history` reflects the export helper return value, not the raw internal history
 - raw per-trial histories remain available on `result.simulator.event_history`
 
-## 7. Trial-Wise Probability Sweep
+## 8. Trial-Wise Sweep
 
 If your Rule YAML uses `probability: *alias`, you can create trial-wise probability schedules with `trial_constant_sweep`.
 
@@ -164,49 +181,37 @@ cfg = Config(
 
 Alias names must match the loaded Rule YAML constants. Otherwise PyBCA raises `ValueError`.
 
-## 8. Legacy Compatibility API
+This mechanism is used for error-rate or acceptance-rate studies.
+The simulator itself does not define temperature as an internal variable. Any effective-temperature interpretation belongs to the analysis layer.
 
-`src/PyBCA/cli_simClass.py` exposes both the current simulator and the legacy simulator.
+## 9. Computation Logic
 
-```python
-from PyBCA.cli_simClass import BCA_Simulator, LegacyBCA_Simulator
+The update order, conflict resolution, state gate, and spatial event application order are summarized in [Simulation Logic](simulation_logic.md).
 
-sim = BCA_Simulator(
-    cellspace_path="Sample/Cellspace/C-Join.yaml",
-    rule_paths=["Sample/rule/base-rule.yaml"],
-    device="cpu",
-)
-sim.Allocate_torch_Tensors_on_Device()
-sim.set_ParallelTrial(3)
-sim.run_steps(steps=20, global_prob=0.5)
-```
-
-Interpretation:
-
-- `BCA_Simulator`: `src/PyBCA/core/simulator.py`
-- `LegacyBCA_Simulator`: `src/PyBCA/_legacy/cli_simClass.py`
-- `PyBCA.lib`: still re-exports legacy utility implementations
-- `PyBCA.guitools`: still re-exports legacy GUI implementations
-
-## 9. Sample Asset Locations
+## 10. Sample Asset Locations
 
 - CellSpace YAML: `Sample/Cellspace/*.yaml`
 - Rule YAML: `Sample/rule/*.yaml`
 - Special Events: `Sample/Specialevent/*.py`
 - BCL sources: `Sample/bclfile/*.bcl`
 
-Useful validation scripts:
+Bundled runner scripts:
 
-- parity: `PYTHONPATH=src python tests/simulator_parity.py`
 - sample runners:
   `tests/BNN.py`,
   `tests/BCA-IP.py`,
   `tests/Join_acc.py`,
   `tests/Fork_acc.py`
 
-## 10. Where To Look Next
+## 11. Compatibility API
 
-- Configuration details: [Engine API](engine_api.md)
-- BCL syntax: [BCL Guide](../bcl/0.1/guide.md)
-- GUI operations: [GUI Tools Guide](guitools_guide.md)
-- legacy/new consistency status: [Implementation Parity Audit](parity_audit.md)
+For compatibility with existing code, `PyBCA.cli_simClass.BCA_Simulator` remains available.
+For new code, `PyBCA.api.Engine` is the clearer reference path.
+
+## 12. Where To Look Next
+
+- start from usage: [PyBCA Guide](PyBCA_guide.md)
+- understand the update order: [Simulation Logic](simulation_logic.md)
+- inspect configuration details: [Engine API](engine_api.md)
+- learn BCL syntax: [BCL Guide](../bcl/0.1/guide.md)
+- use the GUI tools: [GUI Tools Guide](guitools_guide.md)

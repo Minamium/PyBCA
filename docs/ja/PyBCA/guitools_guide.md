@@ -1,12 +1,12 @@
 ---
 title: GUI Tools Guide
 parent: Japanese
-nav_order: 13
+nav_order: 14
 ---
 
 # GUI Tools Guide
 
-このページは、PyBCA/BCL の GUI ツールを現行実装に沿って整理したものです。
+本ページは、PyBCA/BCL に付属する GUI ツール群の役割、依存関係、および利用方法を現行実装に基づいて整理したものである。
 
 対象:
 
@@ -16,14 +16,14 @@ nav_order: 13
 
 ## 1. 依存
 
-GUI 実行には `PySide6` が必要です。
-加えて、用途に応じて以下が必要です。
+GUI 実行には `PySide6` が必要である。
+加えて、用途に応じて以下の依存が必要となる。
 
 - `numpy`
 - `pyyaml`
 - `torch`
 
-`pyproject.toml` に GUI 専用依存は入っていないため、手動で追加してください。
+`pyproject.toml` に GUI 専用依存は含まれていないため、手動で追加する必要がある。
 
 ## 2. PyBCA CellSpace Viewer
 
@@ -74,7 +74,7 @@ main()
 bcl-editor
 ```
 
-このコマンドは `pyproject.toml` の `project.gui-scripts` で公開されています。
+このコマンドは `pyproject.toml` の `project.gui-scripts` で公開されている。
 
 主な機能:
 
@@ -131,7 +131,7 @@ python -m BCL.rule_editor
 - Rule Editor で作った rule YAML も `Config.rule_paths` に渡せます
 - Viewer で確認した CellSpace を API 実行に戻すこともできます
 
-## 6. 現状の責務分離
+## 6. 現行実装における責務分離
 
 - シミュレーション本体: `src/PyBCA/core`
 - 公開実行 API: `src/PyBCA/api`
@@ -139,5 +139,5 @@ python -m BCL.rule_editor
 - BCL 編集 GUI: `src/BCL/editor.py`
 - Rule 編集 GUI: `src/BCL/rule_editor.py`
 
-GUI は全面的に新 API へ移行済みではありません。
-特に CellSpace Viewer は legacy ベースであることを前提に扱ってください。
+GUI 全体が新 API 群へ全面移行したわけではない。
+特に CellSpace Viewer は legacy 実装に依存するため、その前提のもとで利用する必要がある。

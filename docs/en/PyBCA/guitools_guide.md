@@ -1,12 +1,12 @@
 ---
 title: GUI Tools Guide
 parent: English
-nav_order: 13
+nav_order: 14
 ---
 
 # GUI Tools Guide
 
-This page summarizes the current GUI tools in the repository.
+This page summarizes the GUI tools distributed with PyBCA/BCL, together with their dependencies, roles, and current implementation status.
 
 Covered tools:
 
@@ -131,7 +131,7 @@ Main capabilities:
 - Rule YAML created in the Rule Editor can be passed directly into `Config.rule_paths`
 - CellSpace assets reviewed in the Viewer can be reused in API-based runs
 
-## 6. Current Responsibility Split
+## 6. Responsibility Split In The Current Implementation
 
 - simulation core: `src/PyBCA/core`
 - public execution API: `src/PyBCA/api`

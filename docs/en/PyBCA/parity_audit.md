@@ -1,7 +1,6 @@
 ---
 title: Implementation Parity Audit
-parent: English
-nav_order: 14
+nav_exclude: true
 ---
 
 # Implementation Parity Audit

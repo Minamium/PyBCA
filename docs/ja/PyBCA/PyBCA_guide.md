@@ -6,14 +6,14 @@ nav_order: 11
 
 # PyBCA Guide
 
-このガイドは、現行実装に沿って PyBCA を実行するための入口です。
-新規コードでは `PyBCA.api.Engine` を使い、legacy API は互換用途として扱います。
+本ガイドは、PyBCA を用いて数値実験を構成・実行するための導入資料である。
+まず標準的な利用手順を示し、その後に計算ロジックおよび API 詳細へ接続する。
 
-関連ページ:
+関連ページ
 
+- [Simulation Logic](simulation_logic.md)
 - [Engine API](engine_api.md)
 - [GUI Tools Guide](guitools_guide.md)
-- [Implementation Parity Audit](parity_audit.md)
 - [BCL Guide](../bcl/0.1/guide.md)
 
 ## 1. パッケージ構成
@@ -29,7 +29,7 @@ nav_order: 11
 
 ## 2. インストールと依存
 
-基本依存は `pyproject.toml` に定義されています。
+基本依存は `pyproject.toml` に定義されている。
 
 ```bash
 pip install -e .
@@ -42,15 +42,15 @@ pip install -e .
 - `scipy`
 - `pyyaml`
 
-GUI を使う場合は追加で `PySide6` が必要です。
+GUI を用いる場合は追加で `PySide6` が必要である。
 
 ```bash
 pip install PySide6
 ```
 
-開発中にインストールせず直接実行する場合は、`PYTHONPATH=src` を付けてください。
+インストールせずに直接実行する場合は、`PYTHONPATH=src` を付与する。
 
-## 3. 推奨ワークフロー
+## 3. 標準的な実行手順
 
 1. CellSpace YAML を用意する
 2. Rule YAML を 1 つ以上指定する
@@ -84,7 +84,7 @@ result = Engine(cfg).run()
 print(result.current_step)
 ```
 
-ポイント:
+留意点:
 
 - `Config` はパスを自動補正しません
 - `device` の既定値は `"cuda"` です
@@ -109,12 +109,29 @@ result = run(
 )
 ```
 
-辞書入力でも最終的には `Config(**dict)` が使われます。
+辞書入力であっても、最終的には `Config(**dict)` が用いられる。
 
-## 6. Special Event と event history
+## 6. 入力と出力
 
-Special Event を使うときは `spatial_event_file_path` を指定します。
-イベント履歴をファイル保存したい場合は `event_history_path` と `event_history_format` を指定します。
+- CellSpace 入力:
+  `Config.cellspace_path`
+- Rule 入力:
+  `Config.rule_paths`
+- Special Event 入力:
+  `Config.spatial_event_file_path`
+- event history 出力:
+  `Config.event_history_path`, `Config.event_history_format`
+
+主な出力形式:
+
+- `jsonl_trials`
+- `jsonl_trials_dict`
+- `jsonl`
+- `csv`
+- `yaml`
+- `parquet`
+
+## 7. Special Event と event history
 
 ```python
 from PyBCA.api import Config, Engine
@@ -143,7 +160,7 @@ print(type(result.event_history))
 - そのため `Result.event_history` は、出力ヘルパの戻り値を反映します
 - 生の履歴辞書は `result.simulator.event_history` から確認できます
 
-## 7. Trial ごとの確率 sweep
+## 8. trial ごとの sweep
 
 Rule YAML 側で `probability: *alias` を使っている場合、`trial_constant_sweep` で trial ごとに異なる確率を与えられます。
 
@@ -161,52 +178,40 @@ cfg = Config(
 )
 ```
 
-`alias` 名は、ロード済み rule 内の `constants` と一致していなければなりません。
-一致しない場合は `ValueError` になります。
+`alias` 名は、ロード済み rule 内の `constants` と一致している必要がある。
+一致しない場合は `ValueError` が送出される。
 
-## 8. Legacy 互換 API
+この仕組みは、エラー率や受理率を sweep する数値実験に用いられる。
+ただし、シミュレータ自身が内部変数として温度を持つわけではなく、確率と有効温度との対応づけは解析側で与える必要がある。
 
-`src/PyBCA/cli_simClass.py` では、現行 `BCA_Simulator` と legacy simulator の両方にアクセスできます。
+## 9. 計算ロジック
 
-```python
-from PyBCA.cli_simClass import BCA_Simulator, LegacyBCA_Simulator
+セル更新順序、競合解決、state gate、special event の適用順は [Simulation Logic](simulation_logic.md) にまとめています。
 
-sim = BCA_Simulator(
-    cellspace_path="Sample/Cellspace/C-Join.yaml",
-    rule_paths=["Sample/rule/base-rule.yaml"],
-    device="cpu",
-)
-sim.Allocate_torch_Tensors_on_Device()
-sim.set_ParallelTrial(3)
-sim.run_steps(steps=20, global_prob=0.5)
-```
-
-使い分け:
-
-- `BCA_Simulator`: `src/PyBCA/core/simulator.py`
-- `LegacyBCA_Simulator`: `src/PyBCA/_legacy/cli_simClass.py`
-- `PyBCA.lib`: まだ legacy utility 実装を再公開
-- `PyBCA.guitools`: まだ legacy GUI 実装を再公開
-
-## 9. Sample ファイルの場所
+## 10. Sample ファイルの場所
 
 - CellSpace YAML: `Sample/Cellspace/*.yaml`
 - Rule YAML: `Sample/rule/*.yaml`
 - Special Event: `Sample/Specialevent/*.py`
 - BCL source: `Sample/bclfile/*.bcl`
 
-検証に使う主なスクリプト:
+付属の実行スクリプト:
 
-- parity: `PYTHONPATH=src python tests/simulator_parity.py`
 - sample runner:
   `tests/BNN.py`,
   `tests/BCA-IP.py`,
   `tests/Join_acc.py`,
   `tests/Fork_acc.py`
 
-## 10. どの資料を見ればよいか
+## 11. 互換 API
 
-- `Engine` の引数仕様を見たい: [Engine API](engine_api.md)
+既存コードとの互換性のため `PyBCA.cli_simClass.BCA_Simulator` も利用可能である。
+ただし、新規コードに対する参照点としては `PyBCA.api.Engine` を採用する方が明快である。
+
+## 12. どの資料を見ればよいか
+
+- 実行例から入りたい: [PyBCA Guide](PyBCA_guide.md)
+- 更新則や計算順を知りたい: [Simulation Logic](simulation_logic.md)
+- 引数仕様を見たい: [Engine API](engine_api.md)
 - BCL 文法を見たい: [BCL Guide](../bcl/0.1/guide.md)
 - GUI 操作を見たい: [GUI Tools Guide](guitools_guide.md)
-- legacy/new の整合性を見たい: [Implementation Parity Audit](parity_audit.md)

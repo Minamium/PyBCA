@@ -1,7 +1,6 @@
 ---
 title: PyBCA Dev Memo
-parent: English
-nav_order: 16
+nav_exclude: true
 ---
 
 # PyBCA Dev Memo

@@ -6,8 +6,12 @@ nav_order: 12
 
 # Engine API
 
-`Engine` は現行 PyBCA のトップレベル実行 API です。
-設定は `Config` に集約され、`Engine.run()` は `Result` を返します。
+`Engine` は現行 PyBCA のトップレベル実行 API である。
+設定は `Config` に集約され、`Engine.run()` は `Result` を返す。
+
+更新順序や競合解決の計算ロジック自体は [Simulation Logic](simulation_logic.md) を参照されたい。
+
+本ページでは、`Engine` と `Config` が外部からどのように観測されるか、すなわち公開インターフェースとしての仕様を整理する。
 
 実装参照:
 

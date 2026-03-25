@@ -6,8 +6,8 @@ nav_order: 15
 
 # Brownian Circuits Language (BCL)
 
-このページは `src/BCL/compiler.py` の現行実装 `BCLCompiler` に厳密に合わせた仕様です。
-将来構想ではなく、現在コンパイルできる構文だけを対象にします。
+本ページは `src/BCL/compiler.py` に実装された `BCLCompiler` の受理文法に基づき、現行 BCL の仕様を記述する。
+対象は将来構想ではなく、現時点で実際にコンパイル可能な構文に限る。
 
 関連:
 
@@ -16,8 +16,8 @@ nav_order: 15
 
 ## 1. BCL の役割
 
-BCL は CellSpace をテキストで記述し、YAML へ変換するための言語です。
-コンパイル後の YAML は、そのまま `Config.cellspace_path` に渡せます。
+BCL は CellSpace をテキストで記述し、YAML へ変換するための言語である。
+コンパイル後の YAML は、そのまま `Config.cellspace_path` に渡すことができる。
 
 出力 YAML のトップレベルはリストで、各要素は次の形です。
 
@@ -38,7 +38,7 @@ BCL は CellSpace をテキストで記述し、YAML へ変換するための言
 - `element Name(param) { ... }`
 - `place.Name(instance, param[expr, expr])`
 
-コメントは `#` 以降が行末まで無視されます。
+コメントは `#` 以降が行末まで無視される。
 
 ## 3. 文法
 
@@ -70,7 +70,7 @@ IDENT              := [A-Za-z_][A-Za-z0-9_]*
 INT                := -?[0-9]+
 ```
 
-`EXPR` の実際の評価は `BCLCompiler._eval_value()` に従います。
+`EXPR` の評価は `BCLCompiler._eval_value()` に従う。
 
 ## 4. 値の意味
 
@@ -81,7 +81,7 @@ INT                := -?[0-9]+
 
 ## 5. `element` 展開
 
-`element` は前処理で通常行に展開されます。
+`element` は前処理で通常行へ展開される。
 
 例:
 
@@ -101,7 +101,7 @@ place.Dot(dot_1, p[15, 25])
 
 ## 6. 非対応構文
 
-以下は現行 compiler では受理しません。
+以下は現行 compiler では受理されない。
 
 - `input: ...`
 - `output: ...`
@@ -169,9 +169,9 @@ place.Dot(dot_1, p[15, 25])
 3. Rule YAML を `Config.rule_paths` に設定
 4. `Engine.run()` で実行
 
-## 11. sample との整合性
+## 11. 実装準拠性の確認
 
-監査時点で以下を確認しています。
+現行の sample 資産について、少なくとも以下の整合性を確認している。
 
 - `Sample/bclfile/*.bcl` は parse 成功
 - `BNN.bcl` は `Sample/Cellspace/BNN.yaml` と一致

@@ -6,8 +6,8 @@ nav_order: 15
 
 # Brownian Circuits Language (BCL)
 
-This page is aligned strictly with the current implementation of `BCLCompiler` in `src/BCL/compiler.py`.
-It documents only the syntax that is accepted now.
+This page describes the current BCL specification as accepted by `BCLCompiler` in `src/BCL/compiler.py`.
+It is limited to syntax that is actually accepted by the present implementation.
 
 Related pages:
 
@@ -169,9 +169,9 @@ place.Dot(dot_1, p[15, 25])
 3. pass Rule YAML files into `Config.rule_paths`
 4. run `Engine.run()`
 
-## 11. Consistency With Samples
+## 11. Implementation Consistency
 
-At audit time, the following were confirmed.
+For the current sample assets, the following consistency checks were confirmed.
 
 - all `Sample/bclfile/*.bcl` files parsed successfully
 - `BNN.bcl` matched `Sample/Cellspace/BNN.yaml`
