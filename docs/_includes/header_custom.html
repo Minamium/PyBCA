@@ -1,16 +1,25 @@
-<button id="theme-toggle" class="btn" type="button">Dark</button>
+<div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem;">
+  <a class="btn" href="{{ '/' | relative_url }}">Home</a>
+  <a class="btn" href="{{ '/ja/' | relative_url }}">JA</a>
+  <a class="btn" href="{{ '/en/' | relative_url }}">EN</a>
+  <button id="theme-toggle" class="btn" type="button">Dark</button>
+</div>
 <script>
 (function () {
   const KEY = 'jtd-theme';
   const btn = document.getElementById('theme-toggle');
+  const api = window.jtd;
 
   function setTheme(t) {
-    jtd.setTheme(t);              // Just the Docs が用意する切替API
-    localStorage.setItem(KEY, t); // 次回訪問時に復元
+    api.setTheme(t);
+    localStorage.setItem(KEY, t);
     btn.textContent = (t === 'dark') ? 'Light' : 'Dark';
   }
 
-  // 起動時に保存値を反映（なければ light 扱い）
+  if (!btn || !api || typeof api.setTheme !== 'function') {
+    return;
+  }
+
   const saved = localStorage.getItem(KEY);
   if (saved) setTheme(saved);
 

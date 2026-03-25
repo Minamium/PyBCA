@@ -13,6 +13,9 @@ pip install -e ./PyBCA
 Source
 
 - Docs Top: [docs/index.md](docs/index.md)
-- PyBCA Guide: [docs/PyBCA/PyBCA_guide.md](docs/PyBCA/PyBCA_guide.md)
-- BCL Guide (v0.1): [docs/bcl/0.1/guide.md](docs/bcl/0.1/guide.md)
-- Development Memo(JP): [docs/dev-memo/PyBCAdevMemo.md](docs/dev-memo/PyBCAdevMemo.md)
+- Japanese Docs: [docs/ja/index.md](docs/ja/index.md)
+- English Docs: [docs/en/index.md](docs/en/index.md)
+- PyBCA Guide (JA): [docs/ja/PyBCA/PyBCA_guide.md](docs/ja/PyBCA/PyBCA_guide.md)
+- PyBCA Guide (EN): [docs/en/PyBCA/PyBCA_guide.md](docs/en/PyBCA/PyBCA_guide.md)
+- BCL Guide (JA): [docs/ja/bcl/0.1/guide.md](docs/ja/bcl/0.1/guide.md)
+- BCL Guide (EN): [docs/en/bcl/0.1/guide.md](docs/en/bcl/0.1/guide.md)

@@ -1,5 +1,7 @@
 title: PyBCA
 description: PyBCA docs / Brownian Circuit Language (BCL)
+url: https://minamium.github.io
+baseurl: /PyBCA
 
 remote_theme: just-the-docs/just-the-docs@v0.7.0
 
