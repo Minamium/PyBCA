@@ -122,5 +122,5 @@ dmypy.json
 tested*.yaml
 *.jsonl
 *.json
-tests/jsonl
-tests/notebook
+tests/jsonl/
+tests/notebook/*.ipynb
