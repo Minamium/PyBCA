@@ -792,7 +792,9 @@ class BCA_Simulator:
         save_meta: bool = True,               # Trueなら確率sweep等のメタデータを保存/埋め込み
         meta_key: str = "bca_meta",           # parquet schema metadata に埋め込むキー名
         save_meta_sidecar: bool = True,       # Trueなら _meta.json も別途保存（特にparquet読み出しが楽になる）
-        meta_sidecar_path: str | None = None  # sidecar保存先を明示したい場合
+        meta_sidecar_path: str | None = None, # sidecar保存先を明示したい場合
+        trial_index_offset: int = 0,          # 分散実行時に global trial index を付与したい場合
+        extra_meta: dict | None = None        # メタデータに追加したい任意情報
         ):
         """
         event_history を保存/変換するユーティリティ（確率sweepメタデータ対応版）。
@@ -830,13 +832,14 @@ class BCA_Simulator:
         # -----------------------------
         rows = []
         for t, edict in enumerate(self.event_history):
+            trial_id = int(trial_index_offset + t)
             for name, steps in edict.items():
                 if deduplicate:
                     steps_iter = sorted(set(int(s) for s in steps))
                 else:
                     steps_iter = (int(s) for s in steps)
                 for s in steps_iter:
-                    rows.append({"trial": int(t), "event": str(name), "step": int(s)})
+                    rows.append({"trial": trial_id, "event": str(name), "step": int(s)})
 
         df = pd.DataFrame(rows, columns=["trial", "event", "step"])
         if not df.empty:
@@ -932,6 +935,13 @@ class BCA_Simulator:
             else:
                 meta["probability_sweep"] = None
 
+            if extra_meta:
+                for key, value in extra_meta.items():
+                    if isinstance(meta.get(key), dict) and isinstance(value, dict):
+                        meta[key] = {**meta[key], **value}
+                    else:
+                        meta[key] = value
+
             # DataFrame側にもattrsとして保持（メモリ上の解析に便利）
             try:
                 df.attrs[meta_key] = meta
@@ -983,6 +993,7 @@ class BCA_Simulator:
                     f.write(json.dumps({"__meta__": meta}, ensure_ascii=False) + "\n")
 
                 for t, edict in enumerate(self.event_history):
+                    trial_id = int(trial_index_offset + t)
                     def _steps_list(v):
                         arr = list(map(int, v)) if v is not None else []
                         return sorted(set(arr)) if deduplicate else arr
@@ -992,7 +1003,7 @@ class BCA_Simulator:
                     else:
                         events_payload = {name: _steps_list(edict.get(name, [])) for name in all_names}
 
-                    rec = {"trial": int(t), "events": events_payload}
+                    rec = {"trial": trial_id, "events": events_payload}
                     f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
             return df if return_df else path

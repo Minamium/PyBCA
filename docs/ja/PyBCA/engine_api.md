@@ -68,6 +68,13 @@ print(result.current_step, result.elapsed_sec)
 | `event_history_format` | `jsonl_trials` | 出力形式 |
 | `event_history_deduplicate` | `True` | step 重複除去 |
 | `event_history_return_df` | `False` | 保存ヘルパの戻り値として DataFrame を返すか |
+| `distributed_mode` | `off` | `off/auto/torchrun` |
+| `distributed_backend` | `auto` | `auto/nccl/gloo` |
+| `distributed_partition` | `block` | trial 分割方式。現状は block のみ |
+| `distributed_run_dir` | `None` | rank JSON と shard を保存するディレクトリ |
+| `distributed_record_configs` | `True` | rank ごとの設定 JSON を保存するか |
+| `distributed_merge_event_history` | `True` | shard を最終出力へ統合するか |
+| `distributed_seed_stride` | `10000019` | rank ごとの seed オフセット |
 
 ## 3. 受理される alias
 
@@ -91,6 +98,10 @@ print(result.current_step, result.elapsed_sec)
 - `steps >= 0`
 - `global_prob` は `[0, 1]`
 - `state_gate_interval >= 1`
+- `distributed_mode in {off, auto, torchrun}`
+- `distributed_backend in {auto, nccl, gloo}`
+- `distributed_partition == block`
+- `distributed_seed_stride >= 1`
 
 補足:
 
@@ -202,7 +213,49 @@ cfg = Config(
 一方で、基底 helper `save_event_histry_for_dataframe()` の関数既定値は `parquet` です。
 `Engine` を通さず simulator を直接使う場合は、この差を意識してください。
 
-## 11. ログ設定
+## 11. `torchrun` による trial 分散
+
+`distributed_mode="torchrun"` を指定すると、各 rank は独立に `Engine` を起動し、global trial を block 分割した local trial を処理します。
+
+```python
+cfg = Config(
+    cellspace_path="Sample/Cellspace/Join_err/P0_join.yaml",
+    rule_paths=("Sample/rule/base-rule.yaml", "Sample/rule/Join_fork.yaml"),
+    spatial_event_file_path="Sample/Specialevent/Join_detect.py",
+    device="cuda",
+    trials=2000,
+    steps=500,
+    event_history_path="out/join.jsonl",
+    event_history_format="jsonl_trials",
+    distributed_mode="torchrun",
+    distributed_run_dir="out/join.dist",
+)
+```
+
+実行例:
+
+```bash
+python -m torch.distributed.run \
+  --nnodes=1 \
+  --node_rank=0 \
+  --master_addr=127.0.0.1 \
+  --master_port=29541 \
+  --nproc_per_node=8 \
+  your_script.py
+```
+
+分散時の公開仕様は次の通りです。
+
+- 各 rank には解決済みの local `Config` が与えられる
+- `device="cuda"` は `cuda:{LOCAL_RANK}` に解決される
+- `trial_constant_sweep` は `trial_offset` を反映して `base` が補正される
+- `event_history_path` 指定時には各 rank が shard を保存し、rank 0 が最終ファイルへ統合する
+- `distributed_record_configs=True` の場合、`distributed_run_dir/rank_configs/rank_XXXX.json` に各 rank の設定が保存される
+
+`Result.meta["distributed"]` には、rank 情報、trial 範囲、manifest パス、shard パス、統合済み出力パスが格納されます。
+`event_history_return_df=True` の場合でも返される DataFrame は rank local であり、統合済み出力パスは `Result.meta["distributed"]["paths"]["event_history_merged_path"]` から参照します。
+
+## 12. ログ設定
 
 `apply_logging(config)` は `PyBCA` logger に `StreamHandler` を 1 本だけ追加し、`log_level` に合わせて level を設定します。
 
@@ -212,7 +265,7 @@ cfg = Config(
 %(levelname)s : %(message)s
 ```
 
-## 12. よくある利用パターン
+## 13. よくある利用パターン
 
 ### パスを絶対化する
 

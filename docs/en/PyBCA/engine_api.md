@@ -68,6 +68,13 @@ print(result.current_step, result.elapsed_sec)
 | `event_history_format` | `jsonl_trials` | export format |
 | `event_history_deduplicate` | `True` | remove duplicate steps |
 | `event_history_return_df` | `False` | return DataFrame from export helper |
+| `distributed_mode` | `off` | `off/auto/torchrun` |
+| `distributed_backend` | `auto` | `auto/nccl/gloo` |
+| `distributed_partition` | `block` | trial partition mode; currently only block |
+| `distributed_run_dir` | `None` | directory for rank JSON files and shards |
+| `distributed_record_configs` | `True` | whether to persist per-rank config JSON |
+| `distributed_merge_event_history` | `True` | whether rank shards are merged into a final export |
+| `distributed_seed_stride` | `10000019` | per-rank seed offset |
 
 ## 3. Accepted Aliases
 
@@ -91,6 +98,10 @@ print(result.current_step, result.elapsed_sec)
 - `steps >= 0`
 - `global_prob` must be in `[0, 1]`
 - `state_gate_interval >= 1`
+- `distributed_mode in {off, auto, torchrun}`
+- `distributed_backend in {auto, nccl, gloo}`
+- `distributed_partition == block`
+- `distributed_seed_stride >= 1`
 
 Notes:
 
@@ -202,7 +213,49 @@ The `Engine` default is `jsonl_trials`.
 The underlying simulator helper `save_event_histry_for_dataframe()` still defaults to `parquet`.
 If you call the simulator directly, remember that these defaults are different.
 
-## 11. Logging
+## 11. Trial Distribution with `torchrun`
+
+When `distributed_mode="torchrun"`, each rank launches its own `Engine` instance and processes a block-partitioned subset of the global trials.
+
+```python
+cfg = Config(
+    cellspace_path="Sample/Cellspace/Join_err/P0_join.yaml",
+    rule_paths=("Sample/rule/base-rule.yaml", "Sample/rule/Join_fork.yaml"),
+    spatial_event_file_path="Sample/Specialevent/Join_detect.py",
+    device="cuda",
+    trials=2000,
+    steps=500,
+    event_history_path="out/join.jsonl",
+    event_history_format="jsonl_trials",
+    distributed_mode="torchrun",
+    distributed_run_dir="out/join.dist",
+)
+```
+
+Example launcher:
+
+```bash
+python -m torch.distributed.run \
+  --nnodes=1 \
+  --node_rank=0 \
+  --master_addr=127.0.0.1 \
+  --master_port=29541 \
+  --nproc_per_node=8 \
+  your_script.py
+```
+
+The public behavior in distributed mode is:
+
+- each rank receives a resolved local `Config`
+- `device="cuda"` is rewritten as `cuda:{LOCAL_RANK}`
+- `trial_constant_sweep` is shifted by the rank-local `trial_offset`
+- when `event_history_path` is set, each rank writes a shard and rank 0 merges the final output
+- when `distributed_record_configs=True`, each resolved rank config is written to `distributed_run_dir/rank_configs/rank_XXXX.json`
+
+`Result.meta["distributed"]` stores rank information, trial ranges, manifest paths, shard paths, and the merged output path.
+Even when `event_history_return_df=True`, the returned DataFrame remains rank-local; the merged output path is exposed via `Result.meta["distributed"]["paths"]["event_history_merged_path"]`.
+
+## 12. Logging
 
 `apply_logging(config)` configures the `PyBCA` logger with a single `StreamHandler` and the requested `log_level`.
 
@@ -212,7 +265,7 @@ Default formatter:
 %(levelname)s : %(message)s
 ```
 
-## 12. Common Usage Patterns
+## 13. Common Usage Patterns
 
 ### Make paths absolute
 

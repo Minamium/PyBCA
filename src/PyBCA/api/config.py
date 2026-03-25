@@ -88,6 +88,15 @@ class Config:
     event_history_deduplicate: bool = True
     event_history_return_df: bool = False
 
+    # torchrun による trial 分散
+    distributed_mode: str = "off"          # "off" | "auto" | "torchrun"
+    distributed_backend: str = "auto"      # "auto" | "nccl" | "gloo"
+    distributed_partition: str = "block"   # 現状は block のみ
+    distributed_run_dir: str | None = None
+    distributed_record_configs: bool = True
+    distributed_merge_event_history: bool = True
+    distributed_seed_stride: int = 10000019
+
     def __post_init__(self) -> None:
         object.__setattr__(
             self,
@@ -123,6 +132,9 @@ class Config:
             ),
         )
         object.__setattr__(self, "device", str(self.device).strip())
+        object.__setattr__(self, "distributed_mode", str(self.distributed_mode).strip().lower())
+        object.__setattr__(self, "distributed_backend", str(self.distributed_backend).strip().lower())
+        object.__setattr__(self, "distributed_partition", str(self.distributed_partition).strip().lower())
 
         rule_paths = tuple(self.rule_paths)
         object.__setattr__(self, "rule_paths", rule_paths)
@@ -139,6 +151,14 @@ class Config:
             raise ValueError("global_prob must be in [0, 1].")
         if self.state_gate_interval <= 0:
             raise ValueError("state_gate_interval must be >= 1.")
+        if self.distributed_mode not in {"off", "auto", "torchrun"}:
+            raise ValueError("distributed_mode must be one of: off, auto, torchrun.")
+        if self.distributed_backend not in {"auto", "nccl", "gloo"}:
+            raise ValueError("distributed_backend must be one of: auto, nccl, gloo.")
+        if self.distributed_partition not in {"block"}:
+            raise ValueError("distributed_partition must be 'block'.")
+        if self.distributed_seed_stride <= 0:
+            raise ValueError("distributed_seed_stride must be >= 1.")
 
     @property
     def model_name(self) -> str:
@@ -190,4 +210,11 @@ class Config:
             "event_history_format": self.event_history_format,
             "event_history_deduplicate": self.event_history_deduplicate,
             "event_history_return_df": self.event_history_return_df,
+            "distributed_mode": self.distributed_mode,
+            "distributed_backend": self.distributed_backend,
+            "distributed_partition": self.distributed_partition,
+            "distributed_run_dir": self.distributed_run_dir,
+            "distributed_record_configs": self.distributed_record_configs,
+            "distributed_merge_event_history": self.distributed_merge_event_history,
+            "distributed_seed_stride": self.distributed_seed_stride,
         }
