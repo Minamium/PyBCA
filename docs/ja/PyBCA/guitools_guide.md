@@ -1,7 +1,7 @@
 ---
 title: GUI Tools Guide
 parent: Japanese
-nav_order: 14
+nav_order: 15
 ---
 
 # GUI Tools Guide
@@ -86,6 +86,13 @@ bcl-editor
 - YAML export
 - Rule Editor の起動
 
+自由度と制約:
+
+- プリセットブラシは `0, 1, 2, -1, 3, 4` を提供する
+- `Custom` 入力により `-128..127` の整数状態を直接配置できる
+- キャンバスは動的に拡張されるため、初期サイズに縛られない
+- BCL source pane は読み取り専用であり、完全なテキストエディタではない
+
 主なショートカット:
 
 - `Ctrl+N`: New
@@ -124,14 +131,43 @@ python -m BCL.rule_editor
 - `probability` の直接編集
 - `constants` alias を使った確率参照の維持
 
-## 5. GUI と CLI/API の関係
+自由度と制約:
+
+- pattern size は `3x3`, `5x5`, `7x7`, `9x9`
+- カスタムブラシは `-128..127`
+- `constants` と `conv` は読み込み・保存時に保持される
+- ただし `constants` や `conv` を体系的に新規編集する専用 UI はない
+- したがって local rule の試作には強いが、複雑な rule family 全体の著述では YAML 手編集を併用する方がよい
+
+## 5. シミュレーション自由度と限界
+
+GUI 群をシミュレーション実験の観点から整理すると、自由度は一様ではない。
+
+- CellSpace の幾何配置と追加状態の埋め込み:
+  `BCL Editor` が最も柔軟である
+- local rule の `prev/next` 設計:
+  `Rule Editor` が最も柔軟である
+- 単一条件の step 実行確認:
+  `CellSpace Viewer` が有効である
+
+一方、次の点は GUI の守備範囲外、あるいは限定的である。
+
+- `trial_constant_sweep` の本格的運用
+- 多数 trial のバッチ実行
+- `torchrun` による分散 trial 実行
+- `constants` や `conv` を含む rule ファイル全体の体系的編集
+
+特に CellSpace Viewer は legacy backend を用いており、GUI モードでは parallel trial が `1` 固定である。
+従って、GUI は設計・可視確認の前段として有用であるが、研究用の本実験は `PyBCA.api.Engine` を用いたスクリプト実行へ移すのが適切である。
+
+## 6. GUI と CLI/API の関係
 
 - BCL Editor の YAML export は `BCLCompiler` を使います
 - 生成した YAML はそのまま `Engine` の `cellspace_path` に渡せます
 - Rule Editor で作った rule YAML も `Config.rule_paths` に渡せます
 - Viewer で確認した CellSpace を API 実行に戻すこともできます
 
-## 6. 現行実装における責務分離
+## 7. 現行実装における責務分離
 
 - シミュレーション本体: `src/PyBCA/core`
 - 公開実行 API: `src/PyBCA/api`

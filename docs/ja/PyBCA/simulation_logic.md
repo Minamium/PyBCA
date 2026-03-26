@@ -19,6 +19,11 @@ PyBCA の CellSpace は整数状態を持つ 2 次元格子として表現され
 - `2`: token
 - `-1`: recycle-bin connection point
 
+ただし、実装上の状態空間はこれらに限定されない。
+`0` と `-1` に関する特別な扱いを除けば、追加状態は一般の整数値として扱われる。
+`Join/Fork` のような素子は、こうした追加状態を含む rule family によって構成される。
+詳細は [States and Rules](states_and_rules.md) を参照されたい。
+
 入力資産は主として以下の 3 種から成る。
 
 - CellSpace YAML

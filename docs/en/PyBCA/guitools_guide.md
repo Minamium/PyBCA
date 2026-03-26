@@ -1,7 +1,7 @@
 ---
 title: GUI Tools Guide
 parent: English
-nav_order: 14
+nav_order: 15
 ---
 
 # GUI Tools Guide
@@ -86,6 +86,13 @@ Main capabilities:
 - export YAML
 - open the Rule Editor
 
+Customizability and constraints:
+
+- the preset brushes expose `0, 1, 2, -1, 3, 4`
+- the `Custom` field allows direct placement of integer states in the range `-128..127`
+- the canvas expands dynamically, so layout size is not fixed in advance
+- the BCL source pane is read-only, so this is not a full free-form text editor
+
 Common shortcuts:
 
 - `Ctrl+N`: New
@@ -124,14 +131,43 @@ Main capabilities:
 - edit direct `probability` values
 - preserve `constants`-based alias references
 
-## 5. How GUI Relates To CLI/API
+Customizability and constraints:
+
+- pattern size is limited to `3x3`, `5x5`, `7x7`, `9x9`
+- the custom brush range is `-128..127`
+- `constants` and `conv` are preserved on load/save
+- but there is no dedicated GUI for systematically authoring new `constants` or `conv` sections
+- accordingly, the editor is strong for local-rule prototyping, while large rule families still benefit from hand-edited YAML
+
+## 5. Simulation Freedom And Limits
+
+From the perspective of simulation workflow, the three GUI surfaces have different scopes.
+
+- CellSpace geometry and extended-state placement:
+  `BCL Editor` is the most flexible
+- local `prev/next` rule design:
+  `Rule Editor` is the most flexible
+- interactive confirmation of one configuration:
+  `CellSpace Viewer` is effective
+
+The following tasks remain outside, or only weakly inside, the GUI surface:
+
+- production use of `trial_constant_sweep`
+- large-trial batch execution
+- `torchrun`-based distributed trials
+- systematic authorship of full rule files including `constants` and `conv`
+
+In particular, the current CellSpace Viewer still uses the legacy backend, and GUI mode fixes the number of parallel trials to `1`.
+The GUI is therefore best treated as a front-end for design and inspection, while research-scale experiments should be executed through `PyBCA.api.Engine`.
+
+## 6. How GUI Relates To CLI/API
 
 - the BCL Editor exports YAML through `BCLCompiler`
 - generated YAML can be passed directly into `Engine` as `cellspace_path`
 - Rule YAML created in the Rule Editor can be passed directly into `Config.rule_paths`
 - CellSpace assets reviewed in the Viewer can be reused in API-based runs
 
-## 6. Responsibility Split In The Current Implementation
+## 7. Responsibility Split In The Current Implementation
 
 - simulation core: `src/PyBCA/core`
 - public execution API: `src/PyBCA/api`

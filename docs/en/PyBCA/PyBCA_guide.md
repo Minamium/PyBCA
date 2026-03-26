@@ -12,6 +12,7 @@ It begins with the standard execution workflow and then points to the computatio
 Related pages:
 
 - [Simulation Logic](simulation_logic.md)
+- [States and Rules](states_and_rules.md)
 - [Engine API](engine_api.md)
 - [GUI Tools Guide](guitools_guide.md)
 - [BCL Guide](../bcl/0.1/guide.md)
@@ -184,6 +185,8 @@ Alias names must match the loaded Rule YAML constants. Otherwise PyBCA raises `V
 This mechanism is used for error-rate or acceptance-rate studies.
 The simulator itself does not define temperature as an internal variable. Any effective-temperature interpretation belongs to the analysis layer.
 
+For extended-state rule families such as `Join/Fork`, and for the general design of arbitrary additional states, see [States and Rules](states_and_rules.md).
+
 ## 9. Computation Logic
 
 The update order, conflict resolution, state gate, and spatial event application order are summarized in [Simulation Logic](simulation_logic.md).
@@ -212,6 +215,7 @@ For new code, `PyBCA.api.Engine` is the clearer reference path.
 
 - start from usage: [PyBCA Guide](PyBCA_guide.md)
 - understand the update order: [Simulation Logic](simulation_logic.md)
+- understand extended states and `Join/Fork` rules: [States and Rules](states_and_rules.md)
 - inspect configuration details: [Engine API](engine_api.md)
 - learn BCL syntax: [BCL Guide](../bcl/0.1/guide.md)
 - use the GUI tools: [GUI Tools Guide](guitools_guide.md)

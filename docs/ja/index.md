@@ -16,6 +16,7 @@ PyBCA は Brownian Cellular Automaton のシミュレータと、その CellSpac
 
 - [PyBCA Guide](PyBCA/PyBCA_guide.md)
 - [Simulation Logic](PyBCA/simulation_logic.md)
+- [States and Rules](PyBCA/states_and_rules.md)
 - [Engine API](PyBCA/engine_api.md)
 - [GUI Tools Guide](PyBCA/guitools_guide.md)
 - [BCL Guide](bcl/0.1/guide.md)

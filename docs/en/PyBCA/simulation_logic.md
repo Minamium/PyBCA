@@ -19,6 +19,11 @@ The basic states are:
 - `2`: token
 - `-1`: recycle-bin connection point
 
+However, the implemented state space is not limited to these values.
+Aside from the special handling of `0` and `-1`, additional states are treated as ordinary integers.
+Devices such as `Join/Fork` are therefore expressed as rule families over extended state sets.
+For details, see [States and Rules](states_and_rules.md).
+
 The primary input assets are:
 
 - CellSpace YAML

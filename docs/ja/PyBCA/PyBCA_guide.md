@@ -12,6 +12,7 @@ nav_order: 11
 関連ページ
 
 - [Simulation Logic](simulation_logic.md)
+- [States and Rules](states_and_rules.md)
 - [Engine API](engine_api.md)
 - [GUI Tools Guide](guitools_guide.md)
 - [BCL Guide](../bcl/0.1/guide.md)
@@ -184,6 +185,8 @@ cfg = Config(
 この仕組みは、エラー率や受理率を sweep する数値実験に用いられる。
 ただし、シミュレータ自身が内部変数として温度を持つわけではなく、確率と有効温度との対応づけは解析側で与える必要がある。
 
+`Join/Fork` のような追加状態を含む rule family の読み方、および任意追加状態の設計方針については [States and Rules](states_and_rules.md) にまとめている。
+
 ## 9. 計算ロジック
 
 セル更新順序、競合解決、state gate、special event の適用順は [Simulation Logic](simulation_logic.md) にまとめています。
@@ -212,6 +215,7 @@ cfg = Config(
 
 - 実行例から入りたい: [PyBCA Guide](PyBCA_guide.md)
 - 更新則や計算順を知りたい: [Simulation Logic](simulation_logic.md)
+- 追加状態や `Join/Fork` 則を理解したい: [States and Rules](states_and_rules.md)
 - 引数仕様を見たい: [Engine API](engine_api.md)
 - BCL 文法を見たい: [BCL Guide](../bcl/0.1/guide.md)
 - GUI 操作を見たい: [GUI Tools Guide](guitools_guide.md)

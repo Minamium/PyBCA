@@ -23,12 +23,14 @@ The primary emphasis is:
 - Japanese:
   [Guide](ja/PyBCA/PyBCA_guide.md),
   [Simulation Logic](ja/PyBCA/simulation_logic.md),
+  [States and Rules](ja/PyBCA/states_and_rules.md),
   [Engine API](ja/PyBCA/engine_api.md),
   [GUI Tools](ja/PyBCA/guitools_guide.md),
   [BCL Guide](ja/bcl/0.1/guide.md)
 - English:
   [Guide](en/PyBCA/PyBCA_guide.md),
   [Simulation Logic](en/PyBCA/simulation_logic.md),
+  [States and Rules](en/PyBCA/states_and_rules.md),
   [Engine API](en/PyBCA/engine_api.md),
   [GUI Tools](en/PyBCA/guitools_guide.md),
   [BCL Guide](en/bcl/0.1/guide.md)
