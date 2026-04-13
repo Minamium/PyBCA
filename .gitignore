@@ -119,8 +119,4 @@ dmypy.json
 # SampleCP/
 
 # デバッグ用テストファイル
-tested*.yaml
-*.jsonl
-*.json
-tests/jsonl/
-tests/notebook/*.ipynb
+tests/*
