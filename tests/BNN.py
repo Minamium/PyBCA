@@ -49,9 +49,9 @@ simulator = BCA_Simulator(
     spatial_event_filePath=event_path,
     use_tqdm=True,
     trial_constant_sweep={
-        "join_err_0_input": {"base": 0.0, "delta": 0.000005},
-        "join_err_1_input": {"base": 0.0, "delta": 0.000001},
-        "fork_err_0_input": {"base": 0.0, "delta": 0.000005},
+        "join_err_0_input": {"base": 0.0, "delta": 0.0000005},
+        "join_err_1_input": {"base": 0.0, "delta": 0.0000001},
+        "fork_err_0_input": {"base": 0.0, "delta": 0.0000005},
     },
 )
 
