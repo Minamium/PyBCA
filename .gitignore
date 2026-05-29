@@ -120,3 +120,6 @@ dmypy.json
 
 # デバッグ用テストファイル
 tests/*
+
+# ローカル解析ノートブック
+tests/notebook/
