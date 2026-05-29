@@ -10,7 +10,27 @@ dependencies = [
   "numpy",
   "torch>=2.0",
   "scipy",
-  "pyyaml"
+  "pyyaml",
+  "tqdm",
+  "pandas"
+]
+
+[project.optional-dependencies]
+gui = [
+  "PySide6"
+]
+parquet = [
+  "pyarrow"
+]
+notebook = [
+  "ipykernel",
+  "matplotlib"
+]
+all = [
+  "PySide6",
+  "pyarrow",
+  "ipykernel",
+  "matplotlib"
 ]
 
 [build-system]
