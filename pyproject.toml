@@ -16,6 +16,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+analysis = [
+  "matplotlib"
+]
 gui = [
   "PySide6"
 ]
@@ -45,6 +48,9 @@ where = ["src"]
 
 [project.scripts]
 bcl = "BCL.cli:main"
+pybca-plot = "PyBCA.analysis.cli:main"
+pybca-plot-cdf = "PyBCA.analysis.cli:plot_cdf_main"
+pybca-plot-cumulative = "PyBCA.analysis.cli:plot_cumulative_main"
 
 [project.gui-scripts]
 bcl-editor = "BCL.editor:main"
