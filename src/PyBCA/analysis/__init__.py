@@ -12,6 +12,7 @@ from .plots import (
     plot_first_seen_cdf_overlay,
     plot_first_seen_cdf_by_condition,
     plot_join_fork_accuracy_sweep,
+    plot_join_fork_global_calibration_sweep,
     save_figure,
 )
 
@@ -25,5 +26,6 @@ __all__ = [
     "plot_first_seen_cdf_overlay",
     "plot_first_seen_cdf_by_condition",
     "plot_join_fork_accuracy_sweep",
+    "plot_join_fork_global_calibration_sweep",
     "save_figure",
 ]

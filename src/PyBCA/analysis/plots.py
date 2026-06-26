@@ -151,6 +151,45 @@ def _condition_from_path(path: Path) -> tuple[str | None, str | None, str | None
     return match.group("kind"), match.group("tag"), match.group("condition")
 
 
+def _global_probability_from_tag(
+    tag: str | None,
+    tag_map: dict[str, float] | None = None,
+) -> float | None:
+    if tag is None:
+        return None
+    if tag_map is not None and tag in tag_map:
+        return float(tag_map[tag])
+
+    # Convention used in Join/Fork calibration jobs:
+    #   g5e1 -> 5e-1 = 0.5
+    #   g1e1 -> 1e-1 = 0.1
+    #   g5e2 -> 5e-2 = 0.05
+    match = re.match(r"^g(?P<mantissa>\d+(?:p\d+)?)e(?P<exponent>\d+)$", tag)
+    if match is None:
+        return None
+    mantissa = float(match.group("mantissa").replace("p", "."))
+    exponent = int(match.group("exponent"))
+    return mantissa * 10 ** (-exponent)
+
+
+def _global_probability_from_path(
+    path: Path,
+    tag: str | None,
+    tag_map: dict[str, float] | None = None,
+) -> float | None:
+    candidates: list[str] = []
+    if tag is not None:
+        candidates.append(tag.split("_", 1)[0])
+    candidates.append(path.parent.name.split("_", 1)[0])
+    candidates.append(path.parent.parent.name.split("_", 1)[0])
+
+    for candidate in candidates:
+        probability = _global_probability_from_tag(candidate, tag_map=tag_map)
+        if probability is not None:
+            return probability
+    return None
+
+
 def plot_first_seen_cdf_overlay(
     files: Iterable[str | Path],
     events: Iterable[str] | None = None,
@@ -488,6 +527,239 @@ def plot_join_fork_accuracy_sweep(
         title=kwargs.pop("title", f"{kind.capitalize()} firing probability"),
         **kwargs,
     )
+
+
+def plot_join_fork_global_calibration_sweep(
+    root_dir: str | Path,
+    kind: str,
+    event: str | None = None,
+    conditions: Iterable[str] | None = None,
+    global_probability_tags: dict[str, float] | None = None,
+    global_probability_order: Iterable[float] | None = None,
+    probability_aliases: Iterable[str] | None = None,
+    x_max: int | None = None,
+    bin_size: int = 1,
+    title: str | None = None,
+    figsize: tuple[float, float] | None = None,
+    dpi: int = 120,
+    font_size: int = 12,
+    title_fontsize: int | None = None,
+    label_fontsize: int | None = None,
+    tick_labelsize: int | None = None,
+    legend_fontsize: int | None = None,
+    x_label: str = "step",
+    y_label: str = "fraction of trials",
+    condition_colors: dict[str, str] | None = None,
+    condition_order: Iterable[str] | None = None,
+    marker_cycle: Iterable[str] = ("o", "s", "^", "D", "v", "P", "X", "*", "<", ">"),
+    markevery: int | tuple[int, int] | None = 60,
+    markersize: float = 5.0,
+    linewidth: float = 1.8,
+    condition_legend_title: str = "condition",
+    probability_legend_title: str = "error probability",
+    global_title_prefix: str = "global_prob",
+    output_dir: str | Path = ".",
+    filename: str | Path | None = None,
+    show: bool = False,
+) -> tuple[Any, Path | None]:
+    """Plot Join/Fork accuracy sweeps faceted by global probability.
+
+    The expected layout is the one produced by the global calibration jobs::
+
+        root_dir/g5e1_p1e5/join_g5e1_p1e5_P0.jsonl
+        root_dir/g5e1_p1e5/join_g5e1_p1e5_P1.jsonl
+        root_dir/g5e1_p1e5/join_g5e1_p1e5_P2.jsonl
+
+    Global probability tags such as ``g5e1`` are decoded as ``5e-1``.  A custom
+    mapping can be supplied through ``global_probability_tags``.
+    """
+    plt = _pyplot()
+    root = Path(root_dir)
+    if kind not in {"join", "fork"}:
+        raise ValueError("kind must be 'join' or 'fork'.")
+
+    if event is None:
+        event = "output" if kind == "join" else "output_1"
+    if conditions is None:
+        conditions = ("P2", "P1", "P0") if kind == "join" else ("P1", "P0")
+    if condition_order is None:
+        condition_order = tuple(conditions)
+    if probability_aliases is None:
+        probability_aliases = ("join_err_0_input",) if kind == "join" else ("fork_err_0_input",)
+
+    files = sorted(root.glob(f"**/{kind}_*_P*.jsonl"))
+    if not files:
+        raise ValueError(f"No {kind} JSONL files were found under {root}.")
+
+    condition_filter = set(conditions)
+    records: list[dict[str, Any]] = []
+    global_max_seen = 0
+    for path in files:
+        _kind, tag, condition = _condition_from_path(path)
+        if condition is None or condition not in condition_filter:
+            continue
+        global_probability = _global_probability_from_path(
+            path,
+            tag,
+            tag_map=global_probability_tags,
+        )
+        if global_probability is None:
+            continue
+
+        meta, hist, total, max_seen, _names = _first_seen_histogram_with_meta(
+            path,
+            target_events=[event],
+            bin_size=bin_size,
+        )
+        records.append(
+            {
+                "path": path,
+                "tag": tag,
+                "condition": condition,
+                "global_probability": global_probability,
+                "probability": _probability_from_meta(meta, aliases=probability_aliases),
+                "counter": hist.get(event, Counter()),
+                "total": total,
+            }
+        )
+        global_max_seen = max(global_max_seen, max_seen)
+
+    if not records:
+        raise ValueError("No matching global calibration JSONL files were found.")
+    if x_max is None:
+        x_max = int(global_max_seen)
+
+    if global_probability_order is None:
+        global_values = sorted({float(rec["global_probability"]) for rec in records}, reverse=True)
+    else:
+        global_values = [float(value) for value in global_probability_order]
+    if not global_values:
+        raise ValueError("No global probability values were found.")
+
+    unique_probabilities = sorted({rec["probability"] for rec in records if rec["probability"] is not None})
+    marker_values = list(marker_cycle)
+    marker_map = {
+        probability: marker_values[idx % len(marker_values)]
+        for idx, probability in enumerate(unique_probabilities)
+    }
+
+    # Match the physical-system figures by default: P2 green, P1 red, P0 blue.
+    default_colors = {
+        "P2": "tab:green",
+        "P1": "tab:red",
+        "P0": "tab:blue",
+        "P3": "tab:purple",
+    }
+    color_map = {**default_colors, **(condition_colors or {})}
+    condition_order_tuple = tuple(condition_order)
+    order_map = {condition: idx for idx, condition in enumerate(condition_order_tuple)}
+
+    if title_fontsize is None:
+        title_fontsize = font_size + 2
+    if label_fontsize is None:
+        label_fontsize = font_size
+    if tick_labelsize is None:
+        tick_labelsize = font_size
+    if legend_fontsize is None:
+        legend_fontsize = max(font_size - 1, 6)
+    if figsize is None:
+        figsize = (4.7 * len(global_values), 4.8)
+    if title is None:
+        title = f"{kind.capitalize()} firing probability by global probability"
+
+    fig, axes = plt.subplots(1, len(global_values), figsize=figsize, dpi=dpi, sharey=True, squeeze=False)
+    axis_list = list(axes[0])
+    for ax, global_probability in zip(axis_list, global_values):
+        subset = [
+            rec
+            for rec in records
+            if math.isclose(float(rec["global_probability"]), global_probability)
+        ]
+        subset.sort(
+            key=lambda rec: (
+                order_map.get(str(rec["condition"]), len(order_map)),
+                float("inf") if rec["probability"] is None else float(rec["probability"]),
+                str(rec["tag"]),
+            )
+        )
+
+        for rec in subset:
+            probability = rec["probability"]
+            condition = str(rec["condition"])
+            x, y, _seen = _counter_to_cdf(rec["counter"], int(rec["total"]), x_max, bin_size)
+            ax.plot(
+                x,
+                y,
+                color=color_map.get(condition, None),
+                marker=marker_map.get(probability, "o"),
+                markevery=markevery,
+                markersize=markersize,
+                linewidth=linewidth,
+                label=f"{condition}, p={_format_probability(probability)}",
+            )
+
+        ax.set_title(f"{global_title_prefix}={global_probability:g}", fontsize=title_fontsize)
+        ax.set_xlabel(x_label)
+        _apply_axis_font_sizes(ax, label_fontsize=label_fontsize, tick_labelsize=tick_labelsize)
+        ax.set_xlim(0, x_max)
+        ax.set_ylim(0.0, 1.0)
+        ax.grid(True, alpha=0.3)
+
+    axis_list[0].set_ylabel(y_label)
+    fig.suptitle(title, fontsize=title_fontsize + 1)
+
+    from matplotlib.lines import Line2D
+
+    present_conditions: list[str] = []
+    for rec in records:
+        condition = str(rec["condition"])
+        if condition not in present_conditions:
+            present_conditions.append(condition)
+    present_conditions.sort(key=lambda condition: order_map.get(condition, len(order_map)))
+
+    condition_handles = [
+        Line2D([0], [0], color=color_map.get(condition, "black"), lw=linewidth, label=condition)
+        for condition in present_conditions
+    ]
+    probability_handles = [
+        Line2D(
+            [0],
+            [0],
+            color="0.25",
+            marker=marker_map[probability],
+            linestyle="None",
+            markersize=markersize + 1,
+            label=f"p={_format_probability(probability)}",
+        )
+        for probability in unique_probabilities
+    ]
+
+    last_axis = axis_list[-1]
+    legend1 = last_axis.legend(
+        handles=condition_handles,
+        title=condition_legend_title,
+        fontsize=legend_fontsize,
+        title_fontsize=legend_fontsize,
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1.0),
+        frameon=True,
+    )
+    last_axis.add_artist(legend1)
+    last_axis.legend(
+        handles=probability_handles,
+        title=probability_legend_title,
+        fontsize=legend_fontsize,
+        title_fontsize=legend_fontsize,
+        loc="lower left",
+        bbox_to_anchor=(1.02, 0.0),
+        frameon=True,
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    saved_path = save_figure(fig, filename, output_dir=output_dir, dpi=dpi) if filename is not None else None
+    if show:
+        plt.show()
+    return fig, saved_path
 
 
 def plot_cumulative_events(
