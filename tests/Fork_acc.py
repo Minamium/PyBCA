@@ -17,6 +17,7 @@ def sample_path(*parts: str) -> str:
 
 
 parser = argparse.ArgumentParser(description="Fork accuracy test")
+parser.add_argument("--fork_ok_1", "--fork-ok-1", type=float, default=1.0)
 parser.add_argument("--fork_err_0", type=float, default=1e-5)
 parser.add_argument("--trials", type=int, default=100_000)
 parser.add_argument("--steps", type=int, default=500)
@@ -55,6 +56,7 @@ for name, cellspace_path in cellspace_paths:
         record_rule_history=args.record_rule_history,
         rule_history_rule_ids=None if args.record_all_rules else FORK_RULE_HISTORY_IDS,
         trial_constant_sweep={
+            "fork_ok_1_input": {"base": args.fork_ok_1, "delta": 0.0},
             "fork_err_0_input": {"base": args.fork_err_0, "delta": 0.0},
         },
     )

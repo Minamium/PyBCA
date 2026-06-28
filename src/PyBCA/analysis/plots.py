@@ -12,6 +12,26 @@ import numpy as np
 
 from .io import event_history_for_trial, events_to_dict, format_sweep_for_trial, load_jsonl_trials_with_meta
 
+JOIN_RULE_HISTORY_EVENT_GROUPS = {
+    "P2": ("rule_200", "rule_206", "rule_212", "rule_218"),
+    "P1": (
+        "rule_201",
+        "rule_202",
+        "rule_207",
+        "rule_208",
+        "rule_213",
+        "rule_214",
+        "rule_219",
+        "rule_220",
+    ),
+    "P0": ("rule_203", "rule_209", "rule_215", "rule_221"),
+}
+
+FORK_RULE_HISTORY_EVENT_GROUPS = {
+    "P1": ("rule_204", "rule_210", "rule_216", "rule_222"),
+    "P0": ("rule_205", "rule_211", "rule_217", "rule_223"),
+}
+
 
 def _pyplot():
     import matplotlib.pyplot as plt
@@ -57,6 +77,36 @@ def _first_seen_histogram_with_meta(
             hist.setdefault(str(name), Counter())[first // bin_size] += 1
 
     return meta, hist, total_trials, max_seen_step, sorted(all_event_names)
+
+
+def _first_seen_any_histogram_with_meta(
+    filepath: str | Path,
+    target_events: Iterable[str],
+    bin_size: int = 1,
+) -> tuple[dict[str, Any] | None, Counter[int], int, int, list[str]]:
+    counter: Counter[int] = Counter()
+    total_trials = 0
+    max_seen_step = 0
+    all_event_names: set[str] = set()
+    targets = [str(event) for event in target_events]
+
+    meta, trials = load_jsonl_trials_with_meta(filepath)
+    for rec in trials:
+        total_trials += 1
+        evdict = events_to_dict(rec.get("events", {}))
+        all_event_names.update(evdict)
+
+        seen_steps: list[int] = []
+        for name in targets:
+            seen_steps.extend(int(step) for step in evdict.get(name, []) if int(step) >= 0)
+        if not seen_steps:
+            continue
+
+        first = min(seen_steps)
+        max_seen_step = max(max_seen_step, first)
+        counter[first // bin_size] += 1
+
+    return meta, counter, total_trials, max_seen_step, sorted(all_event_names)
 
 
 def first_seen_histogram(
@@ -149,6 +199,19 @@ def _condition_from_path(path: Path) -> tuple[str | None, str | None, str | None
     if match is None:
         return None, None, None
     return match.group("kind"), match.group("tag"), match.group("condition")
+
+
+def _condition_from_rule_history_path(path: Path, kind: str) -> tuple[str | None, str | None]:
+    parsed_kind, tag, condition = _condition_from_path(path)
+    if parsed_kind == kind and condition is not None:
+        return tag, condition
+
+    condition_match = re.search(r"_(P\d+)$", path.stem)
+    if condition_match is None:
+        return None, None
+    if kind not in path.stem.split("_"):
+        return None, None
+    return path.stem[: condition_match.start()], condition_match.group(1)
 
 
 def _global_probability_from_tag(
@@ -355,7 +418,13 @@ def plot_first_seen_cdf_by_condition(
                 "total": total,
             }
         )
-        global_max_seen = max(global_max_seen, max_seen)
+        current_step = 0
+        if isinstance(meta, dict):
+            try:
+                current_step = int(meta.get("current_step", 0))
+            except Exception:
+                current_step = 0
+        global_max_seen = max(global_max_seen, max_seen, current_step)
 
     if not records:
         raise ValueError("No matching Join/Fork JSONL files were found.")
@@ -527,6 +596,234 @@ def plot_join_fork_accuracy_sweep(
         title=kwargs.pop("title", f"{kind.capitalize()} firing probability"),
         **kwargs,
     )
+
+
+def plot_join_fork_rule_history_sweep(
+    root_dir: str | Path,
+    kind: str,
+    condition_rule_events: dict[str, Iterable[str]] | None = None,
+    conditions: Iterable[str] | None = None,
+    probability_aliases: Iterable[str] | None = None,
+    x_max: int | None = None,
+    bin_size: int = 1,
+    title: str | None = None,
+    figsize: tuple[float, float] = (8.0, 4.8),
+    dpi: int = 120,
+    font_size: int = 12,
+    title_fontsize: int | None = None,
+    label_fontsize: int | None = None,
+    tick_labelsize: int | None = None,
+    legend_fontsize: int | None = None,
+    x_label: str = "step",
+    y_label: str = "fraction of trials",
+    condition_colors: dict[str, str] | None = None,
+    condition_order: Iterable[str] | None = None,
+    marker_cycle: Iterable[str] = ("o", "s", "^", "D", "v", "P", "X", "*", "<", ">"),
+    markevery: int | tuple[int, int] | None = 60,
+    markersize: float = 5.0,
+    linewidth: float = 1.8,
+    condition_legend_title: str = "condition",
+    probability_legend_title: str = "base error probability",
+    legend_outside: bool = True,
+    output_dir: str | Path = ".",
+    filename: str | Path | None = None,
+    show: bool = False,
+) -> tuple[Any, Path | None]:
+    """Plot Join/Fork rule-history CDFs by input condition and error probability.
+
+    Unlike spatial-event based accuracy plots, this uses condition-specific rule
+    groups.  For example, Join ``P2`` counts nominal Join rules, while Join
+    ``P1`` counts 1-input error rules.
+    """
+    plt = _pyplot()
+    root = Path(root_dir)
+    if kind not in {"join", "fork"}:
+        raise ValueError("kind must be 'join' or 'fork'.")
+
+    if condition_rule_events is None:
+        condition_rule_events = (
+            JOIN_RULE_HISTORY_EVENT_GROUPS if kind == "join" else FORK_RULE_HISTORY_EVENT_GROUPS
+        )
+    condition_rule_events = {
+        str(condition): tuple(str(event) for event in events)
+        for condition, events in condition_rule_events.items()
+    }
+
+    if conditions is None:
+        conditions = tuple(condition_rule_events)
+    if condition_order is None:
+        condition_order = tuple(conditions)
+    if probability_aliases is None:
+        probability_aliases = ("join_err_0_input",) if kind == "join" else ("fork_err_0_input",)
+
+    files = sorted(root.glob(f"**/{kind}*rule*_P*.jsonl"))
+    if not files:
+        raise ValueError(f"No {kind} rule-history JSONL files were found under {root}.")
+
+    condition_filter = set(str(condition) for condition in conditions)
+    records: list[dict[str, Any]] = []
+    global_max_seen = 0
+    for path in files:
+        tag, condition = _condition_from_rule_history_path(path, kind)
+        if condition is None or condition not in condition_filter:
+            continue
+        target_events = condition_rule_events.get(condition)
+        if not target_events:
+            continue
+
+        meta, counter, total, max_seen, _names = _first_seen_any_histogram_with_meta(
+            path,
+            target_events=target_events,
+            bin_size=bin_size,
+        )
+        records.append(
+            {
+                "path": path,
+                "tag": tag,
+                "condition": condition,
+                "probability": _probability_from_meta(meta, aliases=probability_aliases),
+                "counter": counter,
+                "total": total,
+            }
+        )
+        global_max_seen = max(global_max_seen, max_seen)
+
+    if not records:
+        raise ValueError("No matching rule-history JSONL files were found.")
+    if x_max is None:
+        x_max = int(global_max_seen)
+
+    condition_order_tuple = tuple(str(condition) for condition in condition_order)
+    order_map = {condition: idx for idx, condition in enumerate(condition_order_tuple)}
+    records.sort(
+        key=lambda rec: (
+            order_map.get(str(rec["condition"]), len(order_map)),
+            float("inf") if rec["probability"] is None else float(rec["probability"]),
+            str(rec["tag"]),
+        )
+    )
+
+    # Match the physical-system figures by default: P2 green, P1 red, P0 blue.
+    default_colors = {
+        "P2": "tab:green",
+        "P1": "tab:red",
+        "P0": "tab:blue",
+        "P3": "tab:purple",
+    }
+    color_map = {**default_colors, **(condition_colors or {})}
+
+    unique_probabilities = sorted({rec["probability"] for rec in records if rec["probability"] is not None})
+    marker_values = list(marker_cycle)
+    marker_map = {
+        probability: marker_values[idx % len(marker_values)]
+        for idx, probability in enumerate(unique_probabilities)
+    }
+
+    if title is None:
+        title = f"{kind.capitalize()} rule firing probability"
+    if title_fontsize is None:
+        title_fontsize = font_size + 2
+    if label_fontsize is None:
+        label_fontsize = font_size
+    if tick_labelsize is None:
+        tick_labelsize = font_size
+    if legend_fontsize is None:
+        legend_fontsize = max(font_size - 1, 6)
+
+    fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+    for rec in records:
+        probability = rec["probability"]
+        condition = str(rec["condition"])
+        x, y, _seen = _counter_to_cdf(rec["counter"], int(rec["total"]), x_max, bin_size)
+        ax.plot(
+            x,
+            y,
+            color=color_map.get(condition, None),
+            marker=marker_map.get(probability, "o"),
+            markevery=markevery,
+            markersize=markersize,
+            linewidth=linewidth,
+            label=f"{condition}, p={_format_probability(probability)}",
+        )
+
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    _apply_axis_font_sizes(ax, label_fontsize=label_fontsize, tick_labelsize=tick_labelsize)
+    ax.set_xlim(0, x_max)
+    ax.set_ylim(0.0, 1.0)
+    ax.grid(True, alpha=0.3)
+
+    from matplotlib.lines import Line2D
+
+    present_conditions: list[str] = []
+    for rec in records:
+        condition = str(rec["condition"])
+        if condition not in present_conditions:
+            present_conditions.append(condition)
+    present_conditions.sort(key=lambda condition: order_map.get(condition, len(order_map)))
+
+    condition_handles = [
+        Line2D([0], [0], color=color_map.get(condition, "black"), lw=linewidth, label=condition)
+        for condition in present_conditions
+    ]
+    probability_handles = [
+        Line2D(
+            [0],
+            [0],
+            color="0.25",
+            marker=marker_map[probability],
+            linestyle="None",
+            markersize=markersize + 1,
+            label=f"p={_format_probability(probability)}",
+        )
+        for probability in unique_probabilities
+    ]
+
+    if legend_outside:
+        legend1 = ax.legend(
+            handles=condition_handles,
+            title=condition_legend_title,
+            fontsize=legend_fontsize,
+            title_fontsize=legend_fontsize,
+            loc="upper left",
+            bbox_to_anchor=(1.02, 1.0),
+            frameon=True,
+        )
+        ax.add_artist(legend1)
+        ax.legend(
+            handles=probability_handles,
+            title=probability_legend_title,
+            fontsize=legend_fontsize,
+            title_fontsize=legend_fontsize,
+            loc="lower left",
+            bbox_to_anchor=(1.02, 0.0),
+            frameon=True,
+        )
+    else:
+        legend1 = ax.legend(
+            handles=condition_handles,
+            title=condition_legend_title,
+            fontsize=legend_fontsize,
+            title_fontsize=legend_fontsize,
+            loc="upper left",
+            frameon=True,
+        )
+        ax.add_artist(legend1)
+        ax.legend(
+            handles=probability_handles,
+            title=probability_legend_title,
+            fontsize=legend_fontsize,
+            title_fontsize=legend_fontsize,
+            loc="lower right",
+            frameon=True,
+        )
+
+    fig.tight_layout()
+    saved_path = save_figure(fig, filename, output_dir=output_dir, dpi=dpi) if filename is not None else None
+    if show:
+        plt.show()
+    return fig, saved_path
 
 
 def plot_join_fork_global_calibration_sweep(

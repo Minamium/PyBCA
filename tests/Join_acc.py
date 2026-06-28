@@ -17,6 +17,7 @@ def sample_path(*parts: str) -> str:
 
 
 parser = argparse.ArgumentParser(description="Join accuracy test")
+parser.add_argument("--join_ok_2", "--join-ok-2", type=float, default=1.0)
 parser.add_argument("--join_err_0", type=float, default=1e-6)
 parser.add_argument("--join_err_1", type=float, default=1e-5)
 parser.add_argument("--trials", type=int, default=100_000)
@@ -57,6 +58,7 @@ for name, cellspace_path in cellspace_paths:
         record_rule_history=args.record_rule_history,
         rule_history_rule_ids=None if args.record_all_rules else JOIN_RULE_HISTORY_IDS,
         trial_constant_sweep={
+            "join_ok_2_input": {"base": args.join_ok_2, "delta": 0.0},
             "join_err_0_input": {"base": args.join_err_0, "delta": 0.0},
             "join_err_1_input": {"base": args.join_err_1, "delta": 0.0},
         },

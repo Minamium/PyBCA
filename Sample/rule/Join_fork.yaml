@@ -1,4 +1,6 @@
 constants:
+  join_ok_2_input: &join_ok_2_input 1.0
+  fork_ok_1_input: &fork_ok_1_input 1.0
   join_err_0_input: &join_err_0_input 0.01
   join_err_1_input: &join_err_1_input 0.001
   fork_err_0_input: &fork_err_0_input 0.01
@@ -11,6 +13,7 @@ conv:
 
 rules:
 - id: 200
+  probability: *join_ok_2_input
   rule:
     prev:
     - coord:
@@ -162,6 +165,7 @@ rules:
       state: !OccupiedBy 1
 
 - id: 204
+  probability: *fork_ok_1_input
   rule:
     prev:
     - coord:
@@ -237,6 +241,7 @@ rules:
       state: !OccupiedBy 2
 
 - id: 206
+  probability: *join_ok_2_input
   rule:
     prev:
     - coord:
@@ -388,6 +393,7 @@ rules:
       state: !OccupiedBy 1
 
 - id: 210
+  probability: *fork_ok_1_input
   rule:
     prev:
     - coord:
@@ -466,6 +472,7 @@ rules:
 
 # 左向きJoin (右向きのx反転)
 - id: 212
+  probability: *join_ok_2_input
   rule:
     prev:
     - coord:
@@ -618,6 +625,7 @@ rules:
 
 # 左向きFork (右向きのx反転)
 - id: 216
+  probability: *fork_ok_1_input
   rule:
     prev:
     - coord:
@@ -694,6 +702,7 @@ rules:
 
 # 下向きJoin (上向きのy反転)
 - id: 218
+  probability: *join_ok_2_input
   rule:
     prev:
     - coord:
@@ -846,6 +855,7 @@ rules:
 
 # 下向きFork (上向きのy反転)
 - id: 222
+  probability: *fork_ok_1_input
   rule:
     prev:
     - coord:
