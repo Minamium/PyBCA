@@ -835,3 +835,146 @@ def plot_cumulative_events(
     if show:
         plt.show()
     return fig, saved_path
+
+
+def _normalize_event_groups(
+    event_groups: dict[str, Iterable[str]] | Iterable[tuple[str, Iterable[str]]],
+) -> list[tuple[str, list[str]]]:
+    if isinstance(event_groups, dict):
+        items = event_groups.items()
+    else:
+        items = event_groups
+    return [(str(name), [str(event) for event in events]) for name, events in items]
+
+
+def plot_cumulative_event_groups(
+    event_source: str | Path | dict[str, list[int]],
+    event_groups: dict[str, Iterable[str]] | Iterable[tuple[str, Iterable[str]]],
+    *,
+    trial: int = 0,
+    steps: int | None = None,
+    xlim: tuple[int, int] | None = None,
+    figsize: tuple[float, float] = (12, 6),
+    title_prefix: str = "Event Firing History",
+    output_dir: str | Path = ".",
+    filename_prefix: str | None = None,
+    dpi: int = 120,
+    font_size: int | None = None,
+    title_fontsize: int | None = None,
+    label_fontsize: int | None = None,
+    tick_labelsize: int | None = None,
+    legend_fontsize: int | None = None,
+    show: bool = False,
+) -> list[tuple[Any, Path | None]]:
+    """Plot cumulative event histories for multiple named event groups.
+
+    This is the grouped form of :func:`plot_cumulative_events`.  It keeps the
+    notebook workflow concise when a circuit has a small fixed set of relevant
+    event groups, such as BNN output/weight/input events.
+    """
+    plot_xlim = xlim if xlim is not None else ((0, steps) if steps is not None else None)
+    results: list[tuple[Any, Path | None]] = []
+
+    for group_name, event_names in _normalize_event_groups(event_groups):
+        filename = None
+        if filename_prefix is not None:
+            filename = f"{filename_prefix}_{group_name}.png"
+        fig, saved = plot_cumulative_events(
+            event_source,
+            event_names=event_names,
+            figsize=figsize,
+            title=f"{title_prefix}: {group_name}",
+            xlim=plot_xlim,
+            trial=trial,
+            output_dir=output_dir,
+            filename=filename,
+            dpi=dpi,
+            font_size=font_size,
+            title_fontsize=title_fontsize,
+            label_fontsize=label_fontsize,
+            tick_labelsize=tick_labelsize,
+            legend_fontsize=legend_fontsize,
+            show=show,
+        )
+        results.append((fig, saved))
+
+    return results
+
+
+BNN_CUMULATIVE_EVENT_GROUPS: dict[str, tuple[str, ...]] = {
+    "output": ("output",),
+    "weight": ("add_weight", "subs_weight_pre", "subs_weight_post"),
+    "input": ("input_from_Pre-Neuron", "input_from_Post-Neuron"),
+}
+
+
+def plot_bnn_cumulative_events(
+    event_source: str | Path | dict[str, list[int]],
+    *,
+    trial: int = 0,
+    steps: int = 80_000,
+    xlim: tuple[int, int] | None = None,
+    event_groups: dict[str, Iterable[str]] | Iterable[tuple[str, Iterable[str]]] | None = None,
+    figsize: tuple[float, float] = (12, 6),
+    title_prefix: str = "BNN Event Firing History",
+    output_dir: str | Path = ".",
+    filename_prefix: str | None = None,
+    dpi: int = 120,
+    font_size: int | None = None,
+    show: bool = False,
+) -> list[tuple[Any, Path | None]]:
+    """Plot the BNN cumulative event groups used in the analysis notebooks."""
+    groups = event_groups if event_groups is not None else BNN_CUMULATIVE_EVENT_GROUPS
+    return plot_cumulative_event_groups(
+        event_source,
+        groups,
+        trial=trial,
+        steps=steps,
+        xlim=xlim,
+        figsize=figsize,
+        title_prefix=title_prefix,
+        output_dir=output_dir,
+        filename_prefix=filename_prefix,
+        dpi=dpi,
+        font_size=font_size,
+        show=show,
+    )
+
+
+BCA_IP_CUMULATIVE_EVENT_GROUPS: dict[str, tuple[str, ...]] = {
+    "A_outputs": tuple(f"A_x{i}output" for i in range(1, 7)),
+    "B_outputs": tuple(f"B_x{i}output" for i in range(1, 7)),
+}
+
+
+def plot_bca_ip_cumulative_events(
+    event_source: str | Path | dict[str, list[int]],
+    *,
+    trial: int = 0,
+    steps: int = 2_000_000,
+    xlim: tuple[int, int] | None = None,
+    event_groups: dict[str, Iterable[str]] | Iterable[tuple[str, Iterable[str]]] | None = None,
+    figsize: tuple[float, float] = (12, 6),
+    title_prefix: str = "BCA-IP Event Firing History",
+    output_dir: str | Path = ".",
+    filename_prefix: str | None = None,
+    dpi: int = 120,
+    font_size: int | None = None,
+    show: bool = False,
+) -> list[tuple[Any, Path | None]]:
+    """Plot the BCA-IP cumulative event groups used in the analysis notebooks."""
+    groups = event_groups if event_groups is not None else BCA_IP_CUMULATIVE_EVENT_GROUPS
+    return plot_cumulative_event_groups(
+        event_source,
+        groups,
+        trial=trial,
+        steps=steps,
+        xlim=xlim,
+        figsize=figsize,
+        title_prefix=title_prefix,
+        output_dir=output_dir,
+        filename_prefix=filename_prefix,
+        dpi=dpi,
+        font_size=font_size,
+        show=show,
+    )
