@@ -4,6 +4,12 @@ from pathlib import Path
 from PyBCA.cli_simClass import BCA_Simulator
 
 ROOT = Path(__file__).resolve().parents[1]
+JOIN_RULE_HISTORY_IDS = (
+    200, 201, 202, 203,
+    206, 207, 208, 209,
+    212, 213, 214, 215,
+    218, 219, 220, 221,
+)
 
 
 def sample_path(*parts: str) -> str:
@@ -18,6 +24,14 @@ parser.add_argument("--steps", type=int, default=500)
 parser.add_argument("--global_prob", type=float, default=0.5)
 parser.add_argument("--state_gate_interval", type=int, default=500)
 parser.add_argument("--output_prefix", type=str, default="join_acc")
+parser.add_argument("--rule_history_prefix", type=str, default=None)
+parser.add_argument(
+    "--record_rule_history",
+    "--record-rule-history",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+)
+parser.add_argument("--record_all_rules", "--record-all-rules", action="store_true")
 parser.add_argument("--device", type=str, default="cuda")
 args = parser.parse_args()
 
@@ -40,6 +54,8 @@ for name, cellspace_path in cellspace_paths:
         device=args.device,
         spatial_event_filePath=event_path,
         use_tqdm=True,
+        record_rule_history=args.record_rule_history,
+        rule_history_rule_ids=None if args.record_all_rules else JOIN_RULE_HISTORY_IDS,
         trial_constant_sweep={
             "join_err_0_input": {"base": args.join_err_0, "delta": 0.0},
             "join_err_1_input": {"base": args.join_err_1, "delta": 0.0},
@@ -64,5 +80,15 @@ for name, cellspace_path in cellspace_paths:
         deduplicate=True,
         return_df=False,
     )
+
+    if args.record_rule_history:
+        rule_history_prefix = args.rule_history_prefix or f"{args.output_prefix}_rule"
+        rule_output_file = f"{rule_history_prefix}_{name}.jsonl"
+        simulator.save_rule_history_for_dataframe(
+            rule_output_file,
+            format="jsonl_trials",
+            deduplicate=False,
+            return_df=False,
+        )
 
 print("done")

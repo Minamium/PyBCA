@@ -4,6 +4,12 @@ from pathlib import Path
 from PyBCA.cli_simClass import BCA_Simulator
 
 ROOT = Path(__file__).resolve().parents[1]
+FORK_RULE_HISTORY_IDS = (
+    204, 205,
+    210, 211,
+    216, 217,
+    222, 223,
+)
 
 
 def sample_path(*parts: str) -> str:
@@ -17,6 +23,14 @@ parser.add_argument("--steps", type=int, default=500)
 parser.add_argument("--global_prob", type=float, default=0.5)
 parser.add_argument("--state_gate_interval", type=int, default=500)
 parser.add_argument("--output_prefix", type=str, default="fork_acc")
+parser.add_argument("--rule_history_prefix", type=str, default=None)
+parser.add_argument(
+    "--record_rule_history",
+    "--record-rule-history",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+)
+parser.add_argument("--record_all_rules", "--record-all-rules", action="store_true")
 parser.add_argument("--device", type=str, default="cuda")
 args = parser.parse_args()
 
@@ -38,6 +52,8 @@ for name, cellspace_path in cellspace_paths:
         device=args.device,
         spatial_event_filePath=event_path,
         use_tqdm=True,
+        record_rule_history=args.record_rule_history,
+        rule_history_rule_ids=None if args.record_all_rules else FORK_RULE_HISTORY_IDS,
         trial_constant_sweep={
             "fork_err_0_input": {"base": args.fork_err_0, "delta": 0.0},
         },
@@ -61,5 +77,15 @@ for name, cellspace_path in cellspace_paths:
         deduplicate=True,
         return_df=False,
     )
+
+    if args.record_rule_history:
+        rule_history_prefix = args.rule_history_prefix or f"{args.output_prefix}_rule"
+        rule_output_file = f"{rule_history_prefix}_{name}.jsonl"
+        simulator.save_rule_history_for_dataframe(
+            rule_output_file,
+            format="jsonl_trials",
+            deduplicate=False,
+            return_df=False,
+        )
 
 print("done")
