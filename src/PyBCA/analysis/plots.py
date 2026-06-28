@@ -784,13 +784,18 @@ def plot_cumulative_events(
     meta = None
 
     if isinstance(event_source, (str, Path)):
+        source_path = Path(event_source)
         meta, _trials = load_jsonl_trials_with_meta(event_source)
         event_dict = event_history_for_trial(event_source, trial=trial)
         sweep_text = format_sweep_for_trial(meta, trial)
-        if sweep_text is None:
-            plot_title = f"{title} (trial={trial})"
-        else:
-            plot_title = f"{title} (trial={trial} | {sweep_text})"
+        global_probability = _global_probability_from_path(source_path, tag=None)
+
+        title_parts = [f"trial={trial}"]
+        if global_probability is not None:
+            title_parts.append(f"global_prob={global_probability:g}")
+        if sweep_text is not None:
+            title_parts.append(sweep_text.replace("sweep:", "error:"))
+        plot_title = f"{title} ({' | '.join(title_parts)})"
     elif isinstance(event_source, dict):
         event_dict = event_source
         plot_title = title

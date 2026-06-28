@@ -20,6 +20,8 @@ def build_state(config: Config) -> BCAState:
         gui_mode=config.gui_mode,
         use_tqdm=config.use_tqdm_bool,
         trial_constant_sweep=config.trial_constant_sweep,
+        record_rule_history=config.record_rule_history,
+        rule_history_rule_ids=config.rule_history_rule_ids,
     )
     simulator.Allocate_torch_Tensors_on_Device()
     simulator.set_ParallelTrial(config.trials)

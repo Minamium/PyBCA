@@ -14,6 +14,7 @@ from .distributed import (
     barrier,
     build_local_save_kwargs,
     merge_event_history_shards,
+    merge_rule_history_shards,
     prepare_distributed_run,
     shutdown_process_group,
 )
@@ -69,6 +70,8 @@ class Engine:
         simulator = self.state.simulator if self.state is not None else None
         local_event_history = None
         merged_event_history = None
+        local_rule_history = None
+        merged_rule_history = None
 
         try:
             if self.distributed.active and self.config.steps > 0:
@@ -89,9 +92,20 @@ class Engine:
                     **save_kwargs,
                 )
 
+            if self.distributed.active and self.config.rule_history_path is not None:
+                save_kwargs = build_local_save_kwargs(self.distributed)
+                local_rule_history = simulator.save_rule_history_for_dataframe(
+                    path=self.config.rule_history_path,
+                    format=self.config.rule_history_format,
+                    deduplicate=self.config.rule_history_deduplicate,
+                    return_df=self.config.rule_history_return_df,
+                    **save_kwargs,
+                )
+
             if self.distributed.context.enabled:
                 barrier(self.distributed.context)
                 merged_event_history = merge_event_history_shards(self.distributed)
+                merged_rule_history = merge_rule_history_shards(self.distributed)
                 barrier(self.distributed.context)
 
             elapsed = time.perf_counter() - start
@@ -103,6 +117,14 @@ class Engine:
                 and not self.config.event_history_return_df
             ):
                 result_event_history = merged_event_history
+            result_rule_history = local_rule_history
+            if (
+                self.distributed.context.enabled
+                and self.distributed.context.is_master
+                and merged_rule_history is not None
+                and not self.config.rule_history_return_df
+            ):
+                result_rule_history = merged_rule_history
 
             meta: dict[str, Any] = {"config": self.config.as_dict}
             if self.distributed.context.enabled:
@@ -129,6 +151,8 @@ class Engine:
                         "rank_config_path": self.distributed.rank_config_path,
                         "event_history_shard_path": self.distributed.shard_event_history_path,
                         "event_history_merged_path": merged_event_history,
+                        "rule_history_shard_path": self.distributed.shard_rule_history_path,
+                        "rule_history_merged_path": merged_rule_history,
                     },
                 }
 
@@ -137,6 +161,7 @@ class Engine:
                 current_step=int(getattr(simulator, "_current_step", 0)) if simulator is not None else 0,
                 elapsed_sec=float(elapsed),
                 event_history=result_event_history,
+                rule_history=result_rule_history,
                 meta=meta,
             )
         finally:

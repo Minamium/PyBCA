@@ -591,12 +591,69 @@ def _cases() -> list[Case]:
     ]
 
 
+def _run_rule_history_smoke() -> None:
+    with tempfile.TemporaryDirectory(prefix="bca_rule_history_") as td:
+        out = Path(td) / "rule_history.jsonl"
+        cfg = Config(
+            cellspace_path=_resolve("Sample/Cellspace/Join_err/P2_join.yaml"),
+            rule_paths=(
+                _resolve("Sample/rule/base-rule.yaml"),
+                _resolve("Sample/rule/Join_fork.yaml"),
+            ),
+            device="cpu",
+            trials=3,
+            steps=5,
+            global_prob=1.0,
+            seed=1,
+            use_tqdm="false",
+            rule_history_rule_ids=(200, 201, 202, 203),
+            rule_history_path=str(out),
+            rule_history_format="jsonl_trials",
+            rule_history_return_df=True,
+            state_gate_enable=True,
+        )
+
+        result = Engine(cfg).run()
+        if not out.exists():
+            raise AssertionError(f"rule history output was not created: {out}")
+        if result.rule_history is None or result.rule_history.empty:
+            raise AssertionError("rule history dataframe is empty.")
+
+        event_names = set(result.rule_history["event"])
+        allowed = {"rule_200", "rule_201", "rule_202", "rule_203"}
+        if not event_names.issubset(allowed):
+            raise AssertionError(f"unexpected rule history events: {sorted(event_names)}")
+        if "rule_200" not in event_names:
+            raise AssertionError("expected rule_200 to fire in P2 join smoke case.")
+
+        lines = out.read_text(encoding="utf-8").splitlines()
+        if len(lines) != 4:
+            raise AssertionError(f"unexpected jsonl line count: {len(lines)}")
+
+        meta = json.loads(lines[0])["__meta__"]
+        if meta["history_kind"] != "rule_history":
+            raise AssertionError("rule history metadata kind mismatch.")
+        if meta["record_rule_history"] is not True:
+            raise AssertionError("rule_history_path should enable record_rule_history.")
+        if meta["rule_history_rule_ids"] != [200, 201, 202, 203]:
+            raise AssertionError("tracked rule ids were not persisted correctly.")
+
+        first_trial = json.loads(lines[1])
+        events = {name: steps for name, steps in first_trial["events"]}
+        if len(events.get("rule_200", [])) == 0:
+            raise AssertionError("rule_200 steps were not written for trial 0.")
+
+    print("[OK] rule_history_smoke")
+
+
 def main() -> None:
     torch.manual_seed(0)
     start_all = time.perf_counter()
 
     for case in _cases():
         _run_case(case)
+
+    _run_rule_history_smoke()
 
     elapsed = time.perf_counter() - start_all
     print(f"All parity checks passed. total={elapsed:.3f}s")

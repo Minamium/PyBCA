@@ -8,7 +8,7 @@ from . import io as lib
 
 import torch
 import torch.nn.functional as F 
-from typing import List
+from typing import Any, List
 from tqdm import tqdm
 
 # クラス定義
@@ -20,7 +20,9 @@ class BCA_Simulator:
                  spatial_event_filePath: str | None = None,
                  gui_mode: bool = False,
                  use_tqdm: bool = False,
-                 trial_constant_sweep: dict[str, dict[str, float]] | None = None
+                 trial_constant_sweep: dict[str, dict[str, float]] | None = None,
+                 record_rule_history: bool = False,
+                 rule_history_rule_ids: List[int] | tuple[int, ...] | None = None
                  ):
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
@@ -56,6 +58,15 @@ class BCA_Simulator:
 
         # tqdm
         self.use_tqdm = use_tqdm
+
+        # 遷移規則発火履歴
+        self.record_rule_history = bool(record_rule_history)
+        self.rule_history_rule_ids = (
+            None
+            if rule_history_rule_ids is None
+            else {int(rule_id) for rule_id in rule_history_rule_ids}
+        )
+        self.rule_history = None
 
         # 畳み込み有効化
         torch.backends.cudnn.benchmark = True
@@ -133,6 +144,28 @@ class BCA_Simulator:
             self.event_history = [{name: [] for name in names} for _ in range(parallel_trial)]
         else:
             self.event_history = None
+
+        if self.record_rule_history:
+            if self.rule_history_rule_ids is None:
+                tracked_rule_ids = [int(rule_id) for rule_id in self.rule_ids]
+            else:
+                available_rule_ids = {int(rule_id) for rule_id in self.rule_ids}
+                missing = sorted(self.rule_history_rule_ids - available_rule_ids)
+                if missing:
+                    raise ValueError(f"rule_history_rule_ids contains unloaded rule ids: {missing}")
+                tracked_rule_ids = [
+                    int(rule_id)
+                    for rule_id in self.rule_ids
+                    if int(rule_id) in self.rule_history_rule_ids
+                ]
+            self.rule_history_names = [self._rule_history_name(rule_id) for rule_id in tracked_rule_ids]
+            self.rule_history = [
+                {name: [] for name in self.rule_history_names}
+                for _ in range(parallel_trial)
+            ]
+        else:
+            self.rule_history_names = None
+            self.rule_history = None
 
         # --- trial ごとの確率 sweep を適用して rule_probs_tensor を [T,N] に差し替え ---
         if self.trial_constant_sweep is not None:
@@ -314,6 +347,8 @@ class BCA_Simulator:
             if debug:
                 print(f"After Rule Outer Conflict Resolution {idx}")
                 #self.debug(show_per_trial=debug_per_trial)
+
+            self._record_rule_history(idx)
 
             # 書き換え実行(セル空間とtrialに並列な処理)
             self._write_back(idx)
@@ -727,6 +762,49 @@ class BCA_Simulator:
         self.TCHW[:, 0] = torch.where(write_mask, write_val, cs)
         self.TCHW_applied[:, 0] |= write_mask
 
+    @staticmethod
+    def _rule_history_name(rule_id: int) -> str:
+        return f"rule_{int(rule_id)}"
+
+    def _record_rule_history(self, rule_idx: int) -> None:
+        history = getattr(self, "rule_history", None)
+        if history is None:
+            return
+
+        if hasattr(rule_idx, "item"):
+            rule_index = int(rule_idx.item())
+        else:
+            rule_index = int(rule_idx)
+        rule_id = int(self.rule_ids[rule_index])
+        if self.rule_history_rule_ids is not None and rule_id not in self.rule_history_rule_ids:
+            return
+
+        center = self.TNHW_boolMask[:, rule_index, :, :]
+        if not center.any():
+            return
+
+        step = getattr(self, "_current_step", None)
+        if step is None:
+            return
+
+        counts = center.reshape(center.shape[0], -1).sum(dim=1)
+        hit_trials = torch.nonzero(counts, as_tuple=False).flatten()
+        if hit_trials.numel() == 0:
+            return
+
+        name = self._rule_history_name(rule_id)
+        trial_list = hit_trials.detach().to("cpu").tolist()
+        count_list = counts.index_select(0, hit_trials).detach().to("cpu", dtype=torch.int64).tolist()
+        step_i = int(step)
+        for trial, count in zip(trial_list, count_list):
+            count_i = int(count)
+            if count_i <= 0:
+                continue
+            if count_i == 1:
+                history[int(trial)][name].append(step_i)
+            else:
+                history[int(trial)][name].extend([step_i] * count_i)
+
     # デバッグ情報
     def debug(self, show_per_trial: bool = False):
         # デバッグ情報
@@ -1063,6 +1141,241 @@ class BCA_Simulator:
                         f.write("# " + line + "\n")
                 yaml.safe_dump(records, f, allow_unicode=True, sort_keys=False)
 
+        else:
+            raise ValueError("format は parquet/csv/jsonl/yaml/jsonl_trials/jsonl_trials_dict のいずれかです。")
+
+        return df if return_df else path
+
+    def save_rule_history_for_dataframe(
+        self,
+        path: str | None = None,
+        format: str = "parquet",
+        deduplicate: bool = False,
+        return_df: bool = True,
+        parquet_compression: str = "snappy",
+        save_meta: bool = True,
+        meta_key: str = "bca_meta",
+        save_meta_sidecar: bool = True,
+        meta_sidecar_path: str | None = None,
+        trial_index_offset: int = 0,
+        extra_meta: dict | None = None,
+    ):
+        """
+        rule_history を保存/変換するユーティリティ。
+
+        rule_history 仕様:
+          self.rule_history: List[Dict[str, List[int]]]
+            └ 各trialについて {"rule_<id>": [fired_steps...]} の辞書
+
+        同一 rule が同一 step・同一 trial 内で複数中心に適用された場合、step は
+        複数回 append される。step の存在だけを見たい場合は deduplicate=True を使う。
+        """
+        if getattr(self, "rule_history", None) is None:
+            raise RuntimeError(
+                "rule_history がありません。record_rule_history=True で "
+                "set_ParallelTrial() と run_steps() の後に呼んでください。"
+            )
+
+        import os
+        import json
+        from datetime import datetime
+        import pandas as pd
+
+        rows = []
+        for t, rdict in enumerate(self.rule_history):
+            trial_id = int(trial_index_offset + t)
+            for name, steps in rdict.items():
+                if deduplicate:
+                    steps_iter = sorted(set(int(s) for s in steps))
+                else:
+                    steps_iter = (int(s) for s in steps)
+                for s in steps_iter:
+                    rows.append({"trial": trial_id, "event": str(name), "step": int(s)})
+
+        df = pd.DataFrame(rows, columns=["trial", "event", "step"])
+        if not df.empty:
+            df.sort_values(["trial", "event", "step"], inplace=True, kind="mergesort")
+            df.reset_index(drop=True, inplace=True)
+        else:
+            try:
+                df = df.astype({"trial": "int64", "event": "string", "step": "int64"})
+            except Exception:
+                pass
+
+        meta = None
+        if save_meta:
+            def _clamp01(x: float) -> float:
+                x = float(x)
+                if x < 0.0:
+                    return 0.0
+                if x > 1.0:
+                    return 1.0
+                return x
+
+            T = int(getattr(self, "parallel_trial", len(self.rule_history)))
+            meta = {
+                "meta_version": 1,
+                "created_at": datetime.now().isoformat(timespec="seconds"),
+                "class": "BCA_Simulator",
+                "history_kind": "rule_history",
+                "parallel_trial": T,
+                "current_step": int(getattr(self, "_current_step", -1)),
+                "device": str(getattr(self, "device", "")),
+                "offset_x": int(getattr(self, "offset_x", 0)),
+                "offset_y": int(getattr(self, "offset_y", 0)),
+                "record_rule_history": bool(getattr(self, "record_rule_history", False)),
+                "rule_history_rule_ids": (
+                    None
+                    if getattr(self, "rule_history_rule_ids", None) is None
+                    else sorted(int(x) for x in self.rule_history_rule_ids)
+                ),
+                "rule_history_names": list(getattr(self, "rule_history_names", []) or []),
+            }
+
+            try:
+                meta["rule_ids"] = [int(x) for x in getattr(self, "rule_ids", [])]
+            except Exception:
+                meta["rule_ids"] = None
+
+            if hasattr(self, "rule_probs_base_tensor"):
+                try:
+                    meta["rule_probs_base"] = [
+                        float(x) for x in self.rule_probs_base_tensor.detach().cpu().tolist()
+                    ]
+                except Exception:
+                    meta["rule_probs_base"] = None
+            else:
+                meta["rule_probs_base"] = None
+
+            sweep_cfg = getattr(self, "trial_constant_sweep", None)
+            if sweep_cfg is not None:
+                sweep_out: dict[str, Any] = {}
+                for alias, cfg in sweep_cfg.items():
+                    base = float(cfg.get("base", 0.0))
+                    delta = float(cfg.get("delta", 0.0))
+                    rule_ids = None
+                    if hasattr(self, "const_rule_ids"):
+                        try:
+                            rule_ids = [int(x) for x in self.const_rule_ids.get(alias, [])]
+                        except Exception:
+                            rule_ids = None
+                    rule_indices = None
+                    if hasattr(self, "const_rule_indices"):
+                        try:
+                            rule_indices = [int(x) for x in self.const_rule_indices.get(alias, [])]
+                        except Exception:
+                            rule_indices = None
+                    sweep_out[str(alias)] = {
+                        "base": base,
+                        "delta": delta,
+                        "prob_by_trial": [_clamp01(base + (tt * delta)) for tt in range(T)],
+                        "rule_ids": rule_ids,
+                        "rule_indices": rule_indices,
+                    }
+                meta["probability_sweep"] = sweep_out
+            else:
+                meta["probability_sweep"] = None
+
+            if extra_meta:
+                for key, value in extra_meta.items():
+                    if isinstance(meta.get(key), dict) and isinstance(value, dict):
+                        meta[key] = {**meta[key], **value}
+                    else:
+                        meta[key] = value
+
+            try:
+                df.attrs[meta_key] = meta
+            except Exception:
+                pass
+
+        if path is None:
+            return df if return_df else None
+
+        fmt = format.lower()
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+
+        if save_meta and save_meta_sidecar:
+            if meta_sidecar_path is not None:
+                meta_path = meta_sidecar_path
+            else:
+                root, _ext = os.path.splitext(path)
+                meta_path = root + "_meta.json"
+            os.makedirs(os.path.dirname(meta_path) or ".", exist_ok=True)
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+        meta_pretty_lines = None
+        if save_meta and meta is not None:
+            meta_pretty_lines = json.dumps(meta, ensure_ascii=False, indent=2, sort_keys=True).splitlines()
+
+        if fmt in ("jsonl_trials", "jsonl_trials_dict"):
+            if getattr(self, "rule_history_names", None) is not None:
+                all_names = list(self.rule_history_names)
+            else:
+                name_set = set()
+                for rd in self.rule_history:
+                    name_set.update(rd.keys())
+                all_names = sorted(name_set)
+
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta is not None:
+                    f.write(json.dumps({"__meta__": meta}, ensure_ascii=False) + "\n")
+                for t, rdict in enumerate(self.rule_history):
+                    trial_id = int(trial_index_offset + t)
+
+                    def _steps_list(v):
+                        arr = list(map(int, v)) if v is not None else []
+                        return sorted(set(arr)) if deduplicate else arr
+
+                    if fmt == "jsonl_trials":
+                        payload = [[name, _steps_list(rdict.get(name, []))] for name in all_names]
+                    else:
+                        payload = {name: _steps_list(rdict.get(name, [])) for name in all_names}
+                    f.write(json.dumps({"trial": trial_id, "events": payload}, ensure_ascii=False) + "\n")
+
+            return df if return_df else path
+
+        if fmt == "parquet":
+            wrote_with_meta = False
+            if save_meta and meta is not None:
+                try:
+                    import pyarrow as pa
+                    import pyarrow.parquet as pq
+
+                    table = pa.Table.from_pandas(df, preserve_index=False)
+                    md = dict(table.schema.metadata or {})
+                    md[str(meta_key).encode("utf-8")] = json.dumps(meta, ensure_ascii=False).encode("utf-8")
+                    table = table.replace_schema_metadata(md)
+                    pq.write_table(table, path, compression=parquet_compression)
+                    wrote_with_meta = True
+                except Exception:
+                    wrote_with_meta = False
+            if not wrote_with_meta:
+                try:
+                    df.to_parquet(path, index=False, compression=parquet_compression)
+                except Exception as e:
+                    raise RuntimeError("to_parquet失敗（pandas/pyarrow/fastparquetが必要）: %s" % e)
+        elif fmt == "csv":
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta_pretty_lines is not None:
+                    for line in meta_pretty_lines:
+                        f.write("# " + line + "\n")
+                df.to_csv(f, index=False)
+        elif fmt == "jsonl":
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta is not None:
+                    f.write(json.dumps({"__meta__": meta}, ensure_ascii=False) + "\n")
+                df.to_json(f, orient="records", lines=True, force_ascii=False)
+        elif fmt == "yaml":
+            try:
+                import yaml
+            except ImportError as e:
+                raise RuntimeError("YAML出力には PyYAML が必要です（pip install pyyaml）。") from e
+            with open(path, "w", encoding="utf-8") as f:
+                if save_meta and meta_pretty_lines is not None:
+                    for line in meta_pretty_lines:
+                        f.write("# " + line + "\n")
+                yaml.safe_dump(df.to_dict(orient="records"), f, allow_unicode=True, sort_keys=False)
         else:
             raise ValueError("format は parquet/csv/jsonl/yaml/jsonl_trials/jsonl_trials_dict のいずれかです。")
 

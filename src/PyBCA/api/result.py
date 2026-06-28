@@ -10,4 +10,5 @@ class Result:
     current_step: int = 0
     elapsed_sec: float = 0.0
     event_history: Any | None = None
+    rule_history: Any | None = None
     meta: dict[str, Any] | None = None

@@ -75,6 +75,9 @@ class Config:
     use_tqdm: str | UseTqdm = UseTqdm.TRUE
     trial_constant_sweep: dict[str, dict[str, float]] | None = None
 
+    record_rule_history: bool = False
+    rule_history_rule_ids: tuple[int, ...] | list[int] | None = None
+
     state_gate_enable: bool = False
     state_gate_interval: int = 500
     debug: bool = False
@@ -87,6 +90,10 @@ class Config:
     event_history_format: str = "jsonl_trials"
     event_history_deduplicate: bool = True
     event_history_return_df: bool = False
+    rule_history_path: str | None = None
+    rule_history_format: str = "jsonl_trials"
+    rule_history_deduplicate: bool = False
+    rule_history_return_df: bool = False
 
     # torchrun による trial 分散
     distributed_mode: str = "off"          # "off" | "auto" | "torchrun"
@@ -138,6 +145,11 @@ class Config:
 
         rule_paths = tuple(self.rule_paths)
         object.__setattr__(self, "rule_paths", rule_paths)
+        if self.rule_history_rule_ids is not None:
+            rule_history_rule_ids = tuple(int(rule_id) for rule_id in self.rule_history_rule_ids)
+            object.__setattr__(self, "rule_history_rule_ids", rule_history_rule_ids)
+        if self.rule_history_path is not None and not self.record_rule_history:
+            object.__setattr__(self, "record_rule_history", True)
 
         if not self.cellspace_path:
             raise ValueError("cellspace_path is required.")
@@ -201,6 +213,10 @@ class Config:
             "gui_mode": self.gui_mode,
             "use_tqdm": self.use_tqdm_name,
             "trial_constant_sweep": self.trial_constant_sweep,
+            "record_rule_history": self.record_rule_history,
+            "rule_history_rule_ids": (
+                None if self.rule_history_rule_ids is None else list(self.rule_history_rule_ids)
+            ),
             "state_gate_enable": self.state_gate_enable,
             "state_gate_interval": self.state_gate_interval,
             "debug": self.debug,
@@ -210,6 +226,10 @@ class Config:
             "event_history_format": self.event_history_format,
             "event_history_deduplicate": self.event_history_deduplicate,
             "event_history_return_df": self.event_history_return_df,
+            "rule_history_path": self.rule_history_path,
+            "rule_history_format": self.rule_history_format,
+            "rule_history_deduplicate": self.rule_history_deduplicate,
+            "rule_history_return_df": self.rule_history_return_df,
             "distributed_mode": self.distributed_mode,
             "distributed_backend": self.distributed_backend,
             "distributed_partition": self.distributed_partition,

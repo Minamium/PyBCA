@@ -54,6 +54,8 @@ class DistributedRunState:
     rank_config_path: str | None = None
     shard_event_history_path: str | None = None
     merged_event_history_path: str | None = None
+    shard_rule_history_path: str | None = None
+    merged_rule_history_path: str | None = None
 
     @property
     def active(self) -> bool:
@@ -205,6 +207,11 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
         if context.enabled and partition.active
         else None
     )
+    shard_rule_history_path = (
+        resolve_shard_rule_history_path(config.rule_history_path, run_dir, context.rank)
+        if context.enabled and partition.active
+        else None
+    )
 
     local_config: Config | None = None
     if partition.active:
@@ -219,6 +226,7 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
                 partition.trial_offset,
             ),
             event_history_path=shard_event_history_path if shard_event_history_path is not None else config.event_history_path,
+            rule_history_path=shard_rule_history_path if shard_rule_history_path is not None else config.rule_history_path,
         )
 
     state = DistributedRunState(
@@ -231,6 +239,8 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
         rank_config_path=rank_config_path,
         shard_event_history_path=shard_event_history_path,
         merged_event_history_path=config.event_history_path if context.enabled else config.event_history_path,
+        shard_rule_history_path=shard_rule_history_path,
+        merged_rule_history_path=config.rule_history_path if context.enabled else config.rule_history_path,
     )
 
     if context.enabled and run_dir is not None and config.distributed_record_configs:
@@ -262,6 +272,8 @@ def build_local_save_kwargs(state: DistributedRunState) -> dict[str, Any]:
                 "seed_stride": state.original_config.distributed_seed_stride,
                 "event_history_final_path": state.original_config.event_history_path,
                 "event_history_shard_path": state.shard_event_history_path,
+                "rule_history_final_path": state.original_config.rule_history_path,
+                "rule_history_shard_path": state.shard_rule_history_path,
             }
         },
     }
@@ -306,23 +318,79 @@ def merge_event_history_shards(state: DistributedRunState) -> str | None:
     return final_path
 
 
+def merge_rule_history_shards(state: DistributedRunState) -> str | None:
+    if not state.context.enabled:
+        return state.original_config.rule_history_path
+    if not state.context.is_master:
+        return None
+    if state.original_config.rule_history_path is None:
+        return None
+    if not state.original_config.distributed_merge_event_history:
+        return None
+
+    partitions = all_trial_partitions(state.original_config.trials, state.context.world_size)
+    active_partitions = [part for part in partitions if part.active]
+    if not active_partitions:
+        return None
+
+    shard_paths = [
+        resolve_shard_rule_history_path(state.original_config.rule_history_path, state.run_dir, part.rank)
+        for part in active_partitions
+    ]
+    fmt = state.original_config.rule_history_format.lower()
+    final_path = state.original_config.rule_history_path
+    meta = build_merged_rule_history_meta(state, shard_paths, active_partitions)
+
+    if fmt in ("jsonl_trials", "jsonl_trials_dict"):
+        merge_jsonl_trial_shards(final_path, shard_paths, meta)
+    elif fmt == "jsonl":
+        merge_jsonl_flat_shards(final_path, shard_paths, meta)
+    elif fmt == "csv":
+        merge_csv_shards(final_path, shard_paths, meta)
+    elif fmt == "yaml":
+        merge_yaml_shards(final_path, shard_paths, meta)
+    elif fmt == "parquet":
+        merge_parquet_shards(final_path, shard_paths, meta, state.original_config.rule_history_deduplicate)
+    else:
+        raise ValueError(f"unsupported distributed rule_history_format: {state.original_config.rule_history_format}")
+
+    return final_path
+
+
 def resolve_run_dir(config: Config) -> str:
     if config.distributed_run_dir:
         return os.path.abspath(config.distributed_run_dir)
     if config.event_history_path:
         base = Path(config.event_history_path)
         return str((base.parent / f"{base.stem}.dist").resolve())
+    if config.rule_history_path:
+        base = Path(config.rule_history_path)
+        return str((base.parent / f"{base.stem}.dist").resolve())
     return str((Path.cwd() / "pybca_distributed_run").resolve())
 
 
 def resolve_shard_event_history_path(base_path: str | None, run_dir: str | None, rank: int) -> str | None:
+    return resolve_shard_history_path(base_path, run_dir, rank, "event_history_shards", "event_history")
+
+
+def resolve_shard_rule_history_path(base_path: str | None, run_dir: str | None, rank: int) -> str | None:
+    return resolve_shard_history_path(base_path, run_dir, rank, "rule_history_shards", "rule_history")
+
+
+def resolve_shard_history_path(
+    base_path: str | None,
+    run_dir: str | None,
+    rank: int,
+    shard_dir_name: str,
+    default_stem: str,
+) -> str | None:
     if base_path is None or run_dir is None:
         return None
 
     base = Path(base_path)
     suffix = base.suffix or ".out"
-    stem = base.stem if base.stem else "event_history"
-    shard_dir = Path(run_dir) / "event_history_shards"
+    stem = base.stem if base.stem else default_stem
+    shard_dir = Path(run_dir) / shard_dir_name
     return str((shard_dir / f"{stem}.rank{rank:04d}{suffix}").resolve())
 
 
@@ -345,6 +413,8 @@ def write_distributed_json_records(state: DistributedRunState) -> None:
             "rank_config_path": state.rank_config_path,
             "event_history_final_path": state.original_config.event_history_path,
             "event_history_shard_path": state.shard_event_history_path,
+            "rule_history_final_path": state.original_config.rule_history_path,
+            "rule_history_shard_path": state.shard_rule_history_path,
         },
         "config": state.local_config.as_dict if state.local_config is not None else None,
     }
@@ -425,6 +495,26 @@ def build_merged_event_history_meta(
             "rule_indices": alias_meta.get("rule_indices"),
         }
     meta["probability_sweep"] = sweep_out
+    return meta
+
+
+def build_merged_rule_history_meta(
+    state: DistributedRunState,
+    shard_paths: list[str],
+    partitions: list[TrialPartition],
+) -> dict[str, Any]:
+    meta = build_merged_event_history_meta(state, shard_paths, partitions)
+    meta["history_kind"] = "rule_history"
+    meta["distributed"]["rank_shards"] = [
+        {
+            "rank": part.rank,
+            "local_trials": part.local_trials,
+            "trial_offset": part.trial_offset,
+            "trial_end": part.trial_end,
+            "path": resolve_shard_rule_history_path(state.original_config.rule_history_path, state.run_dir, part.rank),
+        }
+        for part in partitions
+    ]
     return meta
 
 
