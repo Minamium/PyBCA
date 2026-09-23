@@ -1,0 +1,10 @@
+{
+  "base_commit": "dba815081223c60beb49529ca3cc49ab45e55394",
+  "runtime_v100_audit_matches": true,
+  "sha256": {
+    "source-main.tar.gz": "57ed4971a0a96186f8fa60ee63f998bb34062a3b56a64361ab93f745285380a3",
+    "scripts/plan_bca_ip_capacity.py": "540dc1fb24e5e62764c4c85ad201f984998789d7c7bc7a3197bf463ff776814b",
+    "scripts/rokko/capacity.pbs": "1a392a0d39a0271a20c0153716d2899becaefef9b70cf38a83eaa6a9fb5d3407",
+    "tests/test_capacity_planning.py": "79465884565d420c0f95dde4c9c92e3c5fe11f7c07b5a68762f9699a62a0c4fc"
+  }
+}

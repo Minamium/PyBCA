@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N pybca_capacity
+#PBS -q G
+#PBS -l select=1:ngpus=1:ncpus=1:mem=8gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+module load cuda/11.8.0 gcc/11.4.0
+export PATH=/home/IM25D029/PyBCA_workspcace/venv/bin:$PATH
+export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONUNBUFFERED=1
+export PYBCA_CUDA_CACHE="$PWD/results/cuda-cache"
+mkdir -p results/logs
+exec > >(tee "results/logs/capacity-${PBS_JOBID}.log") 2>&1
+python scripts/plan_bca_ip_capacity.py --output-dir "results/capacity-${PBS_JOBID}" \
+  --target-steps 3000000 --gpus 8 --wall-hours 24 \
+  --reserve-seconds 3600 --slowdown-factor 1.10

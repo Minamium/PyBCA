@@ -1,0 +1,43 @@
+Job Id: 236781.rokko1
+    Job_Name = pybca_capacity
+    Job_Owner = IM25D029@rokko1
+    job_state = Q
+    queue = G
+    server = rokko1
+    Checkpoint = u
+    ctime = Thu Sep 24 03:39:19 2026
+    Error_Path = rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260
+	924/pybca_capacity.e236781
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = n
+    Mail_Points = a
+    mtime = Thu Sep 24 03:39:19 2026
+    Output_Path = rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-2026
+	0924/pybca_capacity.o236781
+    Priority = 0
+    qtime = Thu Sep 24 03:39:19 2026
+    Rerunable = False
+    Resource_List.mem = 8gb
+    Resource_List.ncpus = 1
+    Resource_List.ngpus = 1
+    Resource_List.nodect = 1
+    Resource_List.place = free
+    Resource_List.select = 1:ngpus=1:ncpus=1:mem=8gb
+    Resource_List.walltime = 01:00:00
+    substate = 10
+    Variable_List = PBS_O_HOME=/home/IM25D029,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=IM25D029,
+	PBS_O_PATH=/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi/bin:/
+	usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/opt/c3/bin:/opt/ibutils/b
+	in:/opt/pbs/bin:/sbin:/bin:/usr/diags/getinfo/bin:/usr/diags/ipmidumput
+	ils/bin:/usr/site/bin,PBS_O_MAIL=/var/mail/IM25D029,
+	PBS_O_SHELL=/bin/bash,
+	PBS_O_WORKDIR=/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-202609
+	24,PBS_O_SYSTEM=Linux,PBS_O_QUEUE=G,PBS_O_HOST=rokko1
+    comment = Not Running: Insufficient amount of resource: ngpus (R: 1 A: 0 T:
+	 8)
+    etime = Thu Sep 24 03:39:19 2026
+    Submit_arguments = scripts/rokko/capacity.pbs
+    project = _pbs_project_default
+    Submit_Host = rokko1
