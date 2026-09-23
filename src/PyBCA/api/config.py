@@ -69,6 +69,18 @@ class Config:
     steps: int = 1
     global_prob: float = 1.0
     seed: int = 0
+    execution_mode: str = "reference"  # reference | torch_sparse | cuda
+    rng_mode: str = "legacy"           # legacy | independent
+    trial_ids: tuple[int, ...] | list[int] | None = None
+    trial_offset: int = 0  # logical sweep index, independent of arbitrary trial IDs
+    candidate_capacity: int = 4096
+    quiet: bool = False
+
+    # Bounded history chunks and atomic restart checkpoint.
+    stream_dir: str | None = None
+    flush_interval: int = 1000
+    checkpoint_interval: int = 10000
+    resume_from: str | None = None
 
     spatial_event_file_path: str | None = None
     gui_mode: bool = False
@@ -150,6 +162,28 @@ class Config:
             object.__setattr__(self, "rule_history_rule_ids", rule_history_rule_ids)
         if self.rule_history_path is not None and not self.record_rule_history:
             object.__setattr__(self, "record_rule_history", True)
+        if self.trial_ids is not None:
+            object.__setattr__(self, "trial_ids", tuple(int(t) for t in self.trial_ids))
+            if len(self.trial_ids) != self.trials or len(set(self.trial_ids)) != self.trials:
+                raise ValueError("trial_ids must contain one unique ID per trial")
+            if any(t < 0 or t >= 2**64 for t in self.trial_ids):
+                raise ValueError("trial_ids must be unsigned 64-bit integers")
+        if self.execution_mode not in {"reference", "torch_sparse", "cuda"}:
+            raise ValueError("execution_mode must be reference, torch_sparse, or cuda")
+        if self.rng_mode not in {"legacy", "independent"}:
+            raise ValueError("rng_mode must be legacy or independent")
+        if self.rng_mode == "independent" and (self.execution_mode == "reference" or not 0 <= self.seed < 2**64):
+            raise ValueError("Independent RNG needs an optimized mode and an unsigned 64-bit seed")
+        if self.candidate_capacity < 1 or self.flush_interval < 1 or self.checkpoint_interval < 1:
+            raise ValueError("candidate_capacity and save intervals must be positive")
+        if self.trial_offset < 0:
+            raise ValueError("trial_offset must be non-negative")
+        if self.checkpoint_interval % self.flush_interval:
+            raise ValueError("checkpoint_interval must be a multiple of flush_interval")
+        if self.stream_dir and (self.event_history_path or self.rule_history_path):
+            raise ValueError("Use streaming history or final in-memory history exports, not both")
+        if self.resume_from and not self.stream_dir:
+            raise ValueError("resume_from requires stream_dir")
 
         if not self.cellspace_path:
             raise ValueError("cellspace_path is required.")
@@ -209,6 +243,16 @@ class Config:
             "steps": self.steps,
             "global_prob": self.global_prob,
             "seed": self.seed,
+            "execution_mode": self.execution_mode,
+            "rng_mode": self.rng_mode,
+            "trial_ids": None if self.trial_ids is None else list(self.trial_ids),
+            "trial_offset": self.trial_offset,
+            "candidate_capacity": self.candidate_capacity,
+            "quiet": self.quiet,
+            "stream_dir": self.stream_dir,
+            "flush_interval": self.flush_interval,
+            "checkpoint_interval": self.checkpoint_interval,
+            "resume_from": self.resume_from,
             "spatial_event_file_path": self.spatial_event_file_path,
             "gui_mode": self.gui_mode,
             "use_tqdm": self.use_tqdm_name,

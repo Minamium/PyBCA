@@ -1,0 +1,288 @@
+{
+  "device": "cuda",
+  "torch": "2.6.0+cu124",
+  "cases": [
+    {
+      "name": "cjoin_base_prob05",
+      "steps": 20,
+      "trials": 3,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 3.4655321426689625
+    },
+    {
+      "name": "cjoin_base_prob1",
+      "steps": 10,
+      "trials": 2,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 1.469811376184225
+    },
+    {
+      "name": "test_base_prob0",
+      "steps": 8,
+      "trials": 2,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 1.325132556259632
+    },
+    {
+      "name": "test_with_event_window",
+      "steps": 110,
+      "trials": 2,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 20,
+      "elapsed_sec": 11.514001216739416
+    },
+    {
+      "name": "jf_cjoin_base_joinfork",
+      "steps": 12,
+      "trials": 2,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 3.0497030057013035
+    },
+    {
+      "name": "two_way_cjoin_base_joinfork",
+      "steps": 8,
+      "trials": 1,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 2.3133268281817436
+    },
+    {
+      "name": "bnn_event1_stategate_sweep",
+      "steps": 15,
+      "trials": 4,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 4,
+      "elapsed_sec": 4.07372809201479
+    },
+    {
+      "name": "bnn_event2_stategate_sweep",
+      "steps": 10,
+      "trials": 4,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 4,
+      "elapsed_sec": 3.114163354039192
+    },
+    {
+      "name": "join_err_p0",
+      "steps": 20,
+      "trials": 5,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 4.353284325450659
+    },
+    {
+      "name": "join_err_p1",
+      "steps": 20,
+      "trials": 5,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 4.3621276170015335
+    },
+    {
+      "name": "join_err_p2",
+      "steps": 20,
+      "trials": 5,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 4,
+      "elapsed_sec": 4.3637527748942375
+    },
+    {
+      "name": "fork_err_p0",
+      "steps": 20,
+      "trials": 5,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 4.349258333444595
+    },
+    {
+      "name": "fork_err_p1",
+      "steps": 20,
+      "trials": 5,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 10,
+      "elapsed_sec": 4.350134436041117
+    },
+    {
+      "name": "cjoin_err_rule3_p0",
+      "steps": 12,
+      "trials": 4,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 2.4221489131450653
+    },
+    {
+      "name": "cjoin_err_rule3_p1",
+      "steps": 12,
+      "trials": 4,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 2.415033519268036
+    },
+    {
+      "name": "cjoin_err_rule3_p2",
+      "steps": 12,
+      "trials": 4,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 2,
+      "elapsed_sec": 2.428115338087082
+    },
+    {
+      "name": "cjoin_err_plain_rule_p0",
+      "steps": 8,
+      "trials": 3,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 1.8666789904236794
+    },
+    {
+      "name": "cjoin_err_plain_rule_p1",
+      "steps": 8,
+      "trials": 3,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 1.8805842399597168
+    },
+    {
+      "name": "cjoin_err_plain_rule_p2",
+      "steps": 8,
+      "trials": 3,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 1.8841510638594627
+    },
+    {
+      "name": "bca_ip_large_grid",
+      "steps": 2000,
+      "trials": 1,
+      "matched": [
+        "cells",
+        "accepted_centers",
+        "written_cells",
+        "events",
+        "rule_counts"
+      ],
+      "event_count": 0,
+      "elapsed_sec": 459.1597589291632
+    }
+  ],
+  "gpu": "Tesla V100-SXM2-32GB",
+  "passed": true
+}

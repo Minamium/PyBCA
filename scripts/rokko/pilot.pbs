@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -N pybca_pilot
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=32:mem=96gb
+#PBS -l walltime=02:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+module load cuda/11.8.0 gcc/11.4.0
+export PATH=/home/IM25D029/PyBCA_workspcace/venv/bin:$PATH
+export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONUNBUFFERED=1
+export PYBCA_CUDA_CACHE="$PWD/results/cuda-cache"
+mkdir -p results/logs
+exec > >(tee "results/logs/pilot-${PBS_JOBID}.log") 2>&1
+# Non-overlapping output directories make reruns reviewable.
+PILOT_ROOT="results/pilot-${PBS_JOBID}"
+GPU_COUNT=$(python -c 'import torch; print(torch.cuda.device_count())')
+if [[ "${PYBCA_SKIP_TESTS:-0}" != 1 ]]; then
+  PYBCA_TEST_DEVICE=cuda python -m unittest discover -s tests -p 'test_core_runtime.py' -v
+fi
+# A single-GPU batch and the allocated partition must reproduce all trials.
+python scripts/run_bca_ip.py --output-dir "$PILOT_ROOT/single" --trials 8 --steps 2000
+python -m torch.distributed.run --standalone --nproc-per-node="$GPU_COUNT" scripts/run_bca_ip.py \
+  --output-dir "$PILOT_ROOT/distributed" --trials 8 --steps 1000
+python -m torch.distributed.run --standalone --nproc-per-node="$GPU_COUNT" scripts/run_bca_ip.py \
+  --output-dir "$PILOT_ROOT/distributed" --trials 8 --steps 2000 --resume
+python scripts/compare_runs.py "$PILOT_ROOT/single" "$PILOT_ROOT/distributed" \
+  --output "$PILOT_ROOT/partition-resume-parity.json"
+# A longer pilot checks that logging, checkpoints and memory remain practical.
+python -m torch.distributed.run --standalone --nproc-per-node="$GPU_COUNT" scripts/run_bca_ip.py \
+  --output-dir "$PILOT_ROOT/long" --trials 64 --steps 20000
+python scripts/compare_runs.py "$PILOT_ROOT/long" --output "$PILOT_ROOT/long-summary.json"

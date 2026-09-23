@@ -1,0 +1,107 @@
+Starting matching_and_firing (76 rule entries, cuda)
+Starting local_conflicts (76 rule entries, cuda)
+Starting rule_pairs (76 rule entries, cuda)
+ordered rule pairs: 76/5776
+ordered rule pairs: 684/5776
+ordered rule pairs: 1292/5776
+ordered rule pairs: 1900/5776
+ordered rule pairs: 2508/5776
+ordered rule pairs: 3116/5776
+ordered rule pairs: 3724/5776
+ordered rule pairs: 4332/5776
+ordered rule pairs: 4940/5776
+ordered rule pairs: 5548/5776
+Starting independent_pipeline (76 rule entries, cuda)
+Starting witnesses_and_conversions (76 rule entries, cuda)
+{"passed": true, "rules": 76, "elapsed_seconds": 187.5677161924541}
+test_bca_ip_all_event_coordinates (test_core_runtime.CandidateTests.test_bca_ip_all_event_coordinates) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+ok
+test_forced_overflow_has_no_truncation (test_core_runtime.CandidateTests.test_forced_overflow_has_no_truncation) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=30
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=30
+ok
+test_legacy_exact (test_core_runtime.CandidateTests.test_legacy_exact) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=20
+ok
+test_random_conflicts_and_boundaries (test_core_runtime.CandidateTests.test_random_conflicts_and_boundaries) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=2 steps=12
+ok
+test_random_matching_corners_and_negative_states (test_core_runtime.CandidateTests.test_random_matching_corners_and_negative_states) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=2 steps=12
+ok
+test_square_trial_rule_probability_matrix (test_core_runtime.CandidateTests.test_square_trial_rule_probability_matrix) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=12
+ok
+test_cpu_gpu_counter_decisions_and_trajectory (test_core_runtime.RandomTests.test_cpu_gpu_counter_decisions_and_trajectory) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=12
+ok
+test_domains_and_distribution (test_core_runtime.RandomTests.test_domains_and_distribution) ... ok
+test_high_counter_and_key_words_on_gpu (test_core_runtime.RandomTests.test_high_counter_and_key_words_on_gpu) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=12
+ok
+test_partition_invariance (test_core_runtime.RandomTests.test_partition_invariance) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+ok
+test_published_philox_vector (test_core_runtime.RandomTests.test_published_philox_vector) ... ok
+test_sweep_partition_invariance (test_core_runtime.RandomTests.test_sweep_partition_invariance) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=12
+ok
+test_corrupt_chunk_rejected (test_core_runtime.StreamingTests.test_corrupt_chunk_rejected) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=6
+ok
+test_crash_before_first_periodic_checkpoint_can_resume (test_core_runtime.StreamingTests.test_crash_before_first_periodic_checkpoint_can_resume) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+ok
+test_event_snapshot_window_and_negative_origin_resume (test_core_runtime.StreamingTests.test_event_snapshot_window_and_negative_origin_resume) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=4
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=2
+INFO : Checkpoint saved: step=1 target=2 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpvx0tuyj2/run
+INFO : Checkpoint saved: step=2 target=2 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpvx0tuyj2/run
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=4
+INFO : Checkpoint saved: step=3 target=4 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpvx0tuyj2/run
+INFO : Checkpoint saved: step=4 target=4 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpvx0tuyj2/run
+ok
+test_independent_resume_between_cpu_and_gpu (test_core_runtime.StreamingTests.test_independent_resume_between_cpu_and_gpu) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=7
+INFO : Checkpoint saved: step=6 target=7 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpsw441s7u
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=15
+INFO : Checkpoint saved: step=12 target=15 elapsed_sec=0.1 directory=/var/tmp/pbs.236747.rokko1/tmpsw441s7u
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=15
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=7
+INFO : Checkpoint saved: step=6 target=7 elapsed_sec=0.1 directory=/var/tmp/pbs.236747.rokko1/tmptegc8uc1
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=15
+INFO : Checkpoint saved: step=12 target=15 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmptegc8uc1
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=15
+ok
+test_reject_changed_inputs_and_existing_run (test_core_runtime.StreamingTests.test_reject_changed_inputs_and_existing_run) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=6
+ok
+test_stream_resume_matches_uninterrupted_with_crash_tail (test_core_runtime.StreamingTests.test_stream_resume_matches_uninterrupted_with_crash_tail) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpmqou5jps
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpmqou5jps
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpmqou5jps
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpmqou5jps
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpe2axynvj
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpe2axynvj
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpe2axynvj
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236747.rokko1/tmpe2axynvj
+ok
+test_writer_lock_and_stop_checkpoint (test_core_runtime.StreamingTests.test_writer_lock_and_stop_checkpoint) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+ok
+test_collision_rejects_both_centers_without_reconsidering_loser (test_rule_equivalence.OracleSanityTests.test_collision_rejects_both_centers_without_reconsidering_loser) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 53.724s
+
+OK

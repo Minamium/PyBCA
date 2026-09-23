@@ -120,6 +120,10 @@ dmypy.json
 
 # デバッグ用テストファイル
 tests/*
+!tests/test_*.py
+!tests/conftest.py
+!tests/validate_core.py
+results/
 
 # ローカル解析ノートブック
 tests/notebook/

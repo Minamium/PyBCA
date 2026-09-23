@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -N pybca_probe
+#PBS -q G
+#PBS -l select=1:ngpus=1:ncpus=4:mem=16gb
+#PBS -l walltime=00:10:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+module load cuda/11.8.0 gcc/11.4.0
+export PATH=/home/IM25D029/PyBCA_workspcace/venv/bin:$PATH
+export OMP_NUM_THREADS=1
+nvidia-smi
+nvcc --version
+python -u - <<'PY'
+import importlib.util, json, os, platform, torch
+print(json.dumps({"python": platform.python_version(), "torch": torch.__version__,
+    "cuda": torch.version.cuda, "gpu": torch.cuda.get_device_name(0),
+    "capability": torch.cuda.get_device_capability(0),
+    "visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+    "cupy": importlib.util.find_spec("cupy") is not None,
+    "pytest": importlib.util.find_spec("pytest") is not None}, indent=2))
+x = torch.ones(10, device="cuda")
+print("CUDA smoke:", x.sum().item())
+PY

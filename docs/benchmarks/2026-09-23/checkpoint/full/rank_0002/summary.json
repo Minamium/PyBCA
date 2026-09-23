@@ -1,0 +1,17 @@
+{
+  "label": "legacy-reference",
+  "rank": 2,
+  "current_step": 30000,
+  "target_step": 30000,
+  "elapsed_sec": 52.326444894075394,
+  "stopped": false,
+  "history": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/checkpoint-236718.rokko1/full/rank_0002/manifest.json",
+  "trial_ids": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "cellspace": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Cellspace/BCA-IP.yaml",
+  "instance_certified": false
+}

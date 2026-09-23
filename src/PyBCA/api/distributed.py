@@ -128,7 +128,10 @@ def barrier(context: DistributedContext) -> None:
 
     import torch.distributed as dist
 
-    dist.barrier()
+    if context.backend == "nccl":
+        dist.barrier(device_ids=[context.local_rank])
+    else:
+        dist.barrier()
 
 
 def shutdown_process_group(context: DistributedContext) -> None:
@@ -169,7 +172,7 @@ def resolve_device(device: str, context: DistributedContext) -> str:
 
 
 def resolve_seed(seed: int, config: Config, context: DistributedContext) -> int:
-    if not context.enabled:
+    if not context.enabled or config.rng_mode == "independent":
         return int(seed)
     return int(seed) + (context.rank * int(config.distributed_seed_stride))
 
@@ -202,6 +205,16 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
         if run_dir is not None
         else None
     )
+    if context.enabled and config.stream_dir and manifest_path and Path(manifest_path).exists():
+        previous = json.loads(Path(manifest_path).read_text())
+        if not config.resume_from:
+            raise FileExistsError(f"Distributed run already exists: {run_dir}; use a new directory or resume")
+        if previous.get("launcher", {}).get("world_size") != context.world_size:
+            raise ValueError("Checkpoint resume requires the original world size; new runs may use any partition")
+    if context.enabled and config.stream_dir:
+        # All ranks must finish the existence check before rank zero creates
+        # the first manifest; otherwise a fresh run can look like a duplicate.
+        barrier(context)
     shard_event_history_path = (
         resolve_shard_event_history_path(config.event_history_path, run_dir, context.rank)
         if context.enabled and partition.active
@@ -220,8 +233,14 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
             device=resolve_device(config.device, context),
             trials=partition.local_trials,
             seed=resolve_seed(config.seed, config, context),
+            trial_ids=tuple((config.trial_ids or tuple(range(config.trials)))[partition.trial_offset:partition.trial_end]),
+            trial_offset=config.trial_offset + partition.trial_offset,
+            stream_dir=(str(Path(config.stream_dir) / f"rank_{context.rank:04d}")
+                        if config.stream_dir and context.enabled else config.stream_dir),
+            resume_from=(str(Path(config.resume_from) / f"rank_{context.rank:04d}" / "checkpoint.pt")
+                         if config.resume_from and context.enabled else config.resume_from),
             use_tqdm=config.use_tqdm if context.is_master else UseTqdm.FALSE,
-            trial_constant_sweep=shift_trial_constant_sweep(
+            trial_constant_sweep=config.trial_constant_sweep if config.rng_mode == "independent" else shift_trial_constant_sweep(
                 config.trial_constant_sweep,
                 partition.trial_offset,
             ),
@@ -243,7 +262,9 @@ def prepare_distributed_run(config: Config) -> DistributedRunState:
         merged_rule_history_path=config.rule_history_path if context.enabled else config.rule_history_path,
     )
 
-    if context.enabled and run_dir is not None and config.distributed_record_configs:
+    if context.enabled and run_dir is not None and config.distributed_record_configs and not config.resume_from:
+        # Preserve the original run metadata on restart, including when a
+        # checkpoint rejects incompatible resume parameters.
         write_distributed_json_records(state)
 
     return state
@@ -360,6 +381,8 @@ def merge_rule_history_shards(state: DistributedRunState) -> str | None:
 def resolve_run_dir(config: Config) -> str:
     if config.distributed_run_dir:
         return os.path.abspath(config.distributed_run_dir)
+    if config.stream_dir:
+        return os.path.abspath(config.stream_dir)
     if config.event_history_path:
         base = Path(config.event_history_path)
         return str((base.parent / f"{base.stem}.dist").resolve())

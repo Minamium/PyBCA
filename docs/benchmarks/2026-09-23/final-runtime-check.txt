@@ -1,0 +1,59 @@
+test_corrupt_chunk_rejected (test_core_runtime.StreamingTests.test_corrupt_chunk_rejected) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=6
+ok
+test_crash_before_first_periodic_checkpoint_can_resume (test_core_runtime.StreamingTests.test_crash_before_first_periodic_checkpoint_can_resume) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=5
+ok
+test_event_snapshot_window_and_negative_origin_resume (test_core_runtime.StreamingTests.test_event_snapshot_window_and_negative_origin_resume) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=4
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=2
+INFO : Checkpoint saved: step=1 target=2 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmppr8so_1g/run
+INFO : Checkpoint saved: step=2 target=2 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmppr8so_1g/run
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=4
+INFO : Checkpoint saved: step=3 target=4 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmppr8so_1g/run
+INFO : Checkpoint saved: step=4 target=4 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmppr8so_1g/run
+ok
+test_independent_resume_between_cpu_and_gpu (test_core_runtime.StreamingTests.test_independent_resume_between_cpu_and_gpu) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=7
+INFO : Checkpoint saved: step=6 target=7 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmp2cl17zfz
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=15
+INFO : Checkpoint saved: step=12 target=15 elapsed_sec=0.1 directory=/var/tmp/pbs.236721.rokko1/tmp2cl17zfz
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=15
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=7
+INFO : Checkpoint saved: step=6 target=7 elapsed_sec=0.1 directory=/var/tmp/pbs.236721.rokko1/tmp5su1y0bd
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=15
+INFO : Checkpoint saved: step=12 target=15 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmp5su1y0bd
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=15
+ok
+test_reject_changed_inputs_and_existing_run (test_core_runtime.StreamingTests.test_reject_changed_inputs_and_existing_run) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=6
+ok
+test_stream_resume_matches_uninterrupted_with_crash_tail (test_core_runtime.StreamingTests.test_stream_resume_matches_uninterrupted_with_crash_tail) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpv12d9bl2
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpv12d9bl2
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpv12d9bl2
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpv12d9bl2
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpqcaky3z5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpqcaky3z5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpqcaky3z5
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/var/tmp/pbs.236721.rokko1/tmpqcaky3z5
+ok
+test_writer_lock_and_stop_checkpoint (test_core_runtime.StreamingTests.test_writer_lock_and_stop_checkpoint) ... INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=3 steps=10
+ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 10.706s
+
+OK
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=10
+{"label": "legacy-reference", "rank": 0, "current_step": 10, "target_step": 10, "elapsed_sec": 0.16741510853171349, "stopped": false, "history": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/final-resumable-smoke/manifest.json", "active": true, "trial_ids": [0], "cellspace": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Cellspace/BCA-IP.yaml", "instance_certified": false}
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cuda trials=1 steps=20
+{"label": "legacy-reference", "rank": 0, "current_step": 20, "target_step": 20, "elapsed_sec": 0.0802484005689621, "stopped": false, "history": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/final-resumable-smoke/manifest.json", "active": true, "trial_ids": [0], "cellspace": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Cellspace/BCA-IP.yaml", "instance_certified": false}
