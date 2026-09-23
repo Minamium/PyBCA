@@ -1,0 +1,29 @@
+{
+  "label": "legacy-reference",
+  "rank": 2,
+  "current_step": 20000,
+  "target_step": 20000,
+  "elapsed_sec": 125.08405999094248,
+  "stopped": false,
+  "history": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/pilot-236717.rokko1/long/rank_0002/manifest.json",
+  "trial_ids": [
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "cellspace": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Cellspace/BCA-IP.yaml",
+  "instance_certified": false
+}

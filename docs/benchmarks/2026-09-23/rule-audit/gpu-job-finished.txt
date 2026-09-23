@@ -1,0 +1,58 @@
+Job Id: 236747.rokko1
+    Job_Name = pybca_rule_audit
+    Job_Owner = IM25D029@rokko1
+    resources_used.cpupercent = 69
+    resources_used.cput = 00:03:38
+    resources_used.mem = 1350748kb
+    resources_used.ncpus = 4
+    resources_used.vmem = 10451560kb
+    resources_used.walltime = 00:04:43
+    job_state = F
+    queue = G
+    server = rokko1
+    Checkpoint = u
+    ctime = Wed Sep 23 19:09:56 2026
+    Error_Path = rokko1:/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/pybc
+	a_rule_audit.e236747
+    exec_host = nodeg01/0*4
+    exec_vnode = (nodeg01[1]:ngpus=1:ncpus=4:mem=33554432kb)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = n
+    Mail_Points = a
+    mtime = Wed Sep 23 23:18:02 2026
+    Output_Path = rokko1:/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/pyb
+	ca_rule_audit.o236747
+    Priority = 0
+    qtime = Wed Sep 23 19:09:56 2026
+    Rerunable = False
+    Resource_List.mem = 32gb
+    Resource_List.ncpus = 4
+    Resource_List.ngpus = 1
+    Resource_List.nodect = 1
+    Resource_List.place = free
+    Resource_List.select = 1:ngpus=1:ncpus=4:mem=32gb
+    Resource_List.walltime = 01:00:00
+    stime = Wed Sep 23 23:13:17 2026
+    session_id = 35060
+    jobdir = /home/IM25D029
+    substate = 92
+    Variable_List = PBS_O_HOME=/home/IM25D029,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=IM25D029,
+	PBS_O_PATH=/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi/bin:/
+	usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/opt/c3/bin:/opt/ibutils/b
+	in:/opt/pbs/bin:/sbin:/bin:/usr/diags/getinfo/bin:/usr/diags/ipmidumput
+	ils/bin:/usr/site/bin,PBS_O_MAIL=/var/mail/IM25D029,
+	PBS_O_SHELL=/bin/bash,
+	PBS_O_WORKDIR=/home/IM25D029/PyBCA_workspcace/streaming-gpu-core,
+	PBS_O_SYSTEM=Linux,PBS_O_QUEUE=G,PBS_O_HOST=rokko1
+    comment = Job run at Wed Sep 23 at 23:13 on (nodeg01[1]:ngpus=1:ncpus=4:mem
+	=33554432kb) and finished
+    etime = Wed Sep 23 19:09:56 2026
+    run_count = 1
+    Stageout_status = 1
+    Exit_status = 0
+    Submit_arguments = scripts/rokko/rule-audit.pbs
+    history_timestamp = 1790173082
+    project = _pbs_project_default
+    Submit_Host = rokko1

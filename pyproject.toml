@@ -5,7 +5,7 @@ description = "Brownian Cellular Automaton"
 authors = [{ name = "Minamium", email = "arcadia.battery@gmail.com" }]
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
   "numpy",
   "torch>=2.0",
@@ -45,6 +45,13 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"PyBCA.core" = ["*.cu"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
 
 [project.scripts]
 bcl = "BCL.cli:main"

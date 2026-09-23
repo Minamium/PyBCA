@@ -22,6 +22,12 @@ def build_state(config: Config) -> BCAState:
         trial_constant_sweep=config.trial_constant_sweep,
         record_rule_history=config.record_rule_history,
         rule_history_rule_ids=config.rule_history_rule_ids,
+        execution_mode=config.execution_mode,
+        rng_mode=config.rng_mode,
+        trial_ids=config.trial_ids,
+        trial_offset=config.trial_offset,
+        candidate_capacity=config.candidate_capacity,
+        quiet=config.quiet,
     )
     simulator.Allocate_torch_Tensors_on_Device()
     simulator.set_ParallelTrial(config.trials)

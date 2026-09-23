@@ -22,8 +22,30 @@ class BCA_Simulator:
                  use_tqdm: bool = False,
                  trial_constant_sweep: dict[str, dict[str, float]] | None = None,
                  record_rule_history: bool = False,
-                 rule_history_rule_ids: List[int] | tuple[int, ...] | None = None
+                 rule_history_rule_ids: List[int] | tuple[int, ...] | None = None,
+                 execution_mode: str = "reference",
+                 rng_mode: str = "legacy",
+                 trial_ids: List[int] | tuple[int, ...] | None = None,
+                 trial_offset: int = 0,
+                 candidate_capacity: int = 4096,
+                 quiet: bool = False,
                  ):
+        if execution_mode not in {"reference", "torch_sparse", "cuda"}:
+            raise ValueError("execution_mode must be reference, torch_sparse, or cuda")
+        if rng_mode not in {"legacy", "independent"}:
+            raise ValueError("rng_mode must be legacy or independent")
+        if execution_mode == "reference" and rng_mode != "legacy":
+            raise ValueError("Independent RNG requires torch_sparse or cuda execution")
+        if candidate_capacity < 1:
+            raise ValueError("candidate_capacity must be positive")
+        self.execution_mode = execution_mode
+        self.rng_mode = rng_mode
+        self.trial_ids = trial_ids
+        self.trial_offset = int(trial_offset)
+        self.candidate_capacity = candidate_capacity
+        self.quiet = quiet
+        self.history_recorder = None
+        self.candidate_plan = None
         # セル空間読み込み
         self.cellspace_with_offset = lib.load_cell_space_yaml_to_numpy(cellspace_path)
         self.cellspace, self.offset_x, self.offset_y = lib.extract_cellspace_and_offset(self.cellspace_with_offset)
@@ -111,16 +133,19 @@ class BCA_Simulator:
             gpu_name = torch.cuda.get_device_name(torch.cuda.current_device())
             device_info += f" ({gpu_name})"
         
-        print(f"Allocated torch tensors on {device_info}")
-        print(f"Cellspace tensor shape: {self.cellspace_tensor.shape}")
-        print(f"Rule arrays tensor shape: {self.rule_arrays_tensor.shape}")
-        print(f"Rule probabilities tensor shape: {self.rule_probs_tensor.shape}")
-        if self.spatial_event_arrays_tensor is not None:
-            print(f"Spatial events tensor shape: {self.spatial_event_arrays_tensor.shape}")
+        if not self.quiet:
+            print(f"Allocated torch tensors on {device_info}")
+            print(f"Cellspace tensor shape: {self.cellspace_tensor.shape}")
+            print(f"Rule arrays tensor shape: {self.rule_arrays_tensor.shape}")
+            print(f"Rule probabilities tensor shape: {self.rule_probs_tensor.shape}")
+            if self.spatial_event_arrays_tensor is not None:
+                print(f"Spatial events tensor shape: {self.spatial_event_arrays_tensor.shape}")
 
     # 平行試行数より、4次元テンソルを作成する(T, 1, H, W)
     def set_ParallelTrial(self, parallel_trial: int):
         self.parallel_trial = parallel_trial
+        if self.trial_ids is not None and (len(self.trial_ids) != parallel_trial or len(set(self.trial_ids)) != parallel_trial):
+            raise ValueError("trial_ids must contain one unique ID for each trial")
 
         # Trial x 1 x Height x Widthの4次元テンソルを作成
         self.TCHW = self.cellspace_tensor.repeat(parallel_trial, 1, 1).unsqueeze(1).contiguous()
@@ -177,6 +202,8 @@ class BCA_Simulator:
             trial_probs = base_probs.view(1, N).expand(T, N).clone()
 
             t = torch.arange(T, device=self.device, dtype=torch.float32)  # [T]
+            if self.rng_mode == "independent":
+                t += self.trial_offset
 
             for alias, cfg in self.trial_constant_sweep.items():
                 if alias not in self.const_rule_indices:
@@ -191,6 +218,11 @@ class BCA_Simulator:
 
             self.rule_probs_tensor = trial_probs  # [T,N]
 
+        if self.execution_mode != "reference":
+            from .optimized import CandidatePlan
+            self.candidate_plan = CandidatePlan(self, self.execution_mode, self.rng_mode,
+                                                self.trial_ids, self.candidate_capacity)
+
 
     # ステップ実行関数
     def step(self, 
@@ -201,13 +233,18 @@ class BCA_Simulator:
              state_gate_enable: bool = False,
              state_gate_interval: int = 500
             ):
-        if not self.use_tqdm:
+        if not self.use_tqdm and not self.quiet:
             print(f"Step {self._current_step}")
         
         ###################
         # 乱数生成器の定義  #
         ###################
-        self.rng.manual_seed(self._current_step + 65536 + seed)
+        if self.rng_mode == "legacy":
+            self.rng.manual_seed(self._current_step + 65536 + seed)
+        else:
+            self.candidate_plan.set_seed(seed)
+        if self.history_recorder is not None:
+            self.history_recorder.begin_step(self._current_step)
         self.update_cellspace(
                 global_prob=global_prob,
                 debug=debug,
@@ -216,10 +253,18 @@ class BCA_Simulator:
 
         # 大域状態ゲートの適用
         if state_gate_enable and (self._current_step % state_gate_interval == 0):
-            self.apply_state_gates()
+            if self.candidate_plan is not None:
+                self.candidate_plan.state_gates()
+            else:
+                self.apply_state_gates()
 
         # 特殊イベントの適用
-        self.apply_spatial_events()
+        if self.rng_mode == "independent":
+            self.candidate_plan.events()
+        else:
+            self.apply_spatial_events()
+        if self.history_recorder is not None:
+            self.history_recorder.end_step()
 
         # インクリメント
         self._current_step += 1
@@ -263,6 +308,12 @@ class BCA_Simulator:
                          debug: bool = False,                  # デバッグモード
                          debug_per_trial: bool = False         # トライアル別詳細統計
                         ) -> torch.Tensor:
+
+        if self.candidate_plan is not None:
+            result = self.candidate_plan.update(global_prob)
+            if debug:
+                self.debug(show_per_trial=debug_per_trial)
+            return result
 
         ####################################
         # 更新に使うテンソルの定義と整合性チェック  #
@@ -461,6 +512,8 @@ class BCA_Simulator:
             gate_TE = (rnd < prob.view(1, -1).expand(T, -1))
 
         cond_TE = (cond_TE & gate_TE)
+        if self.history_recorder is not None:
+            self.history_recorder.record_events(cond_TE, keep.nonzero().flatten())
         if not cond_TE.any():
             return
 
@@ -767,6 +820,11 @@ class BCA_Simulator:
         return f"rule_{int(rule_id)}"
 
     def _record_rule_history(self, rule_idx: int) -> None:
+        if self.history_recorder is not None:
+            r = int(rule_idx)
+            counts = self.TNHW_boolMask[:, r].flatten(1).sum(dim=1)
+            self.history_recorder.record_rule_counts(counts, r)
+            return
         history = getattr(self, "rule_history", None)
         if history is None:
             return
@@ -804,6 +862,15 @@ class BCA_Simulator:
                 history[int(trial)][name].append(step_i)
             else:
                 history[int(trial)][name].extend([step_i] * count_i)
+
+    def _append_rule_counts(self, counts):
+        if self.rule_history is None:
+            return
+        for trial, row in enumerate(counts.cpu().tolist()):
+            for r, count in enumerate(row):
+                name = self._rule_history_name(self.rule_ids[r])
+                if name in self.rule_history[trial] and count:
+                    self.rule_history[trial][name].extend([self._current_step] * count)
 
     # デバッグ情報
     def debug(self, show_per_trial: bool = False):

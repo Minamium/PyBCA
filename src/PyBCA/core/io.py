@@ -32,7 +32,7 @@ def load_cell_space_yaml_to_numpy(path: str, progress_callback=None, include_off
     with open(path, "r", encoding="utf-8") as f:
         if progress_callback:
             progress_callback(10, 100)  # ファイル読み込み開始
-        items: List[Dict[str, Any]] = yaml.safe_load(f)
+        items: List[Dict[str, Any]] = yaml.load(f, Loader=getattr(yaml, "CSafeLoader", yaml.SafeLoader))
     
     if progress_callback:
         progress_callback(15, 100)  # YAML読み込み完了

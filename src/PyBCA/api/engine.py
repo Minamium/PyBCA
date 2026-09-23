@@ -20,6 +20,7 @@ from .distributed import (
 )
 from .logging_utils import apply_logging
 from .result import Result
+from .streaming import HistoryWriter
 
 logger = logging.getLogger("PyBCA")
 
@@ -72,15 +73,34 @@ class Engine:
         merged_event_history = None
         local_rule_history = None
         merged_rule_history = None
+        writer = None
 
         try:
+            if self.distributed.active and self.config.stream_dir:
+                writer = HistoryWriter(self.config, simulator)
+                if not self.config.resume_from:
+                    # A failure before the first periodic checkpoint must also
+                    # have a valid restart point, even if history was flushed.
+                    writer.checkpoint()
             if self.distributed.active and self.config.steps > 0:
-                iterator = range(self.config.steps)
+                target = self.config.steps if self.config.resume_from else simulator._current_step + self.config.steps
+                iterator = range(simulator._current_step, target)
                 if self.config.use_tqdm_bool:
                     iterator = tqdm(iterator, desc="Simulation", unit="step")
 
                 for step_idx in iterator:
+                    if getattr(self, "stop_requested", False):
+                        break
                     self.stepper(step_idx)
+                    if writer and simulator._current_step % self.config.checkpoint_interval == 0:
+                        writer.checkpoint()
+                        logger.info("Checkpoint saved: step=%d target=%d elapsed_sec=%.1f directory=%s",
+                                    simulator._current_step, target, time.perf_counter()-start, writer.root)
+
+            if writer:
+                writer.checkpoint()
+                local_event_history = str(writer.root / "manifest.json")
+                local_rule_history = local_event_history if self.config.record_rule_history else None
 
             if self.distributed.active and self.config.event_history_path is not None:
                 save_kwargs = build_local_save_kwargs(self.distributed)
@@ -165,6 +185,9 @@ class Engine:
                 meta=meta,
             )
         finally:
+            if writer is not None:
+                writer.close()
+                simulator.history_recorder = None
             shutdown_process_group(self.distributed.context)
 
 

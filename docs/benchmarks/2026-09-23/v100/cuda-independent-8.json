@@ -1,0 +1,28 @@
+{
+  "mode": "cuda",
+  "rng": "independent",
+  "trials": 8,
+  "steps_per_repeat": 1000,
+  "seconds_per_step_samples": [
+    0.0031834143325686457,
+    0.0031858321987092496,
+    0.003185681335628033
+  ],
+  "median_ms_per_step": 3.1856813356280327,
+  "trial_steps_per_sec": 2511.2367362452655,
+  "peak_allocated_bytes": 177161216,
+  "peak_reserved_bytes": 195035136,
+  "setup_sec": 13.120834480971098,
+  "flush_checkpoint_sec": 0.010308198630809784,
+  "final_candidate_overflow_rows": 0,
+  "torch": "2.6.0+cu124",
+  "device": "cuda",
+  "gpu": "Tesla V100-SXM2-32GB",
+  "shape": [
+    8,
+    1,
+    911,
+    735
+  ],
+  "rules": 28
+}

@@ -9,6 +9,8 @@ pip install -e ./PyBCA
 
 ## Documentation
 - Website: https://minamium.github.io/PyBCA/
+- Streaming, restart, independent trials and V100 execution: [実行手順](docs/PyBCA/streaming_gpu.md)
+- V100 validation and benchmarks: [2026-09-23 検証結果](docs/benchmarks/2026-09-23/report.md)
 
 Source
 

@@ -1,0 +1,28 @@
+{
+  "mode": "reference",
+  "rng": "legacy",
+  "trials": 1,
+  "steps_per_repeat": 6,
+  "seconds_per_step_samples": [
+    0.5896410416656485,
+    0.5896254444960505,
+    0.5898099999952441
+  ],
+  "median_ms_per_step": 589.6410416656485,
+  "trial_steps_per_sec": 1.6959470751478702,
+  "peak_allocated_bytes": null,
+  "peak_reserved_bytes": null,
+  "setup_sec": 3.5888372079934925,
+  "flush_checkpoint_sec": 0.005380166927352548,
+  "final_candidate_overflow_rows": null,
+  "torch": "2.9.1",
+  "device": "cpu",
+  "gpu": null,
+  "shape": [
+    1,
+    1,
+    911,
+    735
+  ],
+  "rules": 28
+}

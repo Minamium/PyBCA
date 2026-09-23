@@ -1,0 +1,558 @@
+{
+  "schema": "pybca-stream-v1",
+  "identity": {
+    "model": "bca",
+    "scheme": "default",
+    "trials": 4,
+    "global_prob": 1.0,
+    "seed": 20260923,
+    "rng_mode": "independent",
+    "trial_constant_sweep": null,
+    "trial_offset": 4,
+    "record_rule_history": false,
+    "rule_history_rule_ids": null,
+    "state_gate_enable": false,
+    "state_gate_interval": 500,
+    "trial_ids": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "inputs": {
+      "cellspace": "8c7e7e3e438ea67bcc0961a51580deed3e66902478fd1ace0b051ce1ed5bd69b",
+      "rules": [
+        "8bad523582d9b7abb79559d69d42d9c5a22ea3af9999cfef5dacc42295bbacca"
+      ],
+      "events": "6404e397ea30e9398dabce983e0c2d6366e9914b4028d9194e894e3506c37ddf"
+    },
+    "implementation": {
+      "api/__init__.py": "cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d",
+      "api/config.py": "a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40",
+      "api/distributed.py": "f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4",
+      "api/engine.py": "c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc",
+      "api/logging_utils.py": "bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9",
+      "api/result.py": "3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d",
+      "api/streaming.py": "546600baeff0a13a1b342190c2dfce82b0223dbcbb5bdea3785b5e98e8efe867",
+      "core/__init__.py": "07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea",
+      "core/cuda_backend.py": "8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b",
+      "core/io.py": "3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274",
+      "core/kernels.cu": "7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d",
+      "core/optimized.py": "b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0",
+      "core/random.py": "bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee",
+      "core/schemes/__init__.py": "be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e",
+      "core/schemes/bca_default.py": "8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4",
+      "core/schemes/registry.py": "61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d",
+      "core/simulator.py": "4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe",
+      "core/states/__init__.py": "204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3",
+      "core/states/registry.py": "9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8",
+      "core/states/state_bca.py": "5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332"
+    },
+    "rng_version": "philox4x32-10-v1"
+  },
+  "config": {
+    "model": "bca",
+    "scheme": "default",
+    "backend": "torch",
+    "cellspace_path": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Cellspace/BCA-IP.yaml",
+    "rule_paths": [
+      "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/rule/base-rule.yaml"
+    ],
+    "device": "cuda:1",
+    "trials": 4,
+    "steps": 30000,
+    "global_prob": 1.0,
+    "seed": 20260923,
+    "execution_mode": "cuda",
+    "rng_mode": "independent",
+    "trial_ids": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "trial_offset": 4,
+    "candidate_capacity": 4096,
+    "quiet": true,
+    "stream_dir": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/checkpoint-236718.rokko1/full/rank_0001",
+    "flush_interval": 1000,
+    "checkpoint_interval": 10000,
+    "resume_from": null,
+    "spatial_event_file_path": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/Sample/Specialevent/BCA-IP_event.py",
+    "gui_mode": false,
+    "use_tqdm": "false",
+    "trial_constant_sweep": null,
+    "record_rule_history": false,
+    "rule_history_rule_ids": null,
+    "state_gate_enable": false,
+    "state_gate_interval": 500,
+    "debug": false,
+    "debug_per_trial": false,
+    "log_level": "info",
+    "event_history_path": null,
+    "event_history_format": "jsonl_trials",
+    "event_history_deduplicate": true,
+    "event_history_return_df": false,
+    "rule_history_path": null,
+    "rule_history_format": "jsonl_trials",
+    "rule_history_deduplicate": false,
+    "rule_history_return_df": false,
+    "distributed_mode": "auto",
+    "distributed_backend": "auto",
+    "distributed_partition": "block",
+    "distributed_run_dir": "/home/IM25D029/PyBCA_workspcace/streaming-gpu-core/results/checkpoint-236718.rokko1/full",
+    "distributed_record_configs": true,
+    "distributed_merge_event_history": true,
+    "distributed_seed_stride": 10000019
+  },
+  "environment": {
+    "python": "3.12.1",
+    "torch": "2.6.0+cu124",
+    "cuda": "12.4"
+  },
+  "trial_ids": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "events": [
+    "A_core_input_1",
+    "A_core_input_2",
+    "A_core_input_3",
+    "A_core_input_4",
+    "A_core_input_5",
+    "A_core_input_6",
+    "A_x1output",
+    "A_x2output",
+    "A_x3output",
+    "A_x4output",
+    "A_x5output",
+    "A_x6output",
+    "A_Amp_x1output",
+    "A_Amp_x2output",
+    "A_Amp_x3output",
+    "A_Amp_x4output",
+    "A_Amp_x5output",
+    "A_Amp_x6output",
+    "F_value_A",
+    "B_core_input_1",
+    "B_core_input_2",
+    "B_core_input_3",
+    "B_core_input_4",
+    "B_core_input_5",
+    "B_core_input_6",
+    "B_x1output",
+    "B_x2output",
+    "B_x3output",
+    "B_x4output",
+    "B_x5output",
+    "B_x6output",
+    "B_Amp_x1output",
+    "B_Amp_x2output",
+    "B_Amp_x3output",
+    "B_Amp_x4output",
+    "B_Amp_x5output",
+    "B_Amp_x6output",
+    "F_value_B",
+    "Comparate_A-B",
+    "Comparate_B-A",
+    "Reset_Signal_for_A_set",
+    "Reset_Signal_for_A_clear",
+    "Reset_Signal_for_B_set",
+    "Reset_Signal_for_B_clear"
+  ],
+  "rules": [
+    1014,
+    1114,
+    1012,
+    1112,
+    1015,
+    1115,
+    1013,
+    1113,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "next_step": 30000,
+  "chunks": [
+    {
+      "path": "history/000000000000-000000001000.jsonl",
+      "start_step": 0,
+      "next_step": 1000,
+      "records": 0,
+      "sha256": "ee505297ca7c46e02a3267a48f90e294b9c843c567a64968600a2dd83c1816aa",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000001000-000000002000.jsonl",
+      "start_step": 1000,
+      "next_step": 2000,
+      "records": 0,
+      "sha256": "33e74bae48ef4aa28f1287c75e6bdb10aba736d77ca3c56236021f078f158615",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000002000-000000003000.jsonl",
+      "start_step": 2000,
+      "next_step": 3000,
+      "records": 0,
+      "sha256": "0977c1b5de89354641c64a99da39322acbf82fc50ad5e5e16447bb60bbc48a07",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000003000-000000004000.jsonl",
+      "start_step": 3000,
+      "next_step": 4000,
+      "records": 2,
+      "sha256": "a586e38cfd63ffc0fe9f496ef777b53400f625223bec884e91b6ee51de4db02f",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000004000-000000005000.jsonl",
+      "start_step": 4000,
+      "next_step": 5000,
+      "records": 0,
+      "sha256": "c5a292e4058a280d9c985735787e249ef606017534768714f6b4140a4272127b",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000005000-000000006000.jsonl",
+      "start_step": 5000,
+      "next_step": 6000,
+      "records": 0,
+      "sha256": "5a187da525dd6dba1f91e28f6c004bf3dae052ecbc81d0ff1a494640bd51162d",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000006000-000000007000.jsonl",
+      "start_step": 6000,
+      "next_step": 7000,
+      "records": 2,
+      "sha256": "f044d1cb7d1c4b5d00b3bd6d122a06ac10c68352d491142151df9543f8d8952d",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000007000-000000008000.jsonl",
+      "start_step": 7000,
+      "next_step": 8000,
+      "records": 0,
+      "sha256": "d805c7546edfa3a0b4678dbbd48bbfdacd9823e249aca5bd5dbbc02f2f24f23a",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000008000-000000009000.jsonl",
+      "start_step": 8000,
+      "next_step": 9000,
+      "records": 0,
+      "sha256": "8fc08506125dc21cf950507218e3a1ea0641485eed82448405fa964ac7685396",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000009000-000000010000.jsonl",
+      "start_step": 9000,
+      "next_step": 10000,
+      "records": 0,
+      "sha256": "d3485d0550462344bcf60f23685e65e11c71c173273633f028e741f0f79f9152",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000010000-000000011000.jsonl",
+      "start_step": 10000,
+      "next_step": 11000,
+      "records": 0,
+      "sha256": "ce53883e34ed8cf8cbeeebbef13dc0d7341e3beb0154ff5b3a3348cc76166c2b",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000011000-000000012000.jsonl",
+      "start_step": 11000,
+      "next_step": 12000,
+      "records": 2,
+      "sha256": "0b56d065dfe41ee4d67abe49578a2cb8d6656e7d2ac3d71b7924e26177872b01",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000012000-000000013000.jsonl",
+      "start_step": 12000,
+      "next_step": 13000,
+      "records": 0,
+      "sha256": "31046cf9166da35f24e451275d9fd38f318e6babd536024d2e39654dbf67c2bc",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000013000-000000014000.jsonl",
+      "start_step": 13000,
+      "next_step": 14000,
+      "records": 0,
+      "sha256": "8685e620f38c4b5cc301d53707073aa2933d8be2bcce812f9169740e7bd926bf",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000014000-000000015000.jsonl",
+      "start_step": 14000,
+      "next_step": 15000,
+      "records": 0,
+      "sha256": "2e2c2507c5e902881997c1793a1b2a10c3ee3a64a62cd480fbd6416f91dc0ba7",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000015000-000000016000.jsonl",
+      "start_step": 15000,
+      "next_step": 16000,
+      "records": 0,
+      "sha256": "f357fc1c816371a3d5f717e3d5f069fb780fd2aed46b9d8b520b9d9309e9e97e",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000016000-000000017000.jsonl",
+      "start_step": 16000,
+      "next_step": 17000,
+      "records": 0,
+      "sha256": "7425d43dc721e1b10d39e7417945a7addc820846b47d430e20566794e1d239f1",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000017000-000000018000.jsonl",
+      "start_step": 17000,
+      "next_step": 18000,
+      "records": 0,
+      "sha256": "3babb433533d189041b1b78da9f98882ba25d1c88a08b4576bae01911c0e12bb",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000018000-000000019000.jsonl",
+      "start_step": 18000,
+      "next_step": 19000,
+      "records": 0,
+      "sha256": "cbfa0d9547c79a556925d88c81fff1f36437a9d4c7044899e5bb3a6f47064e47",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000019000-000000020000.jsonl",
+      "start_step": 19000,
+      "next_step": 20000,
+      "records": 0,
+      "sha256": "5b603eee27794a41a8124159297a84a0293adcc2b3637312766a5c82ad038489",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000020000-000000021000.jsonl",
+      "start_step": 20000,
+      "next_step": 21000,
+      "records": 0,
+      "sha256": "9e0b0e7311f29b12b8af9c8165d0dddf184a9e1bb03a792d346c798d72129777",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000021000-000000022000.jsonl",
+      "start_step": 21000,
+      "next_step": 22000,
+      "records": 2,
+      "sha256": "4e5d356a927e540a9bb346dab1155b48852cd4f026abc7e6463b1e8930a1179d",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000022000-000000023000.jsonl",
+      "start_step": 22000,
+      "next_step": 23000,
+      "records": 0,
+      "sha256": "5621679f50f9d915e422ce2b27499e814797578031b5e807e88b7a52add7b754",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000023000-000000024000.jsonl",
+      "start_step": 23000,
+      "next_step": 24000,
+      "records": 0,
+      "sha256": "90560c3101f53d2c09a4c29da1b1727e75560944c01bce3ec59203a5d0c1f8ce",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000024000-000000025000.jsonl",
+      "start_step": 24000,
+      "next_step": 25000,
+      "records": 0,
+      "sha256": "b0b295445e2cde64072a0b96c9e655c23aeb20c0f9dd25f48cfc7b26f551f864",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000025000-000000026000.jsonl",
+      "start_step": 25000,
+      "next_step": 26000,
+      "records": 0,
+      "sha256": "bae80ce2dc9c5eb32a4ecadd185b7b38d3961d3977c1a4477aa367a477aeec1d",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000026000-000000027000.jsonl",
+      "start_step": 26000,
+      "next_step": 27000,
+      "records": 0,
+      "sha256": "fdcc609e930ec3c63596a0a0ed50f1af8fe2834d6a1c3b5c68be7c7d55ab91c6",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000027000-000000028000.jsonl",
+      "start_step": 27000,
+      "next_step": 28000,
+      "records": 0,
+      "sha256": "32bbe5ad3a58b91f26aad100902ba6c59bc619d84be68c492c982de97068a1bc",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000028000-000000029000.jsonl",
+      "start_step": 28000,
+      "next_step": 29000,
+      "records": 0,
+      "sha256": "2f1645a196fd6ee8e8ccf9cc781825f5a5e4ae0c6ad41a576263430025a0ccd8",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    },
+    {
+      "path": "history/000000029000-000000030000.jsonl",
+      "start_step": 29000,
+      "next_step": 30000,
+      "records": 0,
+      "sha256": "191b25170385c2892e8098b5398384e1738911f76b8252e46d44c8a5a854966d",
+      "memory": {
+        "cuda_allocated_bytes": 88938496,
+        "cuda_peak_allocated_bytes": 88939008,
+        "host_peak_rss_bytes": 1247965184
+      }
+    }
+  ]
+}
