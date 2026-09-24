@@ -1,0 +1,251 @@
+[
+  {
+    "rule": 1014,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 1114,
+    "raw": 186,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 186
+  },
+  {
+    "rule": 1012,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 1112,
+    "raw": 95,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 95
+  },
+  {
+    "rule": 1015,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 1115,
+    "raw": 134,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 134
+  },
+  {
+    "rule": 1013,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 1113,
+    "raw": 338,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 334
+  },
+  {
+    "rule": 0,
+    "raw": 63,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 63
+  },
+  {
+    "rule": 1,
+    "raw": 69,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 8
+  },
+  {
+    "rule": 2,
+    "raw": 358,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 358
+  },
+  {
+    "rule": 3,
+    "raw": 476,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 82
+  },
+  {
+    "rule": 4,
+    "raw": 122,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 120
+  },
+  {
+    "rule": 5,
+    "raw": 250,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 176
+  },
+  {
+    "rule": 6,
+    "raw": 182,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 156
+  },
+  {
+    "rule": 7,
+    "raw": 182,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 18
+  },
+  {
+    "rule": 8,
+    "raw": 6,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [
+      [
+        276,
+        185
+      ],
+      [
+        344,
+        185
+      ],
+      [
+        209,
+        186
+      ],
+      [
+        276,
+        680
+      ],
+      [
+        344,
+        680
+      ],
+      [
+        209,
+        681
+      ]
+    ],
+    "accepted": 6
+  },
+  {
+    "rule": 9,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 10,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 11,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 12,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 13,
+    "raw": 2,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 2
+  },
+  {
+    "rule": 14,
+    "raw": 2,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 15,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 16,
+    "raw": 2,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 2
+  },
+  {
+    "rule": 17,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 18,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  },
+  {
+    "rule": 19,
+    "raw": 0,
+    "inner_rejected": 0,
+    "inner_rejected_centers": [],
+    "raw_cjoin_centers": [],
+    "accepted": 0
+  }
+]

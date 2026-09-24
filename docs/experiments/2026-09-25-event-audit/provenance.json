@@ -1,0 +1,34 @@
+{
+  "checkpoint_rank0_sha256": "5e1c76052f73736711b208fec9ff45302b314fbd86ba367b8dd1266da37f3442",
+  "checkpoint_trial_id": 1,
+  "checkpoint_step": 1142419,
+  "core_api_match_v100_probe": {
+    "api/__init__.py": true,
+    "api/config.py": true,
+    "api/distributed.py": true,
+    "api/engine.py": true,
+    "api/logging_utils.py": true,
+    "api/result.py": true,
+    "api/streaming.py": true,
+    "core/__init__.py": true,
+    "core/cuda_backend.py": true,
+    "core/io.py": true,
+    "core/kernels.cu": true,
+    "core/optimized.py": true,
+    "core/random.py": true,
+    "core/schemes/__init__.py": true,
+    "core/schemes/bca_default.py": true,
+    "core/schemes/registry.py": true,
+    "core/simulator.py": true,
+    "core/states/__init__.py": true,
+    "core/states/registry.py": true,
+    "core/states/state_bca.py": true
+  },
+  "paper_root": "/Users/shukunami/Desktop/\u7814\u7a76/Brownian Circuit Architecture/BCA-IP_2026-09-17/revised",
+  "paper_sha256": {
+    "v3_main/02_preliminaries.tex": "b566a4a527b52210b924502bc4fc47380b3e3f6796961168052683a4c79c8fa7",
+    "v3_main/05_bca_ip_verification.tex": "d96a5c29c4165a0bb5640c765a19e9589aefbff811d6cdf427016aaa55c03df4",
+    "v3_SI/02_internal_design.tex": "7d491c355274564fc53d4053843d2b42b46dd45d43aa9bb265f0e00632b83841",
+    "figs/Noise-yokusei-FSM.drawio.pdf": "a85c18dc636f9793fc9d3a838268a883783273fa575159976531ab4e21ddcc79"
+  }
+}
