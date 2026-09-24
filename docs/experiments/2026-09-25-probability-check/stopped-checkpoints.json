@@ -1,0 +1,195 @@
+{
+  "checked_at": "2026-09-25T00:41:34.514719+09:00",
+  "checkpoints": [
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0000",
+      "next_step": 1142419,
+      "checkpoint_sha256": "5e1c76052f73736711b208fec9ff45302b314fbd86ba367b8dd1266da37f3442",
+      "checkpoint_bytes": 43070996,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0001",
+      "next_step": 1147426,
+      "checkpoint_sha256": "5f01f4bce2207bd7aacd7195e28732a3f06bcfd4946e9ae6e6e3f8c7ae22df8f",
+      "checkpoint_bytes": 43071892,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0002",
+      "next_step": 1147499,
+      "checkpoint_sha256": "d6133050c17901663ff7d7d56371fb9f96b7b460d64fef67446f023b796409a1",
+      "checkpoint_bytes": 43071892,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0003",
+      "next_step": 1146020,
+      "checkpoint_sha256": "fc17f62e909d08f7dbf3977dfbc589437e29dc242c73411fe5a8cb750805e1b7",
+      "checkpoint_bytes": 43071764,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0004",
+      "next_step": 1149819,
+      "checkpoint_sha256": "cb54eb9ad1435c5e95a7e64a238809ad29595df00ecf870e3c4322c2bea87ed9",
+      "checkpoint_bytes": 43072468,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0005",
+      "next_step": 1152302,
+      "checkpoint_sha256": "aacc18772ec2038642b66dc95d19b62631891e92efe5425c031dddb8b02aa220",
+      "checkpoint_bytes": 43073044,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0006",
+      "next_step": 1146533,
+      "checkpoint_sha256": "29c5bc6036c13c2963381d5baec3faf12aba8d2324f2a4a133bfb175e0ccda6f",
+      "checkpoint_bytes": 43071956,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-20260924/rank_0007",
+      "next_step": 1147403,
+      "checkpoint_sha256": "7828a25520c7ed94e540f77be73cc639fac5da755303932f8c4dff7d1dd70dfe",
+      "checkpoint_bytes": 43072084,
+      "shape": [
+        64,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    },
+    {
+      "directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/probe-global-prob-0.5-20260925",
+      "next_step": 100000,
+      "checkpoint_sha256": "207b230fbc2231d280a7051398fcfd89941507fcc3ac9f545079a7bc5b0acfd0",
+      "checkpoint_bytes": 1364564,
+      "shape": [
+        2,
+        1,
+        911,
+        735
+      ],
+      "dtype": "torch.int8",
+      "checks": {
+        "manifest_matches_checkpoint": true,
+        "checkpoint_step_matches_manifest": true,
+        "all_core_api_source_hashes_match": true,
+        "finite_expected_cell_values": true,
+        "trial_count_matches": true
+      }
+    }
+  ],
+  "new_job": {
+    "Job_Name": "pybca_ip512_p05",
+    "job_state": "Q",
+    "queue": "G",
+    "ctime": "Fri Sep 25 00:29:35 2026",
+    "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+    "Resource_List.walltime": "24:00:00",
+    "comment": "Not Running: Insufficient amount of resource: ngpus (R: 8 A: 0 T:8)"
+  },
+  "pbs_script_sha256": "3b437708dbfda92a0f9cde93be1edd81c468e1bf3c0450bd245978cd1f1a91f2"
+}

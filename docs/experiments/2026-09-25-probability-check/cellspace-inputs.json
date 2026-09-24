@@ -1,0 +1,367 @@
+{
+  "paper": {
+    "root": "/Users/shukunami/Desktop/研究/Brownian Circuit Architecture/BCA-IP_2026-09-17/revised",
+    "files": {
+      "v3_main/04_bca_ip_architecture.tex": "3ed6011d93063bfb85ad0494bddd7d662f31f2f126c8820ffbb60f4506c0c875",
+      "v3_main/05_bca_ip_verification.tex": "d96a5c29c4165a0bb5640c765a19e9589aefbff811d6cdf427016aaa55c03df4",
+      "v3_SI/02_internal_design.tex": "7d491c355274564fc53d4053843d2b42b46dd45d43aa9bb265f0e00632b83841",
+      "v3_SI/03_module_verification.tex": "fb86f3c60551de4a791417b70268fa8995eab010f42b08e3b941f7566d7a7edc",
+      "v3_SI/04_additional_simulation.tex": "6eac89b9179a5d383145c585c06b9b3d7272a4c40b77f1e0994ade4efbb3cc05",
+      "figs/FSM-core.drawio.pdf": "f002bfdcaca13879e6684a07bcafc0d0a105743c188083b2faa32c23a1bb92c6",
+      "figs/FSM-TD.drawio.pdf": "0be7e593aeed2e7a771b155c90a4f1402758a5cf2fc1cde3500253512f714af2",
+      "figs/Map_A_unit_BCA-IP.drawio.pdf": "98a639bbfabd98222a078cc9d9fdf5c5a8c4b5149ede3ecff705c43900654311",
+      "figs/Map_CTT_TD.drawio.pdf": "ffe86a25de3f0f2465415a4e038c5f3ac66fda758d06757cd954470dd1a19843"
+    },
+    "explicit_global_prob_value_found_in_reviewed_sources": false
+  },
+  "cellspace_sha256": "8c7e7e3e438ea67bcc0961a51580deed3e66902478fd1ace0b051ce1ed5bd69b",
+  "units": {
+    "A": {
+      "b_input_token_coordinates": [
+        [
+          -275,
+          217
+        ],
+        [
+          -274,
+          217
+        ],
+        [
+          -273,
+          217
+        ],
+        [
+          -272,
+          217
+        ],
+        [
+          -270,
+          217
+        ],
+        [
+          -269,
+          217
+        ],
+        [
+          -268,
+          217
+        ],
+        [
+          -267,
+          217
+        ]
+      ],
+      "b_input_count": 8,
+      "weight_input_token_coordinates": [
+        [
+          [
+            -56,
+            -2
+          ],
+          [
+            -55,
+            -2
+          ],
+          [
+            -54,
+            -2
+          ],
+          [
+            -53,
+            -2
+          ]
+        ],
+        [
+          [
+            -56,
+            64
+          ],
+          [
+            -55,
+            64
+          ],
+          [
+            -54,
+            64
+          ],
+          [
+            -53,
+            64
+          ]
+        ],
+        [
+          [
+            -57,
+            130
+          ],
+          [
+            -56,
+            130
+          ],
+          [
+            -55,
+            130
+          ],
+          [
+            -54,
+            130
+          ],
+          [
+            -53,
+            130
+          ]
+        ],
+        [
+          [
+            -53,
+            196
+          ]
+        ],
+        [
+          [
+            -53,
+            262
+          ]
+        ],
+        [
+          [
+            -53,
+            328
+          ]
+        ]
+      ],
+      "weight_counts": [
+        4,
+        4,
+        5,
+        1,
+        1,
+        1
+      ]
+    },
+    "B": {
+      "b_input_token_coordinates": [
+        [
+          -275,
+          712
+        ],
+        [
+          -274,
+          712
+        ],
+        [
+          -273,
+          712
+        ],
+        [
+          -272,
+          712
+        ],
+        [
+          -270,
+          712
+        ],
+        [
+          -269,
+          712
+        ],
+        [
+          -268,
+          712
+        ],
+        [
+          -267,
+          712
+        ]
+      ],
+      "b_input_count": 8,
+      "weight_input_token_coordinates": [
+        [
+          [
+            -56,
+            493
+          ],
+          [
+            -55,
+            493
+          ],
+          [
+            -54,
+            493
+          ],
+          [
+            -53,
+            493
+          ]
+        ],
+        [
+          [
+            -56,
+            559
+          ],
+          [
+            -55,
+            559
+          ],
+          [
+            -54,
+            559
+          ],
+          [
+            -53,
+            559
+          ]
+        ],
+        [
+          [
+            -57,
+            625
+          ],
+          [
+            -56,
+            625
+          ],
+          [
+            -55,
+            625
+          ],
+          [
+            -54,
+            625
+          ],
+          [
+            -53,
+            625
+          ]
+        ],
+        [
+          [
+            -53,
+            691
+          ]
+        ],
+        [
+          [
+            -53,
+            757
+          ]
+        ],
+        [
+          [
+            -53,
+            823
+          ]
+        ]
+      ],
+      "weight_counts": [
+        4,
+        4,
+        5,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "paper_instances": [
+    {
+      "label": "main_instance_1",
+      "N": 1,
+      "a": [
+        1,
+        1,
+        2,
+        2,
+        4,
+        4
+      ],
+      "b": 6,
+      "c": [
+        2,
+        3,
+        4,
+        5,
+        1,
+        1
+      ],
+      "expected_weights": [
+        4,
+        3,
+        2,
+        1,
+        5,
+        5
+      ],
+      "enumerated_states": 64,
+      "feasible_states": 28,
+      "optimal_objective": 14,
+      "all_optimal_solutions": [
+        [
+          1,
+          1,
+          1,
+          1,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "label": "si_instance_2",
+      "N": 1,
+      "a": [
+        1,
+        1,
+        2,
+        2,
+        4,
+        4
+      ],
+      "b": 8,
+      "c": [
+        2,
+        2,
+        1,
+        5,
+        5,
+        5
+      ],
+      "expected_weights": [
+        4,
+        4,
+        5,
+        1,
+        1,
+        1
+      ],
+      "enumerated_states": 64,
+      "feasible_states": 43,
+      "optimal_objective": 14,
+      "all_optimal_solutions": [
+        [
+          1,
+          1,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          0,
+          1,
+          1,
+          0
+        ]
+      ]
+    }
+  ],
+  "b_and_weight_inputs_match": "si_instance_2",
+  "instance_certified": false,
+  "limitations": [
+    "Input counts identify b and W on the pictured input lines; a threshold circuits and Amp control densities have not been independently certified.",
+    "Objective vectors and N are taken from the manuscript, not inferred solely from the token counts.",
+    "No optimum hitting time is inferred from individual output events."
+  ]
+}
