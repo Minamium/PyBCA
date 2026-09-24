@@ -1,0 +1,9 @@
+{
+  "submitted_at": "2026-09-25T01:18:03.349022+09:00",
+  "base_commit": "7fa4014a270d0fc934e0bcd21faad290c33f85d3",
+  "workspace": "/home/b/b39859/PyBCA_workspace/bca-ip-a100-20260925",
+  "archive_sha256": "59fbcb87cf6fe25275670547038607c76fdfead117310e5d8c8ff0520ead4af4",
+  "sbatch_returncode": 0,
+  "stdout": "298047\n",
+  "stderr": ""
+}

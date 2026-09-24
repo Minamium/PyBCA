@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "checks": {
+    "identity": true,
+    "steps": true,
+    "offset": true,
+    "shape_dtype": true,
+    "all_cells": true,
+    "rule_probabilities": true,
+    "every_event": true,
+    "final_manifest": true
+  },
+  "updates": 100000,
+  "trials": 2,
+  "events": 242,
+  "reference_environment": {
+    "python": "3.12.1",
+    "torch": "2.6.0+cu124",
+    "cuda": "12.4"
+  },
+  "replay_environment": {
+    "python": "3.11.13",
+    "torch": "2.2.0+cu121",
+    "cuda": "12.1"
+  },
+  "reference_checkpoint_sha256": "207b230fbc2231d280a7051398fcfd89941507fcc3ac9f545079a7bc5b0acfd0",
+  "reference_cells_sha256": "5124b8ed4d6dd925e2eca0e53b586f153b7d4fe0b4d2f40167208a22b020d28d",
+  "replay_cells_sha256": "5124b8ed4d6dd925e2eca0e53b586f153b7d4fe0b4d2f40167208a22b020d28d"
+}
