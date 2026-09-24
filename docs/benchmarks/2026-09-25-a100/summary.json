@@ -1,0 +1,55 @@
+{
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "global_prob": 0.5,
+  "target_steps": 3000000,
+  "completed_performance_benchmark": true,
+  "completed_target_simulation": false,
+  "profiles": [
+    {
+      "trials": 512,
+      "workers_on_same_gpu": 1,
+      "warmup_steps": 1000,
+      "steps_per_repeat": 1000,
+      "repeats": 3,
+      "seconds_per_step_samples": [
+        0.20571084079297725,
+        0.20562628550291992,
+        0.20560705802601295
+      ],
+      "median_ms_per_step": 205.62628550291993,
+      "trial_steps_per_sec": 2489.9540384525867,
+      "nominal_hours_for_target": 171.41250915793947,
+      "conservative_hours_for_target": 188.63094983007295,
+      "cohort_flush_checkpoint_sec": 0.6446460799779743,
+      "sampled_device_peak_used_bytes": 12205621248,
+      "sampled_device_peak_used_gib": 11.36737060546875,
+      "device_memory_fraction": 0.1434372949443481
+    },
+    {
+      "trials": 3648,
+      "workers_on_same_gpu": 2,
+      "warmup_steps": 100,
+      "steps_per_repeat": 102,
+      "repeats": 3,
+      "seconds_per_step_samples": [
+        1.9705275172258125,
+        1.9705519048433167,
+        1.9708047758915699
+      ],
+      "median_ms_per_step": 1970.5519048433166,
+      "trial_steps_per_sec": 1851.2580110342544,
+      "nominal_hours_for_target": 1642.320349033475,
+      "conservative_hours_for_target": 1806.7838390793422,
+      "cohort_flush_checkpoint_sec": 2.2688163209240884,
+      "sampled_device_peak_used_bytes": 81510268928,
+      "sampled_device_peak_used_gib": 75.912353515625,
+      "device_memory_fraction": 0.9578875378534659
+    }
+  ],
+  "control_64": {
+    "trial_steps_per_sec": 3718.0066368376647,
+    "median_ms_per_step": 17.213524947990663,
+    "update_only_hours_for_target": 14.344604123325553,
+    "checkpoint_filesystem": "Temporary directory; not the primary output filesystem"
+  }
+}

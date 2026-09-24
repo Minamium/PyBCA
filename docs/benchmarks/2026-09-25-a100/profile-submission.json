@@ -1,0 +1,13 @@
+{
+  "job_id": "298054",
+  "submitted_at": "2026-09-24T16:56:52.616237+00:00",
+  "source_job": "298049",
+  "source_job_action": "Cancelled after complete capacity search; partial 1000-step near-capacity profile discarded",
+  "source_plan": "/home/b/b39859/PyBCA_workspace/bca-ip-a100-20260925/results/a100-capacity-search-298049.json",
+  "source_plan_sha256": "7b07a056d60f4e3656491b920ac036d8d272e97332a81453a8909e014ec30a47",
+  "archive_sha256": "640c0d22bdd8934cf7e9f54909fa747d5b410cb31b8ef067a38d76f4d729fbc0",
+  "dependency": "afterok:298052",
+  "chosen_trials": 3648,
+  "seconds_per_repeat_target": 200,
+  "repeats": 3
+}

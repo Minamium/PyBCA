@@ -1,0 +1,23 @@
+{
+  "shape": [
+    911,
+    735
+  ],
+  "cells_per_trial": 669585,
+  "rules": 28,
+  "initial_state_counts": {
+    "-1": 703,
+    "0": 555833,
+    "1": 110822,
+    "2": 2227
+  },
+  "rule_center_counts": {
+    "0": 4,
+    "1": 24
+  },
+  "baseline_trials": 512,
+  "baseline_match_mask_bytes": 9599170560,
+  "baseline_peak_tensor_allocated_bytes": 11229344768,
+  "match_mask_fraction_of_tensor_allocation": 0.854829089169524,
+  "note": "Initial cell-space counts and known dense mask allocation; no claimed speedup from hypothetical sparse implementation."
+}
