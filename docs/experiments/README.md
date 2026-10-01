@@ -5,6 +5,7 @@
 | 実験・解析 | レポート |
 | --- | --- |
 | 600万ステップの到達率と300万からの変化 | [結果と全試行データ](2026-10-01-production-p05-6m/report.md) |
+| 600万でも未到達の55試行と次の実験 | [停滞・リセット・段間流量の調査](2026-10-01-production-p05-6m/nonhit-diagnosis.md) |
 | 300万ステップの完走・履歴監査 | [実行結果](2026-09-28-production-p05/report.md) |
 | 300万時点の短い安定判定と未到達例 | [判定条件と出力変化](2026-09-28-production-p05/short-stability-and-nonhits.md) |
 | 300万から600万への継続設定 | [ジョブ・チェックポイント](2026-09-28-continuation-6m.md) |
@@ -21,3 +22,16 @@ Gitには解析コード、各試行の集計、検証記録、図を保存す�
 - `bca-ip-p05-512-6m.tar.gz`: 600万まで、217,297,964 bytes、SHA-256 `24fa669b840d5c3462b7596f42dce5cb0a42dd9f134e543a046b781d0230c8cb`。先頭300万は同じ試行の履歴。
 
 rawファイルを展開する `results/` はGit管理外。アーカイブには再開用の全512最終セル状態と、イベント履歴・実行条件が含まれる。各レポートの `download.json` と `SHA256SUMS` も照合できる。
+
+公開時にGitHub側のサイズ・SHA-256とローカルの原本を照合した。[Releaseの検証記録](2026-10-01-production-p05-6m/published-release.json)。リポジトリのルートから次のように取得・展開できる（GitHub CLIを使用）。
+
+```sh
+gh release download bca-ip-results-2026-10-01 --repo Minamium/PyBCA \
+  --dir results/github-release-20261001
+(cd results/github-release-20261001 && shasum -a 256 -c SHA256SUMS)
+mkdir -p results/production-p05-20260928 results/production-p05-6m-20261001
+tar -xzf results/github-release-20261001/bca-ip-p05-512-3m.tar.gz \
+  -C results/production-p05-20260928
+tar -xzf results/github-release-20261001/bca-ip-p05-512-6m.tar.gz \
+  -C results/production-p05-6m-20261001
+```

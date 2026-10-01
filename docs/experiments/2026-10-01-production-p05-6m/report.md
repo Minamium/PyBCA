@@ -60,6 +60,8 @@
 
 アーカイブ217,297,964 bytesのローカルSHA-256はrokko側と一致した。大容量rawデータは `results/production-p05-6m-20261001/`、継続前の原本は `results/production-p05-20260928/` に保持している。
 
+**公開・追加調査:** [GitHub Release](https://github.com/Minamium/PyBCA/releases/tag/bca-ip-results-2026-10-01) に両期間の全履歴と最終状態を公開した。未到達55試行のうち51試行で最良の判読出力は目的値10であり、変数の入れ替えが必要だった。[停滞の時系列・段間流量・次の実験](nonhit-diagnosis.md) に調査をまとめた。
+
 ## 再現用データ
 
 - [集計結果](result-summary.json)、[前後比較と試行ID](horizon-comparison.json)、[全512試行の前後一覧](trial-comparison.jsonl)。
@@ -69,8 +71,17 @@
 
 ```sh
 OPENBLAS_NUM_THREADS=1 python3 scripts/read_bca_ip_fsm_outputs.py \
+  results/production-p05-20260928/bca-ip-512-trials-p05-20260925 \
+  --instance docs/experiments/2026-10-01-production-p05-6m/instance-2.json \
+  --horizon 3000000 --output results/production-p05-20260928/fsm-readout
+
+OPENBLAS_NUM_THREADS=1 python3 scripts/sweep_bca_ip_stability.py \
+  results/production-p05-20260928/fsm-readout \
+  --output results/production-p05-20260928/short-stability
+
+OPENBLAS_NUM_THREADS=1 python3 scripts/read_bca_ip_fsm_outputs.py \
   results/production-p05-6m-20261001/bca-ip-512-trials-p05-6m-20260928 \
-  --instance results/production-p05-6m-20261001/instance.json \
+  --instance docs/experiments/2026-10-01-production-p05-6m/instance-2.json \
   --horizon 6000000 --output results/production-p05-6m-20261001/fsm-readout
 
 OPENBLAS_NUM_THREADS=1 python3 scripts/sweep_bca_ip_stability.py \
@@ -82,3 +93,5 @@ python3 scripts/compare_bca_ip_horizons.py \
   results/production-p05-6m-20261001/short-stability \
   --output results/production-p05-6m-20261001/horizon-comparison.json
 ```
+
+元データの展開方法は[実験一覧](../README.md)を参照。解析にはリポジトリのPython依存パッケージを使用する。

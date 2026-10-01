@@ -1,0 +1,694 @@
+[
+  {
+    "trial_id": 118,
+    "reset_step": 3772889,
+    "counts_before": {
+      "300000": {
+        "F_value_A": 502,
+        "F_value_B": 358,
+        "Comparate_A-B": 143,
+        "Comparate_B-A": 0
+      },
+      "100000": {
+        "F_value_A": 183,
+        "F_value_B": 135,
+        "Comparate_A-B": 56,
+        "Comparate_B-A": 0
+      },
+      "50000": {
+        "F_value_A": 94,
+        "F_value_B": 68,
+        "Comparate_A-B": 30,
+        "Comparate_B-A": 0
+      }
+    },
+    "reset_unit": "A",
+    "pre_reset_fsm_readouts": {
+      "A": {
+        "last_rate_change": 1970000,
+        "readout_start": 3472889,
+        "readout_end": 3772889,
+        "regime_duration": 1802889,
+        "quarter_edges": [
+          3472889,
+          3547889,
+          3622889,
+          3697889,
+          3772889
+        ],
+        "counts": [
+          57,
+          35,
+          0,
+          34,
+          51,
+          0
+        ],
+        "quarter_counts": [
+          [
+            13,
+            19,
+            11,
+            14
+          ],
+          [
+            7,
+            7,
+            6,
+            15
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            11,
+            7,
+            7,
+            9
+          ],
+          [
+            11,
+            14,
+            14,
+            12
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 8,
+        "objective_value": 14,
+        "feasible": true,
+        "optimal": true
+      },
+      "B": {
+        "last_rate_change": 2980000,
+        "readout_start": 3472889,
+        "readout_end": 3772889,
+        "regime_duration": 792889,
+        "quarter_edges": [
+          3472889,
+          3547889,
+          3622889,
+          3697889,
+          3772889
+        ],
+        "counts": [
+          49,
+          49,
+          0,
+          50,
+          0,
+          0
+        ],
+        "quarter_counts": [
+          [
+            10,
+            14,
+            13,
+            12
+          ],
+          [
+            13,
+            12,
+            13,
+            11
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            14,
+            12,
+            9,
+            15
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 4,
+        "objective_value": 9,
+        "feasible": true,
+        "optimal": false
+      }
+    }
+  },
+  {
+    "trial_id": 265,
+    "reset_step": 3463355,
+    "counts_before": {
+      "300000": {
+        "F_value_A": 580,
+        "F_value_B": 453,
+        "Comparate_A-B": 132,
+        "Comparate_B-A": 0
+      },
+      "100000": {
+        "F_value_A": 210,
+        "F_value_B": 173,
+        "Comparate_A-B": 41,
+        "Comparate_B-A": 0
+      },
+      "50000": {
+        "F_value_A": 122,
+        "F_value_B": 100,
+        "Comparate_A-B": 26,
+        "Comparate_B-A": 0
+      }
+    },
+    "reset_unit": "A",
+    "pre_reset_fsm_readouts": {
+      "A": {
+        "last_rate_change": 1030000,
+        "readout_start": 3163355,
+        "readout_end": 3463355,
+        "regime_duration": 2433355,
+        "quarter_edges": [
+          3163355,
+          3238355,
+          3313355,
+          3388355,
+          3463355
+        ],
+        "counts": [
+          55,
+          54,
+          0,
+          62,
+          44,
+          0
+        ],
+        "quarter_counts": [
+          [
+            9,
+            12,
+            17,
+            17
+          ],
+          [
+            21,
+            6,
+            14,
+            13
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            20,
+            11,
+            20,
+            11
+          ],
+          [
+            11,
+            14,
+            11,
+            8
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 8,
+        "objective_value": 14,
+        "feasible": true,
+        "optimal": true
+      },
+      "B": {
+        "last_rate_change": 1360000,
+        "readout_start": 3163355,
+        "readout_end": 3463355,
+        "regime_duration": 2103355,
+        "quarter_edges": [
+          3163355,
+          3238355,
+          3313355,
+          3388355,
+          3463355
+        ],
+        "counts": [
+          60,
+          50,
+          64,
+          46,
+          0,
+          0
+        ],
+        "quarter_counts": [
+          [
+            12,
+            10,
+            17,
+            21
+          ],
+          [
+            15,
+            14,
+            11,
+            10
+          ],
+          [
+            17,
+            17,
+            17,
+            13
+          ],
+          [
+            8,
+            8,
+            15,
+            15
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          1,
+          1,
+          0,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 6,
+        "objective_value": 10,
+        "feasible": true,
+        "optimal": false
+      }
+    }
+  },
+  {
+    "trial_id": 339,
+    "reset_step": 2019958,
+    "counts_before": {
+      "300000": {
+        "F_value_A": 512,
+        "F_value_B": 362,
+        "Comparate_A-B": 154,
+        "Comparate_B-A": 0
+      },
+      "100000": {
+        "F_value_A": 186,
+        "F_value_B": 144,
+        "Comparate_A-B": 56,
+        "Comparate_B-A": 0
+      },
+      "50000": {
+        "F_value_A": 92,
+        "F_value_B": 67,
+        "Comparate_A-B": 18,
+        "Comparate_B-A": 0
+      }
+    },
+    "reset_unit": "B",
+    "pre_reset_fsm_readouts": {
+      "A": {
+        "last_rate_change": 920000,
+        "readout_start": 1719958,
+        "readout_end": 2019958,
+        "regime_duration": 1099958,
+        "quarter_edges": [
+          1719958,
+          1794958,
+          1869958,
+          1944958,
+          2019958
+        ],
+        "counts": [
+          59,
+          50,
+          0,
+          53,
+          0,
+          0
+        ],
+        "quarter_counts": [
+          [
+            12,
+            19,
+            12,
+            16
+          ],
+          [
+            18,
+            12,
+            11,
+            9
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            13,
+            11,
+            15,
+            14
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 4,
+        "objective_value": 9,
+        "feasible": true,
+        "optimal": false
+      },
+      "B": {
+        "last_rate_change": 1770000,
+        "readout_start": 1770000,
+        "readout_end": 2019958,
+        "regime_duration": 249958,
+        "quarter_edges": [
+          1770000,
+          1832489,
+          1894979,
+          1957468,
+          2019958
+        ],
+        "counts": [
+          35,
+          37,
+          0,
+          25,
+          36,
+          0
+        ],
+        "quarter_counts": [
+          [
+            11,
+            7,
+            10,
+            7
+          ],
+          [
+            7,
+            13,
+            11,
+            6
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            7,
+            11,
+            7
+          ],
+          [
+            9,
+            7,
+            11,
+            9
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 8,
+        "objective_value": 14,
+        "feasible": true,
+        "optimal": true
+      }
+    }
+  },
+  {
+    "trial_id": 460,
+    "reset_step": 5684601,
+    "counts_before": {
+      "300000": {
+        "F_value_A": 601,
+        "F_value_B": 446,
+        "Comparate_A-B": 151,
+        "Comparate_B-A": 0
+      },
+      "100000": {
+        "F_value_A": 177,
+        "F_value_B": 123,
+        "Comparate_A-B": 45,
+        "Comparate_B-A": 0
+      },
+      "50000": {
+        "F_value_A": 96,
+        "F_value_B": 70,
+        "Comparate_A-B": 23,
+        "Comparate_B-A": 0
+      }
+    },
+    "reset_unit": "A",
+    "pre_reset_fsm_readouts": {
+      "A": {
+        "last_rate_change": 5680000,
+        "readout_start": 5680000,
+        "readout_end": 5684601,
+        "regime_duration": 4601,
+        "quarter_edges": [
+          5680000,
+          5681150,
+          5682300,
+          5683450,
+          5684601
+        ],
+        "counts": [
+          1,
+          2,
+          0,
+          3,
+          0,
+          1
+        ],
+        "quarter_counts": [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "vector": [
+          0,
+          0,
+          0,
+          null,
+          0,
+          0
+        ],
+        "sufficient_duration": false,
+        "stable_readout": false,
+        "constraint_value": null,
+        "objective_value": null,
+        "feasible": null,
+        "optimal": false
+      },
+      "B": {
+        "last_rate_change": 5430000,
+        "readout_start": 5430000,
+        "readout_end": 5684601,
+        "regime_duration": 254601,
+        "quarter_edges": [
+          5430000,
+          5493650,
+          5557300,
+          5620950,
+          5684601
+        ],
+        "counts": [
+          45,
+          56,
+          0,
+          41,
+          0,
+          0
+        ],
+        "quarter_counts": [
+          [
+            11,
+            7,
+            15,
+            12
+          ],
+          [
+            14,
+            16,
+            12,
+            14
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            15,
+            11,
+            9,
+            6
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "vector": [
+          1,
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "sufficient_duration": true,
+        "stable_readout": true,
+        "constraint_value": 4,
+        "objective_value": 9,
+        "feasible": true,
+        "optimal": false
+      }
+    }
+  }
+]

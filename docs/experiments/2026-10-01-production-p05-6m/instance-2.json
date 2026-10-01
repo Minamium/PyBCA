@@ -1,0 +1,22 @@
+{
+  "name": "BCA-IP SI Instance 2",
+  "a": [
+    1,
+    1,
+    2,
+    2,
+    4,
+    4
+  ],
+  "b": 8,
+  "c": [
+    2,
+    2,
+    1,
+    5,
+    5,
+    5
+  ],
+  "source": "BCA-IP_2026-09-17/revised/v3_SI/04_additional_simulation.tex, equation IntegSim_2",
+  "objective": "maximize c^T x subject to a^T x <= b and x in {0,1}^6"
+}
