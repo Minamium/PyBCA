@@ -1,0 +1,47 @@
+{
+  "rows": [
+    {
+      "variable": 1,
+      "fsm_to_amp": 356926,
+      "amp_output": 773433,
+      "aggregate_output_input_ratio": 2.16692815877801,
+      "si_instance_2_coefficient": 2
+    },
+    {
+      "variable": 2,
+      "fsm_to_amp": 325376,
+      "amp_output": 694748,
+      "aggregate_output_input_ratio": 2.135215873328088,
+      "si_instance_2_coefficient": 2
+    },
+    {
+      "variable": 3,
+      "fsm_to_amp": 30273,
+      "amp_output": 30176,
+      "aggregate_output_input_ratio": 0.9967958246622403,
+      "si_instance_2_coefficient": 1
+    },
+    {
+      "variable": 4,
+      "fsm_to_amp": 347679,
+      "amp_output": 1109705,
+      "aggregate_output_input_ratio": 3.1917515869523325,
+      "si_instance_2_coefficient": 5
+    },
+    {
+      "variable": 5,
+      "fsm_to_amp": 139252,
+      "amp_output": 460631,
+      "aggregate_output_input_ratio": 3.3078950392094906,
+      "si_instance_2_coefficient": 5
+    },
+    {
+      "variable": 6,
+      "fsm_to_amp": 164185,
+      "amp_output": 539877,
+      "aggregate_output_input_ratio": 3.2882236501507447,
+      "si_instance_2_coefficient": 5
+    }
+  ],
+  "interpretation": "Full-run aggregate ratios, not calibrated per-pulse gain. SI Instance 2 is a conditional reference; coefficients and circuit decoder remain uncertified."
+}

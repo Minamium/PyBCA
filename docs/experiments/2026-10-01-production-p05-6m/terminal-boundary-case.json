@@ -1,0 +1,352 @@
+{
+  "original": {
+    "trial_id": 308,
+    "status": "unresolved",
+    "A": {
+      "last_rate_change": 5880000,
+      "readout_start": 5880000,
+      "readout_end": 6000000,
+      "regime_duration": 120000,
+      "quarter_edges": [
+        5880000,
+        5910000,
+        5940000,
+        5970000,
+        6000000
+      ],
+      "counts": [
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "quarter_counts": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vector": [
+        0,
+        null,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sufficient_duration": true,
+      "stable_readout": false,
+      "constraint_value": null,
+      "objective_value": null,
+      "feasible": null,
+      "optimal": false,
+      "trial_id": 308,
+      "unit": "A",
+      "change_points": [
+        340000,
+        770000,
+        1190000,
+        1360000,
+        1620000,
+        2270000,
+        2800000,
+        3540000,
+        3980000,
+        4510000,
+        5880000
+      ]
+    },
+    "B": {
+      "last_rate_change": 5900000,
+      "readout_start": 5900000,
+      "readout_end": 6000000,
+      "regime_duration": 100000,
+      "quarter_edges": [
+        5900000,
+        5925000,
+        5950000,
+        5975000,
+        6000000
+      ],
+      "counts": [
+        28,
+        14,
+        0,
+        2,
+        0,
+        3
+      ],
+      "quarter_counts": [
+        [
+          8,
+          9,
+          6,
+          5
+        ],
+        [
+          3,
+          4,
+          2,
+          5
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          2
+        ]
+      ],
+      "vector": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        null
+      ],
+      "sufficient_duration": true,
+      "stable_readout": false,
+      "constraint_value": null,
+      "objective_value": null,
+      "feasible": null,
+      "optimal": false,
+      "trial_id": 308,
+      "unit": "B",
+      "change_points": [
+        210000,
+        1010000,
+        1460000,
+        2250000,
+        4500000,
+        5900000
+      ]
+    }
+  },
+  "fine": {
+    "trial_id": 308,
+    "status": "optimal",
+    "A": {
+      "last_rate_change": 5875000,
+      "readout_start": 5875000,
+      "readout_end": 6000000,
+      "regime_duration": 125000,
+      "quarter_edges": [
+        5875000,
+        5906250,
+        5937500,
+        5968750,
+        6000000
+      ],
+      "counts": [
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "quarter_counts": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "vector": [
+        0,
+        null,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sufficient_duration": true,
+      "stable_readout": false,
+      "constraint_value": null,
+      "objective_value": null,
+      "feasible": null,
+      "optimal": false,
+      "trial_id": 308,
+      "unit": "A",
+      "change_points": [
+        340000,
+        770000,
+        1185000,
+        1285000,
+        1620000,
+        2270000,
+        2805000,
+        3535000,
+        3985000,
+        4515000,
+        5875000
+      ]
+    },
+    "B": {
+      "last_rate_change": 5875000,
+      "readout_start": 5875000,
+      "readout_end": 6000000,
+      "regime_duration": 125000,
+      "quarter_edges": [
+        5875000,
+        5906250,
+        5937500,
+        5968750,
+        6000000
+      ],
+      "counts": [
+        31,
+        20,
+        0,
+        4,
+        0,
+        4
+      ],
+      "quarter_counts": [
+        [
+          6,
+          10,
+          8,
+          7
+        ],
+        [
+          7,
+          5,
+          1,
+          7
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          2
+        ]
+      ],
+      "vector": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "sufficient_duration": true,
+      "stable_readout": true,
+      "constraint_value": 8,
+      "objective_value": 14,
+      "feasible": true,
+      "optimal": true,
+      "trial_id": 308,
+      "unit": "B",
+      "change_points": [
+        215000,
+        1015000,
+        1465000,
+        2250000,
+        4500000,
+        5875000
+      ]
+    }
+  }
+}

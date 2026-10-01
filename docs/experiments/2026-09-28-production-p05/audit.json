@@ -1,0 +1,329 @@
+{
+  "checked_at": "2026-09-28T08:22:55.085533+00:00",
+  "run": "/Users/shukunami/Desktop/workspace/Git_space/PyBCA/results/production-p05-20260928/bca-ip-512-trials-p05-20260925",
+  "trials": 512,
+  "steps": 3000000,
+  "global_prob": 0.5,
+  "seed": 20260924,
+  "groups": {
+    "td_to_fsm": {
+      "events": 60302,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        36,
+        119.0,
+        208
+      ],
+      "first_completed_update_min_median_max": [
+        1720,
+        5364.5,
+        35168
+      ],
+      "last_event_completed_update": 2999991
+    },
+    "fsm_to_amp": {
+      "events": 1363691,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        1709,
+        2655.5,
+        3691
+      ],
+      "first_completed_update_min_median_max": [
+        4401,
+        64331.5,
+        202111
+      ],
+      "last_event_completed_update": 2999998
+    },
+    "amp_output": {
+      "events": 3608570,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        4120,
+        6966.0,
+        11298
+      ],
+      "first_completed_update_min_median_max": [
+        4828,
+        64732.0,
+        203095
+      ],
+      "last_event_completed_update": 3000000
+    },
+    "unit_output": {
+      "events": 3484454,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        3837,
+        6741.0,
+        11295
+      ],
+      "first_completed_update_min_median_max": [
+        5366,
+        65455.5,
+        203351
+      ],
+      "last_event_completed_update": 3000000
+    },
+    "comparator": {
+      "events": 617405,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        365,
+        1254.5,
+        1486
+      ],
+      "first_completed_update_min_median_max": [
+        31001,
+        120762.0,
+        340772
+      ],
+      "last_event_completed_update": 2999980
+    },
+    "reset_signal": {
+      "events": 1890,
+      "trials_with_event": 496,
+      "count_per_trial_min_median_max": [
+        0,
+        4.0,
+        10
+      ],
+      "first_completed_update_min_median_max": [
+        124450,
+        762032.5,
+        2988483
+      ],
+      "last_event_completed_update": 2999455
+    }
+  },
+  "event_name_totals": {
+    "A_Amp_x1output": 387782,
+    "A_Amp_x2output": 342909,
+    "A_Amp_x3output": 15556,
+    "A_Amp_x4output": 548452,
+    "A_Amp_x5output": 228986,
+    "A_Amp_x6output": 265462,
+    "A_core_input_1": 10652,
+    "A_core_input_2": 8957,
+    "A_core_input_3": 3179,
+    "A_core_input_4": 3157,
+    "A_core_input_5": 2208,
+    "A_core_input_6": 2600,
+    "A_x1output": 179185,
+    "A_x2output": 161422,
+    "A_x3output": 15573,
+    "A_x4output": 172445,
+    "A_x5output": 70245,
+    "A_x6output": 80926,
+    "B_Amp_x1output": 385651,
+    "B_Amp_x2output": 351839,
+    "B_Amp_x3output": 14620,
+    "B_Amp_x4output": 561253,
+    "B_Amp_x5output": 231645,
+    "B_Amp_x6output": 274415,
+    "B_core_input_1": 10331,
+    "B_core_input_2": 8438,
+    "B_core_input_3": 3157,
+    "B_core_input_4": 3118,
+    "B_core_input_5": 2132,
+    "B_core_input_6": 2373,
+    "B_x1output": 177741,
+    "B_x2output": 163954,
+    "B_x3output": 14700,
+    "B_x4output": 175234,
+    "B_x5output": 69007,
+    "B_x6output": 83259,
+    "Comparate_A-B": 303146,
+    "Comparate_B-A": 314259,
+    "F_value_A": 1736731,
+    "F_value_B": 1747723,
+    "Reset_Signal_for_A_clear": 986,
+    "Reset_Signal_for_A_set": 986,
+    "Reset_Signal_for_B_clear": 904,
+    "Reset_Signal_for_B_set": 904
+  },
+  "records": 9138202,
+  "checked_chunks": 24000,
+  "unique_final_states": 512,
+  "audits": [
+    {
+      "rank": 0,
+      "checkpoint_sha256": "b6d48ba53f6f49431ad0c287b6736783fc25d549a97406f6bcc42103c4e06686",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1159416,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12593223527,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5885,
+        7251
+      ]
+    },
+    {
+      "rank": 1,
+      "checkpoint_sha256": "3c7bbaa391bc137e4496e726817b869dd93c5377ff2a28d079afa41a0bbd95fd",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1156251,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12593937293,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5963,
+        7267
+      ]
+    },
+    {
+      "rank": 2,
+      "checkpoint_sha256": "fdfb389e1488d49629f2f5e52405389492ea4d5baa9d0ebf7d148028deb6c138",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1121049,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12596251443,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6084,
+        7094
+      ]
+    },
+    {
+      "rank": 3,
+      "checkpoint_sha256": "c4fb0e4665f94baaaba51c7fcac0efa91eab613953a9f1c8a29d08f063e3eb41",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1161916,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12593937293,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5910,
+        7239
+      ]
+    },
+    {
+      "rank": 4,
+      "checkpoint_sha256": "e2c4f5e5aebf1b6b2ffe5d7d3f52b706e7c90fdd2b007c89fba7bb0aee8572ea",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1142434,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12593495473,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5931,
+        7367
+      ]
+    },
+    {
+      "rank": 5,
+      "checkpoint_sha256": "25eb2ae5ea89defd9430e890f27460c2f4f4be1886ae9271bf920817da9ce2f9",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1158784,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12591817603,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5878,
+        7236
+      ]
+    },
+    {
+      "rank": 6,
+      "checkpoint_sha256": "c4a2d2fc2f3786f9ae73bbc17a40673ae912b691d3a46fc2be1cf6ecb463e532",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1123327,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12587864324,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6120,
+        7387
+      ]
+    },
+    {
+      "rank": 7,
+      "checkpoint_sha256": "bd8cb2e821cc596dcd3f92d3ca198497bdee04dd3ed41b07dcd2ed67458def31",
+      "steps": 3000000,
+      "trials": 64,
+      "records": 1115025,
+      "chunks": 3000,
+      "elapsed_sec": 75990.12593396008,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6009,
+        7322
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    }
+  ],
+  "trials_with_all_six_event_groups": 496,
+  "trials_with_td_input_after_first_reset_of_same_unit": 495,
+  "prior_probe_prefix_exact_match": true,
+  "prior_probe_event_records": 242,
+  "reset_set_clear_pairs_match": true,
+  "errors": [],
+  "optimum_hit_statistics": null,
+  "optimum_limitation": "No certified state decoder or per-step first-hit observer was part of this run. Module outputs do not establish an optimum."
+}

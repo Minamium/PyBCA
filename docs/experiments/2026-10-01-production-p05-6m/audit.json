@@ -1,0 +1,329 @@
+{
+  "checked_at": "2026-09-30T19:29:44.661767+00:00",
+  "run": "/Users/shukunami/Desktop/workspace/Git_space/PyBCA/results/production-p05-6m-20261001/bca-ip-512-trials-p05-6m-20260928",
+  "trials": 512,
+  "steps": 6000000,
+  "global_prob": 0.5,
+  "seed": 20260924,
+  "groups": {
+    "td_to_fsm": {
+      "events": 107816,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        57,
+        211.0,
+        340
+      ],
+      "first_completed_update_min_median_max": [
+        1720,
+        5364.5,
+        35168
+      ],
+      "last_event_completed_update": 5999941
+    },
+    "fsm_to_amp": {
+      "events": 2929367,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        3964,
+        5671.0,
+        7529
+      ],
+      "first_completed_update_min_median_max": [
+        4401,
+        64331.5,
+        202111
+      ],
+      "last_event_completed_update": 6000000
+    },
+    "amp_output": {
+      "events": 7600290,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        10419,
+        14779.0,
+        21517
+      ],
+      "first_completed_update_min_median_max": [
+        4828,
+        64732.0,
+        203095
+      ],
+      "last_event_completed_update": 6000000
+    },
+    "unit_output": {
+      "events": 7464150,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        10096,
+        14498.0,
+        21517
+      ],
+      "first_completed_update_min_median_max": [
+        5366,
+        65455.5,
+        203351
+      ],
+      "last_event_completed_update": 6000000
+    },
+    "comparator": {
+      "events": 1353148,
+      "trials_with_event": 512,
+      "count_per_trial_min_median_max": [
+        1054,
+        2709.5,
+        2985
+      ],
+      "first_completed_update_min_median_max": [
+        31001,
+        120762.0,
+        340772
+      ],
+      "last_event_completed_update": 5999998
+    },
+    "reset_signal": {
+      "events": 3852,
+      "trials_with_event": 511,
+      "count_per_trial_min_median_max": [
+        0,
+        8.0,
+        15
+      ],
+      "first_completed_update_min_median_max": [
+        124450,
+        779036.0,
+        5987143
+      ],
+      "last_event_completed_update": 5999980
+    }
+  },
+  "event_name_totals": {
+    "A_Amp_x1output": 862393,
+    "A_Amp_x2output": 779253,
+    "A_Amp_x3output": 58298,
+    "A_Amp_x4output": 1212191,
+    "A_Amp_x5output": 404589,
+    "A_Amp_x6output": 464894,
+    "A_core_input_1": 19366,
+    "A_core_input_2": 16075,
+    "A_core_input_3": 5766,
+    "A_core_input_4": 5649,
+    "A_core_input_5": 3724,
+    "A_core_input_6": 4357,
+    "A_x1output": 399712,
+    "A_x2output": 364575,
+    "A_x3output": 58307,
+    "A_x4output": 370353,
+    "A_x5output": 121110,
+    "A_x6output": 138991,
+    "B_Amp_x1output": 865215,
+    "B_Amp_x2output": 842375,
+    "B_Amp_x3output": 59071,
+    "B_Amp_x4output": 1218826,
+    "B_Amp_x5output": 373360,
+    "B_Amp_x6output": 459825,
+    "B_core_input_1": 18543,
+    "B_core_input_2": 15339,
+    "B_core_input_3": 5623,
+    "B_core_input_4": 5527,
+    "B_core_input_5": 3703,
+    "B_core_input_6": 4144,
+    "B_x1output": 399839,
+    "B_x2output": 391925,
+    "B_x3output": 59295,
+    "B_x4output": 372686,
+    "B_x5output": 112632,
+    "B_x6output": 139942,
+    "Comparate_A-B": 666481,
+    "Comparate_B-A": 686667,
+    "F_value_A": 3721943,
+    "F_value_B": 3742207,
+    "Reset_Signal_for_A_clear": 2009,
+    "Reset_Signal_for_A_set": 2009,
+    "Reset_Signal_for_B_clear": 1843,
+    "Reset_Signal_for_B_set": 1843
+  },
+  "records": 19462475,
+  "checked_chunks": 48000,
+  "unique_final_states": 512,
+  "audits": [
+    {
+      "rank": 0,
+      "checkpoint_sha256": "ec8144b1353a375e6f4a1ae0e0ee47684127a07893ce493911619d5dcdad1c08",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2443530,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58842595667,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        5990,
+        7534
+      ]
+    },
+    {
+      "rank": 1,
+      "checkpoint_sha256": "3cebb444878701bfb0cde025fa978dfb9fb5036450502ef11ba4a5d93b2dde5c",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2442160,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58842799067,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6024,
+        7410
+      ]
+    },
+    {
+      "rank": 2,
+      "checkpoint_sha256": "a2f89ceb30d48e6ed88eb78a1e378138d44d56f020df4889b67c6b492d32b6f3",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2413873,
+      "chunks": 6000,
+      "elapsed_sec": 76113.5884315148,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6168,
+        7460
+      ]
+    },
+    {
+      "rank": 3,
+      "checkpoint_sha256": "89412394cdcc710170c9703ec85c07ce2c45a1f29c7aa73317947e9b79e47fa4",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2419793,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58843877167,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6358,
+        7362
+      ]
+    },
+    {
+      "rank": 4,
+      "checkpoint_sha256": "02360cdd3268c2885d6b4b148b0e742c5c8ec7662160f13aff4a619769434e8a",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2417964,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58843163401,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6000,
+        7428
+      ]
+    },
+    {
+      "rank": 5,
+      "checkpoint_sha256": "45860c2ab83e8dd31a09ce82f3d0847542d88482cae2ba574efc9c7977ec2b47",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2460949,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58834296092,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6170,
+        7420
+      ]
+    },
+    {
+      "rank": 6,
+      "checkpoint_sha256": "1fcee7babc63d1a6e0de11d2944fda22fb3e726389fefc0526233d51e7ae2eb4",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2441686,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58844771981,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6201,
+        7417
+      ]
+    },
+    {
+      "rank": 7,
+      "checkpoint_sha256": "e6ae18aa47e39472b7e2b8a497d47458fed694a3303baaaf97ff8941df705db5",
+      "steps": 6000000,
+      "trials": 64,
+      "records": 2422520,
+      "chunks": 6000,
+      "elapsed_sec": 76113.58841009438,
+      "cuda_allocated_bytes": [
+        1404225536
+      ],
+      "token_count_range": [
+        6186,
+        7445
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    },
+    {
+      "python": "3.12.1",
+      "torch": "2.6.0+cu124",
+      "cuda": "12.4"
+    }
+  ],
+  "trials_with_all_six_event_groups": 511,
+  "trials_with_td_input_after_first_reset_of_same_unit": 510,
+  "prior_probe_prefix_exact_match": null,
+  "prior_probe_event_records": null,
+  "reset_set_clear_pairs_match": true,
+  "errors": [],
+  "optimum_hit_statistics": null,
+  "optimum_limitation": "No certified state decoder or per-step first-hit observer was part of this run. Module outputs do not establish an optimum."
+}

@@ -1,0 +1,70 @@
+Mon Sep 28 17:18:11 JST 2026
+Job Id: 236962.rokko1
+    Job_Name = pybca_ip512_p05
+    Job_Owner = IM25D029@rokko1
+    resources_used.cpupercent = 795
+    resources_used.cput = 168:05:25
+    resources_used.mem = 353916kb
+    resources_used.ncpus = 8
+    resources_used.vmem = 4214052kb
+    resources_used.walltime = 21:07:45
+    job_state = F
+    queue = G
+    server = rokko1
+    Checkpoint = u
+    ctime = Fri Sep 25 00:29:35 2026
+    Error_Path = rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260
+	924/pybca_ip512_p05.e236962
+    exec_host = nodeg01/0*0
+    exec_vnode = (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4)
+
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = n
+    Mail_Points = a
+    mtime = Sun Sep 27 18:14:48 2026
+    Output_Path = rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-2026
+	0924/pybca_ip512_p05.o236962
+    Priority = 0
+    qtime = Fri Sep 25 00:29:35 2026
+    Rerunable = False
+    Resource_List.mem = 64gb
+    Resource_List.mpiprocs = 8
+    Resource_List.ncpus = 8
+    Resource_List.ngpus = 8
+    Resource_List.nodect = 1
+    Resource_List.place = free
+    Resource_List.select = 1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+    Resource_List.walltime = 24:00:00
+    stime = Sat Sep 26 21:06:59 2026
+    session_id = 23962
+    jobdir = /home/IM25D029
+    substate = 92
+    Variable_List = PBS_O_HOME=/home/IM25D029,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=IM25D029,
+	PBS_O_PATH=/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi/bin:/
+	usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/opt/c3/bin:/opt/ibutils/b
+	in:/opt/pbs/bin:/sbin:/bin:/usr/diags/getinfo/bin:/usr/diags/ipmidumput
+	ils/bin:/usr/site/bin,PBS_O_MAIL=/var/mail/IM25D029,
+	PBS_O_SHELL=/bin/bash,
+	PBS_O_WORKDIR=/home/IM25D029/PyBCA_workspcace/bca-ip-statistics-202609
+	24,PBS_O_SYSTEM=Linux,PBS_O_QUEUE=G,PBS_O_HOST=rokko1
+    comment = Job run at Sat Sep 26 at 21:06 on (nodeg01[1]:mem=67108864kb:ncpu
+	s=8:ngpus=4+nodeg01[0]:ngpus=4) and finished
+    etime = Fri Sep 25 00:29:35 2026
+    run_count = 1
+    Stageout_status = 1
+    Exit_status = 0
+    Submit_arguments = scripts/rokko/bca-ip-512-p05.pbs
+    history_timestamp = 1790500488
+    project = _pbs_project_default
+    Submit_Host = rokko1
+
+b6d48ba53f6f49431ad0c287b6736783fc25d549a97406f6bcc42103c4e06686  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0000/checkpoint.pt
+3c7bbaa391bc137e4496e726817b869dd93c5377ff2a28d079afa41a0bbd95fd  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0001/checkpoint.pt
+fdfb389e1488d49629f2f5e52405389492ea4d5baa9d0ebf7d148028deb6c138  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0002/checkpoint.pt
+c4fb0e4665f94baaaba51c7fcac0efa91eab613953a9f1c8a29d08f063e3eb41  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0003/checkpoint.pt
+e2c4f5e5aebf1b6b2ffe5d7d3f52b706e7c90fdd2b007c89fba7bb0aee8572ea  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0004/checkpoint.pt
+25eb2ae5ea89defd9430e890f27460c2f4f4be1886ae9271bf920817da9ce2f9  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0005/checkpoint.pt
+c4a2d2fc2f3786f9ae73bbc17a40673ae912b691d3a46fc2be1cf6ecb463e532  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0006/checkpoint.pt
+bd8cb2e821cc596dcd3f92d3ca198497bdee04dd3ed41b07dcd2ed67458def31  /home/IM25D029/PyBCA_workspcace/bca-ip-statistics-20260924/results/bca-ip-512-trials-p05-20260925/rank_0007/checkpoint.pt
