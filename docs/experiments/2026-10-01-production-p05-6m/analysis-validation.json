@@ -1,0 +1,31 @@
+{
+  "decoder_unchanged_from_3m": true,
+  "original_policy_reused": true,
+  "test_results": {
+    "fsm_readout": 9,
+    "short_stability": 4,
+    "horizon_comparison": 3,
+    "failures": 0
+  },
+  "script_sha256": {
+    "scripts/read_bca_ip_fsm_outputs.py": "680932af4d84f4c16cebda603d4cdac57c49702545b9a794b3115ddf97b9d3ad",
+    "scripts/sweep_bca_ip_stability.py": "eced79a2cd87ed0429148c57d20c111b48d067f12464f92e71d6ba99e3e416e1",
+    "scripts/audit_bca_ip_run.py": "23fb4230ffe8db73d252d85daa0def287e15167c4a0c9b1491328f5a96a8b466",
+    "scripts/compare_bca_ip_horizons.py": "faa5b84ae74044e0ce8dedf3b43ff9046cc44e09450e2b686c7c7b10005eb951"
+  },
+  "fsm_events_prefix_exact_match": true,
+  "reset_events_prefix_exact_match": true,
+  "all_history_chunks": 48000,
+  "fsm_events": 2929367,
+  "audit_errors": [],
+  "both_horizon_cohorts_cover_512_trials": true,
+  "same_policy_and_decoder_as_3m": true,
+  "all_previous_430_supported_ids_reproduced": true,
+  "all_27_new_ids_have_post_3m_support": true,
+  "ever_ids_identical_at_all_durations_and_both_fits": true,
+  "terminal_difference_between_fits": [
+    308
+  ],
+  "existing_user_plots_edit_unchanged": true,
+  "errors": []
+}

@@ -1,0 +1,54 @@
+{
+  "checked_date": "2026-10-01",
+  "tests": {
+    "command": "PYTHONPATH=src:tests OPENBLAS_NUM_THREADS=1 python3 -m unittest discover -s tests -p 'test_*.py'",
+    "total": 53,
+    "failures": 0,
+    "skipped_cuda_only": 3,
+    "log": "publication-tests.txt"
+  },
+  "stage_array_shape": [
+    512,
+    600,
+    44
+  ],
+  "event_records": 19462475,
+  "all_44_event_totals_match_existing_audit": true,
+  "all_fsm_time_bins_match_existing_readout": true,
+  "all_reset_time_bins_match_existing_readout": true,
+  "joint_intervals": 3215,
+  "every_interval_counts_match_stage_array": true,
+  "optimum_vs_nonoptimum_intervals": 2217,
+  "optimum_vs_nonoptimum_unit_reversals": 2,
+  "script_sha256": {
+    "scripts/diagnose_bca_ip_stalls.py": "b62d2b0b93807966f627ef2bda6fb5f3e6299fafeaff6f4ae6c669af84218bba"
+  },
+  "script_matches_output_provenance": true,
+  "release_public": true,
+  "release_url": "https://github.com/Minamium/PyBCA/releases/tag/bca-ip-results-2026-10-01",
+  "release_assets_verified_against_local": [
+    {
+      "name": "bca-ip-p05-512-3m.tar.gz",
+      "size": 81845628,
+      "sha256": "a258873e93452c926dfd3323faf2a7a59bc85e66aec2809a08021e5511aebd74"
+    },
+    {
+      "name": "bca-ip-p05-512-6m.tar.gz",
+      "size": 217297964,
+      "sha256": "24fa669b840d5c3462b7596f42dce5cb0a42dd9f134e543a046b781d0230c8cb"
+    },
+    {
+      "name": "SHA256SUMS",
+      "size": 182,
+      "sha256": "8ffebfe4bb7bcede090760c215870a085e4813b6891063df5f3eb6623d7adce7"
+    }
+  ],
+  "plots_visually_checked": [
+    "escape-by-prior-value.png",
+    "nonhit-trial-119-6m.png",
+    "ranking-memory-example.png"
+  ],
+  "preexisting_user_plot_edit_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "preexisting_user_plot_edit_unchanged": true,
+  "errors": []
+}

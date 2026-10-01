@@ -1,0 +1,31 @@
+{
+  "mode": "cuda",
+  "rng": "independent",
+  "trials": 512,
+  "global_prob": 0.5,
+  "seed": 2026092501,
+  "warmup_steps": 10,
+  "steps_per_repeat": 200,
+  "seconds_per_step_samples": [
+    0.20597435081552248,
+    0.20610107743530534,
+    0.20637502182507889
+  ],
+  "median_ms_per_step": 206.10107743530534,
+  "trial_steps_per_sec": 2484.217969024037,
+  "peak_allocated_bytes": 11229340672,
+  "peak_reserved_bytes": 11236540416,
+  "setup_sec": 9.935555396019481,
+  "flush_checkpoint_sec": 0.4500549319200218,
+  "final_candidate_overflow_rows": 0,
+  "torch": "2.2.0+cu121",
+  "device": "cuda",
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "shape": [
+    512,
+    1,
+    911,
+    735
+  ],
+  "rules": 28
+}

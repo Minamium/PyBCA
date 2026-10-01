@@ -1,0 +1,6 @@
+{
+  "job_id": "298052",
+  "submitted_at": "2026-09-24T16:46:58.598777+00:00",
+  "archive_sha256": "feeb232c9e15d6ec5423460c2b291747c4430921e1e44c8d0acf5ddefcfb173c",
+  "purpose": "Independent single-process throughput control, one A100"
+}

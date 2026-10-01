@@ -24,6 +24,8 @@ def main():
     parser.add_argument("--trials", type=int, default=1)
     parser.add_argument("--steps", type=int, default=100)
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--global-prob", type=float, default=1.0)
+    parser.add_argument("--seed", type=int, default=31)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     torch.set_num_threads(1)
@@ -34,7 +36,8 @@ def main():
                    rule_paths=[str(ROOT/"Sample/rule/base-rule.yaml")],
                    spatial_event_file_path=str(ROOT/"Sample/Specialevent/BCA-IP_event.py"),
                    device=args.device, trials=args.trials, execution_mode=args.mode,
-                   rng_mode=args.rng, seed=31, quiet=True, use_tqdm="false", log_level="warning",
+                   rng_mode=args.rng, seed=args.seed, global_prob=args.global_prob,
+                   quiet=True, use_tqdm="false", log_level="warning",
                    stream_dir=td, flush_interval=1000, checkpoint_interval=10000)
         started = time.perf_counter()
         engine = Engine(c)
@@ -63,6 +66,7 @@ def main():
             overflow_rows = (int((sim.candidate_plan.cuda.counts > sim.candidate_capacity).sum().item())
                              if args.mode == "cuda" else None)
             result = {"mode": args.mode, "rng": args.rng, "trials": args.trials,
+                      "global_prob": args.global_prob, "seed": args.seed, "warmup_steps": 10,
                       "steps_per_repeat": args.steps, "seconds_per_step_samples": samples,
                       "median_ms_per_step": statistics.median(samples)*1000,
                       "trial_steps_per_sec": args.trials/statistics.median(samples),

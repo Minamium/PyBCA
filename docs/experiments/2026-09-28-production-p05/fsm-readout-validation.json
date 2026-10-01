@@ -1,0 +1,14 @@
+{
+  "tests_passed": 9,
+  "trial_records": 512,
+  "unit_records": 1024,
+  "raw_terminal_chunks_independently_recounted": 2400,
+  "terminal_event_records_recounted": 142232,
+  "wire_quarters_compared": 24576,
+  "quarter_counts_exact_match": true,
+  "all_extracted_event_times_match_first_extraction": true,
+  "module_audit_fsm_total_match": true,
+  "all_zero_bits_in_optimal_readouts_have_zero_events": true,
+  "decoder_sha256_matches": true,
+  "errors": []
+}

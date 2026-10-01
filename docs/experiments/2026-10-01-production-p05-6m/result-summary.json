@@ -1,0 +1,72 @@
+{
+  "trials": 512,
+  "previous_horizon": 3000000,
+  "current_horizon": 6000000,
+  "minimum_duration": 10000,
+  "readout_policy": {
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3
+  },
+  "ever_supported": {
+    "previous": 430,
+    "current": 457,
+    "fraction": 0.892578125,
+    "percentage_point_increase": 5.2734375,
+    "wilson_95": [
+      0.8627737386122504,
+      0.9165354718553299
+    ]
+  },
+  "terminal_optimal": {
+    "previous": 425,
+    "current": 446,
+    "fraction": 0.87109375,
+    "percentage_point_increase": 4.1015625,
+    "wilson_95": [
+      0.8392810633432318,
+      0.8973793843624412
+    ]
+  },
+  "newly_supported_among_previous_never": {
+    "previous_never": 82,
+    "newly_supported": 27,
+    "fraction": 0.32926829268292684
+  },
+  "never_supported": {
+    "count": 55,
+    "fraction": 0.107421875,
+    "terminal_statuses": {
+      "unresolved": 12,
+      "stable_nonoptimal": 43
+    }
+  },
+  "paired_terminal_counts": {
+    "terminal_at_both": 415,
+    "new_terminal": 31,
+    "no_longer_terminal": 10,
+    "terminal_at_neither": 56,
+    "newly_supported_in_longer_fit": 27,
+    "prior_support_not_reproduced_by_longer_fit": 0,
+    "cumulative_supported": 457,
+    "cumulative_never_supported": 55,
+    "cumulative_supported_not_terminal": 11,
+    "previously_supported_only_now_terminal": 4,
+    "previously_never_supported_now_terminal": 27
+  },
+  "previous_terminal_not_current_statuses": {
+    "unresolved": 7,
+    "stable_nonoptimal": 3
+  },
+  "ever_supported_not_current_statuses": {
+    "unresolved": 7,
+    "stable_nonoptimal": 4
+  },
+  "ever_ids_identical_at_all_durations_and_both_fits": true,
+  "fine_terminal_count": 447,
+  "fine_only_terminal_trial_ids": [
+    308
+  ],
+  "first_hit_times": null
+}

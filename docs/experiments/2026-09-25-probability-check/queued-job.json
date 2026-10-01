@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-09-25T00:48:59.721734+09:00",
+  "job_id": "236962.rokko1",
+  "pbs": {
+    "Job_Name": "pybca_ip512_p05",
+    "job_state": "Q",
+    "queue": "G",
+    "ctime": "Fri Sep 25 00:29:35 2026",
+    "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+    "Resource_List.walltime": "24:00:00",
+    "comment": "Not Running: Insufficient amount of resource: ngpus (R: 8 A: 4 T:8)"
+  },
+  "output_directory_exists": false,
+  "ranks": []
+}

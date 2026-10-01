@@ -1,0 +1,62 @@
+{
+  "checked_at_jst": "2026-10-01T04:19:55.820434",
+  "ranks": [
+    {
+      "rank": "rank_0000",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0001",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0002",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0003",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0004",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0005",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0006",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    },
+    {
+      "rank": "rank_0007",
+      "same_identity": true,
+      "original_manifest_unchanged": true,
+      "identical_prefix_chunks": 3000,
+      "next_step": 6000000
+    }
+  ],
+  "errors": []
+}

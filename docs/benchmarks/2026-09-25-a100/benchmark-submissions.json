@@ -1,0 +1,24 @@
+[
+  {
+    "script": "scripts/kyoto/preflight.sh",
+    "options": [
+      "--export=ALL,PYBCA_PREFLIGHT_PHASE=replay"
+    ],
+    "returncode": 0,
+    "stdout": "298048\n",
+    "stderr": "",
+    "submitted_at": "2026-09-25T01:26:42.071872+09:00",
+    "job_id": "298048"
+  },
+  {
+    "script": "scripts/kyoto/benchmark.sh",
+    "options": [
+      "--dependency=afterok:298048"
+    ],
+    "returncode": 0,
+    "stdout": "298049\n",
+    "stderr": "",
+    "submitted_at": "2026-09-25T01:26:42.120420+09:00",
+    "job_id": "298049"
+  }
+]

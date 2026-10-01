@@ -41,7 +41,32 @@ def assert_sim(test, a, b, histories=True):
         test.assertEqual(a.rule_history, b.rule_history)
 
 
+def clone_simulator(simulator):
+    # PyTorch 2.2 cannot pickle Generators during deepcopy. Preserve each
+    # stream's state and independence explicitly on both CPU and CUDA.
+    memo = {}
+    for value in vars(simulator).values():
+        if isinstance(value, torch.Generator):
+            generator = torch.Generator(device=value.device)
+            generator.set_state(value.get_state())
+            memo[id(value)] = generator
+    return copy.deepcopy(simulator, memo)
+
+
 class RandomTests(unittest.TestCase):
+    def test_clone_preserves_rng_state_without_sharing(self):
+        sim = Engine(config(execution_mode="reference", rng_mode="legacy")).state.simulator
+        sim.rng_event = torch.Generator(device=DEVICE).manual_seed(77)
+        cloned = clone_simulator(sim)
+        for name in ("rng", "rng_event"):
+            a, b = getattr(sim, name), getattr(cloned, name)
+            before = a.get_state().clone()
+            self.assertIsNot(a, b)
+            self.assertTrue(torch.equal(before, b.get_state()))
+            torch.rand(8, generator=b, device=DEVICE)
+            self.assertTrue(torch.equal(before, a.get_state()))
+            self.assertFalse(torch.equal(before, b.get_state()))
+
     def test_published_philox_vector(self):
         self.assertEqual(int(philox_u32([0, 0], 0, 0, 0, 0)), 0x6627E8D5)
 
@@ -98,7 +123,7 @@ class CandidateTests(unittest.TestCase):
         for row in ref.spatial_event_arrays:
             x, y, value = map(int, row[:3])
             ref.TCHW[:, 0, y-ref.offset_y, x-ref.offset_x] = value
-        new = copy.deepcopy(ref)
+        new = clone_simulator(ref)
         from PyBCA.core.optimized import CandidatePlan
         new.candidate_plan = CandidatePlan(new, MODE, "independent")
         new.candidate_plan.set_seed(c.seed)
@@ -143,7 +168,7 @@ class CandidateTests(unittest.TestCase):
         base = Engine(config(execution_mode="reference", rng_mode="legacy", trials=2)).state.simulator
         for seed in range(40):
             gen = torch.Generator().manual_seed(701+seed)
-            ref = copy.deepcopy(base)
+            ref = clone_simulator(base)
             ref.cellspace_tensor = torch.randint(-1, 3, (7, 9), generator=gen, dtype=torch.int8).to(DEVICE)
             ref.rule_arrays_tensor = torch.randint(-1, 3, (3, 2, 3, 3), generator=gen, dtype=torch.int8).to(DEVICE)
             ref.rule_ids = [0, 1, 2]
@@ -152,7 +177,7 @@ class CandidateTests(unittest.TestCase):
             ref.spatial_event_arrays = ref.spatial_event_arrays_tensor = None
             ref.spatial_event_names = None
             ref.set_ParallelTrial(2)
-            new = copy.deepcopy(ref)
+            new = clone_simulator(ref)
             from PyBCA.core.optimized import CandidatePlan
             new.candidate_plan = CandidatePlan(new, MODE, "legacy", candidate_capacity=1 if seed % 2 else 4096)
             mask = (torch.rand((2, 3, 7, 9), generator=gen) < .25).to(DEVICE)

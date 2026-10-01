@@ -1,0 +1,19 @@
+{
+  "related_tests_passed": 17,
+  "all_outcome_groups_cover_512_trials": true,
+  "baseline_423_reproduced": true,
+  "same_success_ids_at_all_seven_duration_thresholds_with_finer_segmentation": true,
+  "all_source_and_code_hashes_match": true,
+  "nonhit_values_9_10_12_counts": [
+    25,
+    48,
+    9
+  ],
+  "reset_cases_checked_against_raw_history": [
+    339,
+    412
+  ],
+  "all_six_new_figures_visually_inspected": true,
+  "existing_user_plots_edit_unchanged": true,
+  "errors": []
+}

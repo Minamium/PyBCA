@@ -1,0 +1,62 @@
+#!/bin/bash
+#PBS -N pybca_ip512_p05_6m
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+#PBS -l place=free
+#PBS -l walltime=24:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+module load cuda/11.8.0 gcc/11.4.0
+export PATH=/home/IM25D029/PyBCA_workspcace/venv/bin:$PATH
+export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONUNBUFFERED=1
+export PYBCA_CUDA_CACHE="$PWD/results/cuda-cache"
+mkdir -p results/logs
+exec > >(tee "results/logs/bca-ip-512-p05-6m-${PBS_JOBID}.log") 2>&1
+
+# The complete 3M run was copied here and checked before submission. The
+# original directory remains the immutable 3M result used by the analyses.
+python - <<'PY'
+from pathlib import Path
+import hashlib
+import json
+import torch
+
+run = Path("results/bca-ip-512-trials-p05-6m-20260928")
+provenance = json.loads((run / "continuation.json").read_text())
+if torch.cuda.device_count() != 8:
+    raise RuntimeError("Expected eight allocated GPUs")
+ids, steps = [], []
+for rank in range(8):
+    directory = run / f"rank_{rank:04d}"
+    path = directory / "checkpoint.pt"
+    state = torch.load(path, map_location="cpu", weights_only=True)
+    step = state["next_step"]
+    identity = state["manifest"]["identity"]
+    if not 3_000_000 <= step <= 6_000_000:
+        raise RuntimeError(f"Unexpected restart step: {directory}: {step}")
+    if step == 3_000_000:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest != provenance["ranks"][directory.name]["checkpoint_sha256"]:
+            raise RuntimeError(f"Changed 3M checkpoint: {path}")
+    if (identity["seed"] != 20260924 or identity["global_prob"] != .5 or
+            identity["rng_mode"] != "independent" or
+            identity["trial_ids"] != list(range(rank*64, (rank+1)*64))):
+        raise RuntimeError(f"Unexpected restart identity: {directory}")
+    ids.extend(identity["trial_ids"])
+    steps.append(step)
+    del state
+if ids != list(range(512)):
+    raise RuntimeError("Trial roster mismatch")
+print(json.dumps({"restart_steps": steps, "absolute_target": 6_000_000,
+                  "trials": len(ids), "gpus": torch.cuda.device_count()}), flush=True)
+PY
+
+python -m torch.distributed.run --standalone --nproc-per-node=8 \
+  scripts/run_bca_ip.py \
+  --output-dir "$PWD/results/bca-ip-512-trials-p05-6m-20260928" \
+  --resume --steps 6000000 --trials 512 --seed 20260924 --global-prob 0.5 \
+  --trial-start 0 --device cuda --mode cuda --rng independent \
+  --flush-interval 1000 --checkpoint-interval 10000 \
+  --candidate-capacity 4096 --label legacy-reference-p05-continued-6m

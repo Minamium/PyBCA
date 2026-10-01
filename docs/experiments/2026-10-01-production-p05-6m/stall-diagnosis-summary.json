@@ -1,0 +1,176 @@
+{
+  "schema": "pybca-stall-diagnosis-v1",
+  "horizon": 6000000,
+  "audit": {
+    "chunks": 48000,
+    "records": 19462475
+  },
+  "best_nonhit_vectors": {
+    "111100": 42,
+    "010100": 1,
+    "111010": 3,
+    "000011": 1,
+    "110100": 1,
+    "111001": 5,
+    "110001": 1,
+    "110010": 1
+  },
+  "leader_reset_during_constant_tail_trials": 0,
+  "other_reset_during_constant_tail_trials": 54,
+  "arrival_by_3m_best_value": {
+    "9": {
+      "at_3m": 25,
+      "reached_by_6m": 17
+    },
+    "10": {
+      "at_3m": 48,
+      "reached_by_6m": 1
+    },
+    "12": {
+      "at_3m": 9,
+      "reached_by_6m": 9
+    }
+  },
+  "ranking_groups": {
+    "never_supported": {
+      "intervals": 350,
+      "trials": 55,
+      "unit_ranking": {
+        "agree": 266,
+        "objective_tie": 70,
+        "reverse": 14
+      },
+      "comparator_ranking": {
+        "agree": 265,
+        "objective_tie": 70,
+        "reverse": 14,
+        "flow_tie": 1
+      },
+      "trials_with_unit_reversal": [
+        28,
+        32,
+        66,
+        98,
+        149,
+        283,
+        290,
+        307,
+        313,
+        354,
+        426,
+        438,
+        478
+      ],
+      "unit_reversals_without_reset_in_window": 4
+    },
+    "retained": {
+      "intervals": 2787,
+      "trials": 446,
+      "unit_ranking": {
+        "agree": 2576,
+        "objective_tie": 185,
+        "reverse": 26
+      },
+      "comparator_ranking": {
+        "agree": 2576,
+        "objective_tie": 185,
+        "reverse": 25,
+        "flow_tie": 1
+      },
+      "trials_with_unit_reversal": [
+        2,
+        75,
+        82,
+        86,
+        127,
+        161,
+        182,
+        190,
+        227,
+        291,
+        298,
+        306,
+        311,
+        318,
+        368,
+        375,
+        452,
+        458,
+        473,
+        475,
+        477,
+        480,
+        482,
+        507
+      ],
+      "unit_reversals_without_reset_in_window": 18
+    },
+    "earlier_only": {
+      "intervals": 78,
+      "trials": 11,
+      "unit_ranking": {
+        "reverse": 4,
+        "agree": 66,
+        "objective_tie": 8
+      },
+      "comparator_ranking": {
+        "reverse": 4,
+        "agree": 66,
+        "objective_tie": 8
+      },
+      "trials_with_unit_reversal": [
+        81,
+        118,
+        265
+      ],
+      "unit_reversals_without_reset_in_window": 3
+    }
+  },
+  "td_input_by_group": {
+    "never_supported": {
+      "trials": 55,
+      "core_input_counts": [
+        5197,
+        4272,
+        1493,
+        1344,
+        857,
+        985
+      ]
+    },
+    "retained": {
+      "trials": 446,
+      "core_input_counts": [
+        31868,
+        26461,
+        9630,
+        9567,
+        6407,
+        7322
+      ]
+    },
+    "earlier_only": {
+      "trials": 11,
+      "core_input_counts": [
+        844,
+        681,
+        266,
+        265,
+        163,
+        194
+      ]
+    }
+  },
+  "provenance": {
+    "script_sha256": "b62d2b0b93807966f627ef2bda6fb5f3e6299fafeaff6f4ae6c669af84218bba",
+    "previous_nonhits_sha256": "2876b1185eda5a2e679f8065c78499dceedc3a90613ab60cf475e735debd0048",
+    "readout_summary_sha256": "9cb137577e60978cb33375af2f603bf01759f412972b1231199dd497ee71801b",
+    "dynamics_summary_sha256": "b351672a4ec8aa7743bffcb4de8dc28b104c0e2a3d67139913a75cfd82ea10d9"
+  },
+  "notes": [
+    "Joint intervals have no detected rate change in either unit for at least 300k updates; readout and flow counts use their last 300k.",
+    "Intervals from the same trial are not independent trials; rank counts are descriptive.",
+    "A reset inside a constant decoded tail does not prove the internal state stayed unchanged.",
+    "TD monitor events are not direct measurements of completed acceptance into the FSM."
+  ]
+}

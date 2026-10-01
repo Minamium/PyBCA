@@ -1,0 +1,59 @@
+.......INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=30
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=30
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=20
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=2 steps=12
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=2 steps=12
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=12
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=12
+.s.sINFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+..INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=1 steps=12
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=6
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=5
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=5
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=4
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=2
+INFO : Checkpoint saved: step=1 target=2 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpmfflm15_/run
+INFO : Checkpoint saved: step=2 target=2 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpmfflm15_/run
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=4
+INFO : Checkpoint saved: step=3 target=4 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpmfflm15_/run
+INFO : Checkpoint saved: step=4 target=4 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpmfflm15_/run
+.sINFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=3
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=6
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpfpmti5xj
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpfpmti5xj
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpfpmti5xj
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpfpmti5xj
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=23
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=10
+INFO : Checkpoint saved: step=6 target=10 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpe6dudtwl
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=16
+INFO : Checkpoint saved: step=12 target=16 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpe6dudtwl
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=23
+INFO : Checkpoint saved: step=12 target=23 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpe6dudtwl
+INFO : Checkpoint saved: step=18 target=23 elapsed_sec=0.0 directory=/private/var/folders/ss/qnbrzmmx6jjgm0jbvxb8r7v40000gn/T/tmpe6dudtwl
+.INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=10
+INFO : Engine initialized: model=bca scheme=default backend=torch device=cpu trials=3 steps=10
+...........................
+----------------------------------------------------------------------
+Ran 53 tests in 9.054s
+
+OK (skipped=3)
