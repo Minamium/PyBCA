@@ -1,0 +1,2560 @@
+{
+  "schema": "pybca-prefix-retention-v1",
+  "trials": 512,
+  "horizon": 6000000,
+  "sample_step": 50000,
+  "durations": [
+    10000,
+    100000
+  ],
+  "policy": {
+    "min_duration": 10000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "bin_width": 10000,
+    "change_penalty": 20.0,
+    "min_segment_bins": 3
+  },
+  "segmentation": {
+    "penalty": 20.0,
+    "bin_width": 10000,
+    "min_bins": 3,
+    "future_observations_used": false
+  },
+  "rows": [
+    {
+      "step": 50000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 467,
+        "unresolved": 45,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 0,
+        "unresolved": 512,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 100000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 257,
+        "unresolved": 255,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 257,
+        "unresolved": 255,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 150000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 134,
+        "unresolved": 378,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 130,
+        "unresolved": 382,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 200000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 149,
+        "unresolved": 363,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 117,
+        "unresolved": 395,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 250000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 192,
+        "unresolved": 320,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 141,
+        "unresolved": 371,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 300000,
+      "10000": {
+        "optimal": 0,
+        "readable_nonoptimal": 262,
+        "unresolved": 250,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      },
+      "100000": {
+        "optimal": 0,
+        "readable_nonoptimal": 210,
+        "unresolved": 302,
+        "wilson95": [
+          0.0,
+          0.007446975722882739
+        ]
+      }
+    },
+    {
+      "step": 350000,
+      "10000": {
+        "optimal": 3,
+        "readable_nonoptimal": 292,
+        "unresolved": 217,
+        "wilson95": [
+          0.0019946757921860923,
+          0.017083780683944113
+        ]
+      },
+      "100000": {
+        "optimal": 2,
+        "readable_nonoptimal": 252,
+        "unresolved": 258,
+        "wilson95": [
+          0.0010718890803936704,
+          0.014129407144654047
+        ]
+      }
+    },
+    {
+      "step": 400000,
+      "10000": {
+        "optimal": 6,
+        "readable_nonoptimal": 304,
+        "unresolved": 202,
+        "wilson95": [
+          0.00538157169683981,
+          0.025328365532537866
+        ]
+      },
+      "100000": {
+        "optimal": 2,
+        "readable_nonoptimal": 259,
+        "unresolved": 251,
+        "wilson95": [
+          0.0010718890803936704,
+          0.014129407144654047
+        ]
+      }
+    },
+    {
+      "step": 450000,
+      "10000": {
+        "optimal": 8,
+        "readable_nonoptimal": 328,
+        "unresolved": 176,
+        "wilson95": [
+          0.007938224978408945,
+          0.03052603275313371
+        ]
+      },
+      "100000": {
+        "optimal": 8,
+        "readable_nonoptimal": 266,
+        "unresolved": 238,
+        "wilson95": [
+          0.007938224978408945,
+          0.03052603275313371
+        ]
+      }
+    },
+    {
+      "step": 500000,
+      "10000": {
+        "optimal": 20,
+        "readable_nonoptimal": 325,
+        "unresolved": 167,
+        "wilson95": [
+          0.0254270798652394,
+          0.05956310087929313
+        ]
+      },
+      "100000": {
+        "optimal": 13,
+        "readable_nonoptimal": 272,
+        "unresolved": 227,
+        "wilson95": [
+          0.014897398253755443,
+          0.04295266073319966
+        ]
+      }
+    },
+    {
+      "step": 550000,
+      "10000": {
+        "optimal": 27,
+        "readable_nonoptimal": 355,
+        "unresolved": 130,
+        "wilson95": [
+          0.036492305788731,
+          0.07563799671337895
+        ]
+      },
+      "100000": {
+        "optimal": 26,
+        "readable_nonoptimal": 311,
+        "unresolved": 175,
+        "wilson95": [
+          0.03488718106757214,
+          0.07336596118345534
+        ]
+      }
+    },
+    {
+      "step": 600000,
+      "10000": {
+        "optimal": 40,
+        "readable_nonoptimal": 344,
+        "unresolved": 128,
+        "wilson95": [
+          0.05789550378543784,
+          0.10463788198074447
+        ]
+      },
+      "100000": {
+        "optimal": 33,
+        "readable_nonoptimal": 305,
+        "unresolved": 174,
+        "wilson95": [
+          0.046259166467464766,
+          0.08913409754114011
+        ]
+      }
+    },
+    {
+      "step": 650000,
+      "10000": {
+        "optimal": 51,
+        "readable_nonoptimal": 333,
+        "unresolved": 128,
+        "wilson95": [
+          0.07657588582865321,
+          0.12860626269943648
+        ]
+      },
+      "100000": {
+        "optimal": 47,
+        "readable_nonoptimal": 289,
+        "unresolved": 176,
+        "wilson95": [
+          0.06973502506867789,
+          0.11993848245508186
+        ]
+      }
+    },
+    {
+      "step": 700000,
+      "10000": {
+        "optimal": 67,
+        "readable_nonoptimal": 346,
+        "unresolved": 99,
+        "wilson95": [
+          0.10437583733165495,
+          0.16284087521375457
+        ]
+      },
+      "100000": {
+        "optimal": 62,
+        "readable_nonoptimal": 298,
+        "unresolved": 152,
+        "wilson95": [
+          0.0956215685151347,
+          0.15220934277486237
+        ]
+      }
+    },
+    {
+      "step": 750000,
+      "10000": {
+        "optimal": 91,
+        "readable_nonoptimal": 327,
+        "unresolved": 94,
+        "wilson95": [
+          0.14705714493684846,
+          0.21321141363454083
+        ]
+      },
+      "100000": {
+        "optimal": 80,
+        "readable_nonoptimal": 275,
+        "unresolved": 157,
+        "wilson95": [
+          0.12737214825167764,
+          0.19024764755780427
+        ]
+      }
+    },
+    {
+      "step": 800000,
+      "10000": {
+        "optimal": 113,
+        "readable_nonoptimal": 307,
+        "unresolved": 92,
+        "wilson95": [
+          0.18693397436110393,
+          0.2586321097341001
+        ]
+      },
+      "100000": {
+        "optimal": 98,
+        "readable_nonoptimal": 276,
+        "unresolved": 138,
+        "wilson95": [
+          0.1596771615064055,
+          0.22773151882256118
+        ]
+      }
+    },
+    {
+      "step": 850000,
+      "10000": {
+        "optimal": 126,
+        "readable_nonoptimal": 308,
+        "unresolved": 78,
+        "wilson95": [
+          0.21076597685786014,
+          0.28520319050141624
+        ]
+      },
+      "100000": {
+        "optimal": 119,
+        "readable_nonoptimal": 267,
+        "unresolved": 126,
+        "wilson95": [
+          0.19791074746675236,
+          0.2709182981349466
+        ]
+      }
+    },
+    {
+      "step": 900000,
+      "10000": {
+        "optimal": 144,
+        "readable_nonoptimal": 286,
+        "unresolved": 82,
+        "wilson95": [
+          0.2440454292479543,
+          0.32171262263080685
+        ]
+      },
+      "100000": {
+        "optimal": 134,
+        "readable_nonoptimal": 259,
+        "unresolved": 119,
+        "wilson95": [
+          0.225518645748377,
+          0.30146780361955927
+        ]
+      }
+    },
+    {
+      "step": 950000,
+      "10000": {
+        "optimal": 159,
+        "readable_nonoptimal": 280,
+        "unresolved": 73,
+        "wilson95": [
+          0.2720022030446931,
+          0.3519132526003054
+        ]
+      },
+      "100000": {
+        "optimal": 147,
+        "readable_nonoptimal": 252,
+        "unresolved": 113,
+        "wilson95": [
+          0.24962121454230693,
+          0.32776831808970175
+        ]
+      }
+    },
+    {
+      "step": 1000000,
+      "10000": {
+        "optimal": 179,
+        "readable_nonoptimal": 256,
+        "unresolved": 77,
+        "wilson95": [
+          0.30956420616105157,
+          0.39189445450559673
+        ]
+      },
+      "100000": {
+        "optimal": 165,
+        "readable_nonoptimal": 233,
+        "unresolved": 114,
+        "wilson95": [
+          0.28323763481948466,
+          0.3639407823320088
+        ]
+      }
+    },
+    {
+      "step": 1050000,
+      "10000": {
+        "optimal": 190,
+        "readable_nonoptimal": 247,
+        "unresolved": 75,
+        "wilson95": [
+          0.33035334729761556,
+          0.4137540761309402
+        ]
+      },
+      "100000": {
+        "optimal": 181,
+        "readable_nonoptimal": 221,
+        "unresolved": 110,
+        "wilson95": [
+          0.31333738403843076,
+          0.3958755971303825
+        ]
+      }
+    },
+    {
+      "step": 1100000,
+      "10000": {
+        "optimal": 214,
+        "readable_nonoptimal": 238,
+        "unresolved": 60,
+        "wilson95": [
+          0.37601197713271584,
+          0.4611472923218196
+        ]
+      },
+      "100000": {
+        "optimal": 197,
+        "readable_nonoptimal": 216,
+        "unresolved": 99,
+        "wilson95": [
+          0.34362862708233655,
+          0.4276189181037966
+        ]
+      }
+    },
+    {
+      "step": 1150000,
+      "10000": {
+        "optimal": 223,
+        "readable_nonoptimal": 236,
+        "unresolved": 53,
+        "wilson95": [
+          0.393236225502339,
+          0.4788174862119388
+        ]
+      },
+      "100000": {
+        "optimal": 216,
+        "readable_nonoptimal": 208,
+        "unresolved": 88,
+        "wilson95": [
+          0.3798348559863955,
+          0.4650787339703049
+        ]
+      }
+    },
+    {
+      "step": 1200000,
+      "10000": {
+        "optimal": 237,
+        "readable_nonoptimal": 224,
+        "unresolved": 51,
+        "wilson95": [
+          0.42013716203671736,
+          0.5061967931927154
+        ]
+      },
+      "100000": {
+        "optimal": 228,
+        "readable_nonoptimal": 204,
+        "unresolved": 80,
+        "wilson95": [
+          0.4028287556857245,
+          0.48861075728396575
+        ]
+      }
+    },
+    {
+      "step": 1250000,
+      "10000": {
+        "optimal": 248,
+        "readable_nonoptimal": 215,
+        "unresolved": 49,
+        "wilson95": [
+          0.4413643447142569,
+          0.5276183732770832
+        ]
+      },
+      "100000": {
+        "optimal": 237,
+        "readable_nonoptimal": 191,
+        "unresolved": 84,
+        "wilson95": [
+          0.42013716203671736,
+          0.5061967931927154
+        ]
+      }
+    },
+    {
+      "step": 1300000,
+      "10000": {
+        "optimal": 255,
+        "readable_nonoptimal": 208,
+        "unresolved": 49,
+        "wilson95": [
+          0.4549138158353452,
+          0.5412090239135723
+        ]
+      },
+      "100000": {
+        "optimal": 248,
+        "readable_nonoptimal": 193,
+        "unresolved": 71,
+        "wilson95": [
+          0.4413643447142569,
+          0.5276183732770832
+        ]
+      }
+    },
+    {
+      "step": 1350000,
+      "10000": {
+        "optimal": 267,
+        "readable_nonoptimal": 205,
+        "unresolved": 40,
+        "wilson95": [
+          0.4782160044018836,
+          0.5644327583600238
+        ]
+      },
+      "100000": {
+        "optimal": 260,
+        "readable_nonoptimal": 193,
+        "unresolved": 59,
+        "wilson95": [
+          0.46461161789502853,
+          0.5508970231093013
+        ]
+      }
+    },
+    {
+      "step": 1400000,
+      "10000": {
+        "optimal": 280,
+        "readable_nonoptimal": 187,
+        "unresolved": 45,
+        "wilson95": [
+          0.5035666073562264,
+          0.5894852386697533
+        ]
+      },
+      "100000": {
+        "optimal": 271,
+        "readable_nonoptimal": 167,
+        "unresolved": 74,
+        "wilson95": [
+          0.48600435058567043,
+          0.572153053180567
+        ]
+      }
+    },
+    {
+      "step": 1450000,
+      "10000": {
+        "optimal": 291,
+        "readable_nonoptimal": 174,
+        "unresolved": 47,
+        "wilson95": [
+          0.5251045053589303,
+          0.6105961034289569
+        ]
+      },
+      "100000": {
+        "optimal": 280,
+        "readable_nonoptimal": 155,
+        "unresolved": 77,
+        "wilson95": [
+          0.5035666073562264,
+          0.5894852386697533
+        ]
+      }
+    },
+    {
+      "step": 1500000,
+      "10000": {
+        "optimal": 302,
+        "readable_nonoptimal": 160,
+        "unresolved": 50,
+        "wilson95": [
+          0.5467237689569542,
+          0.6316256025928404
+        ]
+      },
+      "100000": {
+        "optimal": 291,
+        "readable_nonoptimal": 147,
+        "unresolved": 74,
+        "wilson95": [
+          0.5251045053589303,
+          0.6105961034289569
+        ]
+      }
+    },
+    {
+      "step": 1550000,
+      "10000": {
+        "optimal": 306,
+        "readable_nonoptimal": 168,
+        "unresolved": 38,
+        "wilson95": [
+          0.5546058102808347,
+          0.6392522022732898
+        ]
+      },
+      "100000": {
+        "optimal": 300,
+        "readable_nonoptimal": 158,
+        "unresolved": 54,
+        "wilson95": [
+          0.5427868716650033,
+          0.6278081793826262
+        ]
+      }
+    },
+    {
+      "step": 1600000,
+      "10000": {
+        "optimal": 308,
+        "readable_nonoptimal": 165,
+        "unresolved": 39,
+        "wilson95": [
+          0.5585509792394101,
+          0.6430613538168792
+        ]
+      },
+      "100000": {
+        "optimal": 306,
+        "readable_nonoptimal": 151,
+        "unresolved": 55,
+        "wilson95": [
+          0.5546058102808347,
+          0.6392522022732898
+        ]
+      }
+    },
+    {
+      "step": 1650000,
+      "10000": {
+        "optimal": 319,
+        "readable_nonoptimal": 154,
+        "unresolved": 39,
+        "wilson95": [
+          0.5802995498210187,
+          0.663961545997178
+        ]
+      },
+      "100000": {
+        "optimal": 311,
+        "readable_nonoptimal": 140,
+        "unresolved": 61,
+        "wilson95": [
+          0.5644739555080028,
+          0.6487698583015341
+        ]
+      }
+    },
+    {
+      "step": 1700000,
+      "10000": {
+        "optimal": 325,
+        "readable_nonoptimal": 140,
+        "unresolved": 47,
+        "wilson95": [
+          0.5921988135721009,
+          0.6753252437525908
+        ]
+      },
+      "100000": {
+        "optimal": 318,
+        "readable_nonoptimal": 127,
+        "unresolved": 67,
+        "wilson95": [
+          0.5783188624340109,
+          0.6620650731331034
+        ]
+      }
+    },
+    {
+      "step": 1750000,
+      "10000": {
+        "optimal": 332,
+        "readable_nonoptimal": 136,
+        "unresolved": 44,
+        "wilson95": [
+          0.6061145993456434,
+          0.6885495797366259
+        ]
+      },
+      "100000": {
+        "optimal": 322,
+        "readable_nonoptimal": 116,
+        "unresolved": 74,
+        "wilson95": [
+          0.5862459238690599,
+          0.6696466527023844
+        ]
+      }
+    },
+    {
+      "step": 1800000,
+      "10000": {
+        "optimal": 339,
+        "readable_nonoptimal": 134,
+        "unresolved": 39,
+        "wilson95": [
+          0.6200671299136647,
+          0.7017371709261818
+        ]
+      },
+      "100000": {
+        "optimal": 334,
+        "readable_nonoptimal": 120,
+        "unresolved": 58,
+        "wilson95": [
+          0.6100972441805625,
+          0.6923212554038716
+        ]
+      }
+    },
+    {
+      "step": 1850000,
+      "10000": {
+        "optimal": 349,
+        "readable_nonoptimal": 133,
+        "unresolved": 30,
+        "wilson95": [
+          0.6400651567981631,
+          0.7205107465525084
+        ]
+      },
+      "100000": {
+        "optimal": 339,
+        "readable_nonoptimal": 129,
+        "unresolved": 44,
+        "wilson95": [
+          0.6200671299136647,
+          0.7017371709261818
+        ]
+      }
+    },
+    {
+      "step": 1900000,
+      "10000": {
+        "optimal": 347,
+        "readable_nonoptimal": 125,
+        "unresolved": 40,
+        "wilson95": [
+          0.6360592176679912,
+          0.7167623651805154
+        ]
+      },
+      "100000": {
+        "optimal": 347,
+        "readable_nonoptimal": 114,
+        "unresolved": 51,
+        "wilson95": [
+          0.6360592176679912,
+          0.7167623651805154
+        ]
+      }
+    },
+    {
+      "step": 1950000,
+      "10000": {
+        "optimal": 351,
+        "readable_nonoptimal": 124,
+        "unresolved": 37,
+        "wilson95": [
+          0.6440743227146964,
+          0.7242559011381401
+        ]
+      },
+      "100000": {
+        "optimal": 348,
+        "readable_nonoptimal": 117,
+        "unresolved": 47,
+        "wilson95": [
+          0.6380617858369023,
+          0.7186369572626866
+        ]
+      }
+    },
+    {
+      "step": 2000000,
+      "10000": {
+        "optimal": 365,
+        "readable_nonoptimal": 119,
+        "unresolved": 28,
+        "wilson95": [
+          0.6722316819102983,
+          0.7503787854576931
+        ]
+      },
+      "100000": {
+        "optimal": 354,
+        "readable_nonoptimal": 103,
+        "unresolved": 55,
+        "wilson95": [
+          0.6500941921096665,
+          0.7298675124964175
+        ]
+      }
+    },
+    {
+      "step": 2050000,
+      "10000": {
+        "optimal": 369,
+        "readable_nonoptimal": 113,
+        "unresolved": 30,
+        "wilson95": [
+          0.6803077278941309,
+          0.7578113804781904
+        ]
+      },
+      "100000": {
+        "optimal": 365,
+        "readable_nonoptimal": 101,
+        "unresolved": 46,
+        "wilson95": [
+          0.6722316819102983,
+          0.7503787854576931
+        ]
+      }
+    },
+    {
+      "step": 2100000,
+      "10000": {
+        "optimal": 373,
+        "readable_nonoptimal": 111,
+        "unresolved": 28,
+        "wilson95": [
+          0.6883982092798265,
+          0.7652295400968246
+        ]
+      },
+      "100000": {
+        "optimal": 368,
+        "readable_nonoptimal": 105,
+        "unresolved": 39,
+        "wilson95": [
+          0.6782873773691931,
+          0.7559545707520456
+        ]
+      }
+    },
+    {
+      "step": 2150000,
+      "10000": {
+        "optimal": 379,
+        "readable_nonoptimal": 106,
+        "unresolved": 27,
+        "wilson95": [
+          0.7005618428507421,
+          0.7763288680324041
+        ]
+      },
+      "100000": {
+        "optimal": 374,
+        "readable_nonoptimal": 99,
+        "unresolved": 39,
+        "wilson95": [
+          0.6904231293083547,
+          0.767081780319379
+        ]
+      }
+    },
+    {
+      "step": 2200000,
+      "10000": {
+        "optimal": 381,
+        "readable_nonoptimal": 107,
+        "unresolved": 24,
+        "wilson95": [
+          0.7046240394693286,
+          0.7800209919159826
+        ]
+      },
+      "100000": {
+        "optimal": 378,
+        "readable_nonoptimal": 98,
+        "unresolved": 36,
+        "wilson95": [
+          0.6985321963804407,
+          0.7744813542516229
+        ]
+      }
+    },
+    {
+      "step": 2250000,
+      "10000": {
+        "optimal": 389,
+        "readable_nonoptimal": 101,
+        "unresolved": 22,
+        "wilson95": [
+          0.7209126284142816,
+          0.7947496849796895
+        ]
+      },
+      "100000": {
+        "optimal": 385,
+        "readable_nonoptimal": 92,
+        "unresolved": 35,
+        "wilson95": [
+          0.7127602505721561,
+          0.7873934218174851
+        ]
+      }
+    },
+    {
+      "step": 2300000,
+      "10000": {
+        "optimal": 390,
+        "readable_nonoptimal": 95,
+        "unresolved": 27,
+        "wilson95": [
+          0.722953309910823,
+          0.7965861637342306
+        ]
+      },
+      "100000": {
+        "optimal": 389,
+        "readable_nonoptimal": 89,
+        "unresolved": 34,
+        "wilson95": [
+          0.7209126284142816,
+          0.7947496849796895
+        ]
+      }
+    },
+    {
+      "step": 2350000,
+      "10000": {
+        "optimal": 393,
+        "readable_nonoptimal": 96,
+        "unresolved": 23,
+        "wilson95": [
+          0.7290817018650534,
+          0.8020892525332476
+        ]
+      },
+      "100000": {
+        "optimal": 391,
+        "readable_nonoptimal": 85,
+        "unresolved": 36,
+        "wilson95": [
+          0.7249950433577201,
+          0.798421590538416
+        ]
+      }
+    },
+    {
+      "step": 2400000,
+      "10000": {
+        "optimal": 393,
+        "readable_nonoptimal": 92,
+        "unresolved": 27,
+        "wilson95": [
+          0.7290817018650534,
+          0.8020892525332476
+        ]
+      },
+      "100000": {
+        "optimal": 391,
+        "readable_nonoptimal": 82,
+        "unresolved": 39,
+        "wilson95": [
+          0.7249950433577201,
+          0.798421590538416
+        ]
+      }
+    },
+    {
+      "step": 2450000,
+      "10000": {
+        "optimal": 398,
+        "readable_nonoptimal": 84,
+        "unresolved": 30,
+        "wilson95": [
+          0.7393174041291233,
+          0.8112393515245901
+        ]
+      },
+      "100000": {
+        "optimal": 395,
+        "readable_nonoptimal": 77,
+        "unresolved": 40,
+        "wilson95": [
+          0.7331726774291983,
+          0.8057525974712677
+        ]
+      }
+    },
+    {
+      "step": 2500000,
+      "10000": {
+        "optimal": 403,
+        "readable_nonoptimal": 82,
+        "unresolved": 27,
+        "wilson95": [
+          0.7495813388571546,
+          0.8203612180519713
+        ]
+      },
+      "100000": {
+        "optimal": 398,
+        "readable_nonoptimal": 74,
+        "unresolved": 40,
+        "wilson95": [
+          0.7393174041291233,
+          0.8112393515245901
+        ]
+      }
+    },
+    {
+      "step": 2550000,
+      "10000": {
+        "optimal": 403,
+        "readable_nonoptimal": 80,
+        "unresolved": 29,
+        "wilson95": [
+          0.7495813388571546,
+          0.8203612180519713
+        ]
+      },
+      "100000": {
+        "optimal": 402,
+        "readable_nonoptimal": 69,
+        "unresolved": 41,
+        "wilson95": [
+          0.7475262289010062,
+          0.8185391677570372
+        ]
+      }
+    },
+    {
+      "step": 2600000,
+      "10000": {
+        "optimal": 402,
+        "readable_nonoptimal": 82,
+        "unresolved": 28,
+        "wilson95": [
+          0.7475262289010062,
+          0.8185391677570372
+        ]
+      },
+      "100000": {
+        "optimal": 401,
+        "readable_nonoptimal": 73,
+        "unresolved": 38,
+        "wilson95": [
+          0.7454722916786112,
+          0.8167159447283499
+        ]
+      }
+    },
+    {
+      "step": 2650000,
+      "10000": {
+        "optimal": 408,
+        "readable_nonoptimal": 77,
+        "unresolved": 27,
+        "wilson95": [
+          0.7598748962512072,
+          0.8294534619133311
+        ]
+      },
+      "100000": {
+        "optimal": 404,
+        "readable_nonoptimal": 72,
+        "unresolved": 36,
+        "wilson95": [
+          0.7516376331702338,
+          0.8221820839899746
+        ]
+      }
+    },
+    {
+      "step": 2700000,
+      "10000": {
+        "optimal": 413,
+        "readable_nonoptimal": 71,
+        "unresolved": 28,
+        "wilson95": [
+          0.7701996390145233,
+          0.8385145204054275
+        ]
+      },
+      "100000": {
+        "optimal": 410,
+        "readable_nonoptimal": 66,
+        "unresolved": 36,
+        "wilson95": [
+          0.7640009571653381,
+          0.8330817215013653
+        ]
+      }
+    },
+    {
+      "step": 2750000,
+      "10000": {
+        "optimal": 413,
+        "readable_nonoptimal": 72,
+        "unresolved": 27,
+        "wilson95": [
+          0.7701996390145233,
+          0.8385145204054275
+        ]
+      },
+      "100000": {
+        "optimal": 411,
+        "readable_nonoptimal": 62,
+        "unresolved": 39,
+        "wilson95": [
+          0.7660658916314913,
+          0.8348939472862946
+        ]
+      }
+    },
+    {
+      "step": 2800000,
+      "10000": {
+        "optimal": 418,
+        "readable_nonoptimal": 77,
+        "unresolved": 17,
+        "wilson95": [
+          0.780557332045865,
+          0.8475426286294983
+        ]
+      },
+      "100000": {
+        "optimal": 417,
+        "readable_nonoptimal": 71,
+        "unresolved": 24,
+        "wilson95": [
+          0.7784830650129315,
+          0.8457397354113492
+        ]
+      }
+    },
+    {
+      "step": 2850000,
+      "10000": {
+        "optimal": 422,
+        "readable_nonoptimal": 72,
+        "unresolved": 18,
+        "wilson95": [
+          0.7888685481260529,
+          0.8547400535536402
+        ]
+      },
+      "100000": {
+        "optimal": 418,
+        "readable_nonoptimal": 67,
+        "unresolved": 27,
+        "wilson95": [
+          0.780557332045865,
+          0.8475426286294983
+        ]
+      }
+    },
+    {
+      "step": 2900000,
+      "10000": {
+        "optimal": 424,
+        "readable_nonoptimal": 72,
+        "unresolved": 16,
+        "wilson95": [
+          0.7930328989697278,
+          0.8583300232121304
+        ]
+      },
+      "100000": {
+        "optimal": 421,
+        "readable_nonoptimal": 61,
+        "unresolved": 30,
+        "wilson95": [
+          0.7867885863654592,
+          0.8529428550631516
+        ]
+      }
+    },
+    {
+      "step": 2950000,
+      "10000": {
+        "optimal": 423,
+        "readable_nonoptimal": 69,
+        "unresolved": 20,
+        "wilson95": [
+          0.7909499792318174,
+          0.8565357826989582
+        ]
+      },
+      "100000": {
+        "optimal": 421,
+        "readable_nonoptimal": 64,
+        "unresolved": 27,
+        "wilson95": [
+          0.7867885863654592,
+          0.8529428550631516
+        ]
+      }
+    },
+    {
+      "step": 3000000,
+      "10000": {
+        "optimal": 425,
+        "readable_nonoptimal": 72,
+        "unresolved": 15,
+        "wilson95": [
+          0.7951173271721453,
+          0.8601227552607954
+        ]
+      },
+      "100000": {
+        "optimal": 423,
+        "readable_nonoptimal": 63,
+        "unresolved": 26,
+        "wilson95": [
+          0.7909499792318174,
+          0.8565357826989582
+        ]
+      }
+    },
+    {
+      "step": 3050000,
+      "10000": {
+        "optimal": 427,
+        "readable_nonoptimal": 67,
+        "unresolved": 18,
+        "wilson95": [
+          0.7992907911560903,
+          0.8637036117790153
+        ]
+      },
+      "100000": {
+        "optimal": 424,
+        "readable_nonoptimal": 62,
+        "unresolved": 26,
+        "wilson95": [
+          0.7930328989697278,
+          0.8583300232121304
+        ]
+      }
+    },
+    {
+      "step": 3100000,
+      "10000": {
+        "optimal": 430,
+        "readable_nonoptimal": 67,
+        "unresolved": 15,
+        "wilson95": [
+          0.8055628302469452,
+          0.869063053441408
+        ]
+      },
+      "100000": {
+        "optimal": 429,
+        "readable_nonoptimal": 61,
+        "unresolved": 22,
+        "wilson95": [
+          0.8034705415897391,
+          0.8672781818475316
+        ]
+      }
+    },
+    {
+      "step": 3150000,
+      "10000": {
+        "optimal": 430,
+        "readable_nonoptimal": 63,
+        "unresolved": 19,
+        "wilson95": [
+          0.8055628302469452,
+          0.869063053441408
+        ]
+      },
+      "100000": {
+        "optimal": 429,
+        "readable_nonoptimal": 57,
+        "unresolved": 26,
+        "wilson95": [
+          0.8034705415897391,
+          0.8672781818475316
+        ]
+      }
+    },
+    {
+      "step": 3200000,
+      "10000": {
+        "optimal": 431,
+        "readable_nonoptimal": 65,
+        "unresolved": 16,
+        "wilson95": [
+          0.8076567590928229,
+          0.8708462848466129
+        ]
+      },
+      "100000": {
+        "optimal": 431,
+        "readable_nonoptimal": 58,
+        "unresolved": 23,
+        "wilson95": [
+          0.8076567590928229,
+          0.8708462848466129
+        ]
+      }
+    },
+    {
+      "step": 3250000,
+      "10000": {
+        "optimal": 430,
+        "readable_nonoptimal": 70,
+        "unresolved": 12,
+        "wilson95": [
+          0.8055628302469452,
+          0.869063053441408
+        ]
+      },
+      "100000": {
+        "optimal": 430,
+        "readable_nonoptimal": 65,
+        "unresolved": 17,
+        "wilson95": [
+          0.8055628302469452,
+          0.869063053441408
+        ]
+      }
+    },
+    {
+      "step": 3300000,
+      "10000": {
+        "optimal": 432,
+        "readable_nonoptimal": 63,
+        "unresolved": 17,
+        "wilson95": [
+          0.8097523524421957,
+          0.8726278517483224
+        ]
+      },
+      "100000": {
+        "optimal": 431,
+        "readable_nonoptimal": 60,
+        "unresolved": 21,
+        "wilson95": [
+          0.8076567590928229,
+          0.8708462848466129
+        ]
+      }
+    },
+    {
+      "step": 3350000,
+      "10000": {
+        "optimal": 435,
+        "readable_nonoptimal": 59,
+        "unresolved": 18,
+        "wilson95": [
+          0.8160493741268273,
+          0.8779623108169383
+        ]
+      },
+      "100000": {
+        "optimal": 432,
+        "readable_nonoptimal": 56,
+        "unresolved": 24,
+        "wilson95": [
+          0.8097523524421957,
+          0.8726278517483224
+        ]
+      }
+    },
+    {
+      "step": 3400000,
+      "10000": {
+        "optimal": 437,
+        "readable_nonoptimal": 63,
+        "unresolved": 12,
+        "wilson95": [
+          0.8202561922275942,
+          0.8815098132183363
+        ]
+      },
+      "100000": {
+        "optimal": 437,
+        "readable_nonoptimal": 57,
+        "unresolved": 18,
+        "wilson95": [
+          0.8202561922275942,
+          0.8815098132183363
+        ]
+      }
+    },
+    {
+      "step": 3450000,
+      "10000": {
+        "optimal": 433,
+        "readable_nonoptimal": 63,
+        "unresolved": 16,
+        "wilson95": [
+          0.8118496353612644,
+          0.8744077290803361
+        ]
+      },
+      "100000": {
+        "optimal": 432,
+        "readable_nonoptimal": 56,
+        "unresolved": 24,
+        "wilson95": [
+          0.8097523524421957,
+          0.8726278517483224
+        ]
+      }
+    },
+    {
+      "step": 3500000,
+      "10000": {
+        "optimal": 433,
+        "readable_nonoptimal": 57,
+        "unresolved": 22,
+        "wilson95": [
+          0.8118496353612644,
+          0.8744077290803361
+        ]
+      },
+      "100000": {
+        "optimal": 433,
+        "readable_nonoptimal": 53,
+        "unresolved": 26,
+        "wilson95": [
+          0.8118496353612644,
+          0.8744077290803361
+        ]
+      }
+    },
+    {
+      "step": 3550000,
+      "10000": {
+        "optimal": 438,
+        "readable_nonoptimal": 58,
+        "unresolved": 16,
+        "wilson95": [
+          0.8223623276661127,
+          0.8832808380309003
+        ]
+      },
+      "100000": {
+        "optimal": 436,
+        "readable_nonoptimal": 53,
+        "unresolved": 23,
+        "wilson95": [
+          0.8181518841641696,
+          0.8797369610306786
+        ]
+      }
+    },
+    {
+      "step": 3600000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 57,
+        "unresolved": 15,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 439,
+        "readable_nonoptimal": 56,
+        "unresolved": 17,
+        "wilson95": [
+          0.8244703208053621,
+          0.8850500051427335
+        ]
+      }
+    },
+    {
+      "step": 3650000,
+      "10000": {
+        "optimal": 438,
+        "readable_nonoptimal": 63,
+        "unresolved": 11,
+        "wilson95": [
+          0.8223623276661127,
+          0.8832808380309003
+        ]
+      },
+      "100000": {
+        "optimal": 438,
+        "readable_nonoptimal": 54,
+        "unresolved": 20,
+        "wilson95": [
+          0.8223623276661127,
+          0.8832808380309003
+        ]
+      }
+    },
+    {
+      "step": 3700000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 62,
+        "unresolved": 10,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 438,
+        "readable_nonoptimal": 59,
+        "unresolved": 15,
+        "wilson95": [
+          0.8223623276661127,
+          0.8832808380309003
+        ]
+      }
+    },
+    {
+      "step": 3750000,
+      "10000": {
+        "optimal": 442,
+        "readable_nonoptimal": 62,
+        "unresolved": 8,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 55,
+        "unresolved": 15,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 3800000,
+      "10000": {
+        "optimal": 443,
+        "readable_nonoptimal": 60,
+        "unresolved": 9,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      },
+      "100000": {
+        "optimal": 443,
+        "readable_nonoptimal": 56,
+        "unresolved": 13,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      }
+    },
+    {
+      "step": 3850000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 60,
+        "unresolved": 12,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 440,
+        "readable_nonoptimal": 54,
+        "unresolved": 18,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      }
+    },
+    {
+      "step": 3900000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 56,
+        "unresolved": 16,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 439,
+        "readable_nonoptimal": 52,
+        "unresolved": 21,
+        "wilson95": [
+          0.8244703208053621,
+          0.8850500051427335
+        ]
+      }
+    },
+    {
+      "step": 3950000,
+      "10000": {
+        "optimal": 442,
+        "readable_nonoptimal": 53,
+        "unresolved": 17,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      },
+      "100000": {
+        "optimal": 440,
+        "readable_nonoptimal": 47,
+        "unresolved": 25,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      }
+    },
+    {
+      "step": 4000000,
+      "10000": {
+        "optimal": 442,
+        "readable_nonoptimal": 57,
+        "unresolved": 13,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 50,
+        "unresolved": 20,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 4050000,
+      "10000": {
+        "optimal": 439,
+        "readable_nonoptimal": 61,
+        "unresolved": 12,
+        "wilson95": [
+          0.8244703208053621,
+          0.8850500051427335
+        ]
+      },
+      "100000": {
+        "optimal": 439,
+        "readable_nonoptimal": 55,
+        "unresolved": 18,
+        "wilson95": [
+          0.8244703208053621,
+          0.8850500051427335
+        ]
+      }
+    },
+    {
+      "step": 4100000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 58,
+        "unresolved": 14,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 440,
+        "readable_nonoptimal": 52,
+        "unresolved": 20,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      }
+    },
+    {
+      "step": 4150000,
+      "10000": {
+        "optimal": 437,
+        "readable_nonoptimal": 59,
+        "unresolved": 16,
+        "wilson95": [
+          0.8202561922275942,
+          0.8815098132183363
+        ]
+      },
+      "100000": {
+        "optimal": 437,
+        "readable_nonoptimal": 55,
+        "unresolved": 20,
+        "wilson95": [
+          0.8202561922275942,
+          0.8815098132183363
+        ]
+      }
+    },
+    {
+      "step": 4200000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 55,
+        "unresolved": 17,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 440,
+        "readable_nonoptimal": 49,
+        "unresolved": 23,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      }
+    },
+    {
+      "step": 4250000,
+      "10000": {
+        "optimal": 442,
+        "readable_nonoptimal": 56,
+        "unresolved": 14,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      },
+      "100000": {
+        "optimal": 440,
+        "readable_nonoptimal": 54,
+        "unresolved": 18,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      }
+    },
+    {
+      "step": 4300000,
+      "10000": {
+        "optimal": 445,
+        "readable_nonoptimal": 52,
+        "unresolved": 15,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 47,
+        "unresolved": 23,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 4350000,
+      "10000": {
+        "optimal": 442,
+        "readable_nonoptimal": 58,
+        "unresolved": 12,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 49,
+        "unresolved": 21,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 4400000,
+      "10000": {
+        "optimal": 443,
+        "readable_nonoptimal": 54,
+        "unresolved": 15,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 49,
+        "unresolved": 21,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 4450000,
+      "10000": {
+        "optimal": 441,
+        "readable_nonoptimal": 53,
+        "unresolved": 18,
+        "wilson95": [
+          0.828692006648878,
+          0.8885826398013826
+        ]
+      },
+      "100000": {
+        "optimal": 441,
+        "readable_nonoptimal": 50,
+        "unresolved": 21,
+        "wilson95": [
+          0.828692006648878,
+          0.8885826398013826
+        ]
+      }
+    },
+    {
+      "step": 4500000,
+      "10000": {
+        "optimal": 444,
+        "readable_nonoptimal": 52,
+        "unresolved": 16,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      },
+      "100000": {
+        "optimal": 443,
+        "readable_nonoptimal": 47,
+        "unresolved": 22,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      }
+    },
+    {
+      "step": 4550000,
+      "10000": {
+        "optimal": 445,
+        "readable_nonoptimal": 50,
+        "unresolved": 17,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 48,
+        "unresolved": 19,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    },
+    {
+      "step": 4600000,
+      "10000": {
+        "optimal": 444,
+        "readable_nonoptimal": 54,
+        "unresolved": 14,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      },
+      "100000": {
+        "optimal": 443,
+        "readable_nonoptimal": 47,
+        "unresolved": 22,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      }
+    },
+    {
+      "step": 4650000,
+      "10000": {
+        "optimal": 447,
+        "readable_nonoptimal": 57,
+        "unresolved": 8,
+        "wilson95": [
+          0.8414051435005794,
+          0.899132464456176
+        ]
+      },
+      "100000": {
+        "optimal": 447,
+        "readable_nonoptimal": 54,
+        "unresolved": 11,
+        "wilson95": [
+          0.8414051435005794,
+          0.899132464456176
+        ]
+      }
+    },
+    {
+      "step": 4700000,
+      "10000": {
+        "optimal": 444,
+        "readable_nonoptimal": 58,
+        "unresolved": 10,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      },
+      "100000": {
+        "optimal": 443,
+        "readable_nonoptimal": 54,
+        "unresolved": 15,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      }
+    },
+    {
+      "step": 4750000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 51,
+        "unresolved": 15,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 446,
+        "readable_nonoptimal": 46,
+        "unresolved": 20,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      }
+    },
+    {
+      "step": 4800000,
+      "10000": {
+        "optimal": 447,
+        "readable_nonoptimal": 59,
+        "unresolved": 6,
+        "wilson95": [
+          0.8414051435005794,
+          0.899132464456176
+        ]
+      },
+      "100000": {
+        "optimal": 446,
+        "readable_nonoptimal": 50,
+        "unresolved": 16,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      }
+    },
+    {
+      "step": 4850000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 56,
+        "unresolved": 10,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 51,
+        "unresolved": 16,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    },
+    {
+      "step": 4900000,
+      "10000": {
+        "optimal": 443,
+        "readable_nonoptimal": 55,
+        "unresolved": 14,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      },
+      "100000": {
+        "optimal": 442,
+        "readable_nonoptimal": 51,
+        "unresolved": 19,
+        "wilson95": [
+          0.8308057653133303,
+          0.8903460413880127
+        ]
+      }
+    },
+    {
+      "step": 4950000,
+      "10000": {
+        "optimal": 445,
+        "readable_nonoptimal": 56,
+        "unresolved": 11,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 51,
+        "unresolved": 16,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    },
+    {
+      "step": 5000000,
+      "10000": {
+        "optimal": 444,
+        "readable_nonoptimal": 50,
+        "unresolved": 18,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      },
+      "100000": {
+        "optimal": 443,
+        "readable_nonoptimal": 48,
+        "unresolved": 21,
+        "wilson95": [
+          0.8329215137052752,
+          0.8921074532471502
+        ]
+      }
+    },
+    {
+      "step": 5050000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 54,
+        "unresolved": 12,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 48,
+        "unresolved": 19,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    },
+    {
+      "step": 5100000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 50,
+        "unresolved": 16,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 444,
+        "readable_nonoptimal": 46,
+        "unresolved": 22,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      }
+    },
+    {
+      "step": 5150000,
+      "10000": {
+        "optimal": 440,
+        "readable_nonoptimal": 49,
+        "unresolved": 23,
+        "wilson95": [
+          0.8265802029933275,
+          0.8868172832058506
+        ]
+      },
+      "100000": {
+        "optimal": 438,
+        "readable_nonoptimal": 44,
+        "unresolved": 30,
+        "wilson95": [
+          0.8223623276661127,
+          0.8832808380309003
+        ]
+      }
+    },
+    {
+      "step": 5200000,
+      "10000": {
+        "optimal": 445,
+        "readable_nonoptimal": 49,
+        "unresolved": 18,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      },
+      "100000": {
+        "optimal": 444,
+        "readable_nonoptimal": 44,
+        "unresolved": 24,
+        "wilson95": [
+          0.8350392877789226,
+          0.8938668394245854
+        ]
+      }
+    },
+    {
+      "step": 5250000,
+      "10000": {
+        "optimal": 449,
+        "readable_nonoptimal": 50,
+        "unresolved": 13,
+        "wilson95": [
+          0.8456598964509836,
+          0.9026320320079368
+        ]
+      },
+      "100000": {
+        "optimal": 449,
+        "readable_nonoptimal": 45,
+        "unresolved": 18,
+        "wilson95": [
+          0.8456598964509836,
+          0.9026320320079368
+        ]
+      }
+    },
+    {
+      "step": 5300000,
+      "10000": {
+        "optimal": 450,
+        "readable_nonoptimal": 51,
+        "unresolved": 11,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      },
+      "100000": {
+        "optimal": 450,
+        "readable_nonoptimal": 46,
+        "unresolved": 16,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      }
+    },
+    {
+      "step": 5350000,
+      "10000": {
+        "optimal": 450,
+        "readable_nonoptimal": 50,
+        "unresolved": 12,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      },
+      "100000": {
+        "optimal": 450,
+        "readable_nonoptimal": 46,
+        "unresolved": 16,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      }
+    },
+    {
+      "step": 5400000,
+      "10000": {
+        "optimal": 453,
+        "readable_nonoptimal": 49,
+        "unresolved": 10,
+        "wilson95": [
+          0.8541970418460828,
+          0.9096035276171676
+        ]
+      },
+      "100000": {
+        "optimal": 453,
+        "readable_nonoptimal": 47,
+        "unresolved": 12,
+        "wilson95": [
+          0.8541970418460828,
+          0.9096035276171676
+        ]
+      }
+    },
+    {
+      "step": 5450000,
+      "10000": {
+        "optimal": 451,
+        "readable_nonoptimal": 52,
+        "unresolved": 9,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      },
+      "100000": {
+        "optimal": 451,
+        "readable_nonoptimal": 48,
+        "unresolved": 13,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      }
+    },
+    {
+      "step": 5500000,
+      "10000": {
+        "optimal": 451,
+        "readable_nonoptimal": 50,
+        "unresolved": 11,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      },
+      "100000": {
+        "optimal": 451,
+        "readable_nonoptimal": 46,
+        "unresolved": 15,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      }
+    },
+    {
+      "step": 5550000,
+      "10000": {
+        "optimal": 450,
+        "readable_nonoptimal": 52,
+        "unresolved": 10,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      },
+      "100000": {
+        "optimal": 450,
+        "readable_nonoptimal": 47,
+        "unresolved": 15,
+        "wilson95": [
+          0.8477906572251377,
+          0.9043784314848653
+        ]
+      }
+    },
+    {
+      "step": 5600000,
+      "10000": {
+        "optimal": 451,
+        "readable_nonoptimal": 53,
+        "unresolved": 8,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      },
+      "100000": {
+        "optimal": 451,
+        "readable_nonoptimal": 52,
+        "unresolved": 9,
+        "wilson95": [
+          0.8499237357408231,
+          0.9061225132202622
+        ]
+      }
+    },
+    {
+      "step": 5650000,
+      "10000": {
+        "optimal": 448,
+        "readable_nonoptimal": 51,
+        "unresolved": 13,
+        "wilson95": [
+          0.8435314068192065,
+          0.9008833613886315
+        ]
+      },
+      "100000": {
+        "optimal": 448,
+        "readable_nonoptimal": 47,
+        "unresolved": 17,
+        "wilson95": [
+          0.8435314068192065,
+          0.9008833613886315
+        ]
+      }
+    },
+    {
+      "step": 5700000,
+      "10000": {
+        "optimal": 449,
+        "readable_nonoptimal": 49,
+        "unresolved": 14,
+        "wilson95": [
+          0.8456598964509836,
+          0.9026320320079368
+        ]
+      },
+      "100000": {
+        "optimal": 449,
+        "readable_nonoptimal": 43,
+        "unresolved": 20,
+        "wilson95": [
+          0.8456598964509836,
+          0.9026320320079368
+        ]
+      }
+    },
+    {
+      "step": 5750000,
+      "10000": {
+        "optimal": 449,
+        "readable_nonoptimal": 46,
+        "unresolved": 17,
+        "wilson95": [
+          0.8456598964509836,
+          0.9026320320079368
+        ]
+      },
+      "100000": {
+        "optimal": 448,
+        "readable_nonoptimal": 40,
+        "unresolved": 24,
+        "wilson95": [
+          0.8435314068192065,
+          0.9008833613886315
+        ]
+      }
+    },
+    {
+      "step": 5800000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 46,
+        "unresolved": 20,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 446,
+        "readable_nonoptimal": 41,
+        "unresolved": 25,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      }
+    },
+    {
+      "step": 5850000,
+      "10000": {
+        "optimal": 448,
+        "readable_nonoptimal": 49,
+        "unresolved": 15,
+        "wilson95": [
+          0.8435314068192065,
+          0.9008833613886315
+        ]
+      },
+      "100000": {
+        "optimal": 448,
+        "readable_nonoptimal": 45,
+        "unresolved": 19,
+        "wilson95": [
+          0.8435314068192065,
+          0.9008833613886315
+        ]
+      }
+    },
+    {
+      "step": 5900000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 52,
+        "unresolved": 14,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 446,
+        "readable_nonoptimal": 44,
+        "unresolved": 22,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      }
+    },
+    {
+      "step": 5950000,
+      "10000": {
+        "optimal": 445,
+        "readable_nonoptimal": 50,
+        "unresolved": 17,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 45,
+        "unresolved": 22,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    },
+    {
+      "step": 6000000,
+      "10000": {
+        "optimal": 446,
+        "readable_nonoptimal": 47,
+        "unresolved": 19,
+        "wilson95": [
+          0.8392810633432318,
+          0.8973793843624412
+        ]
+      },
+      "100000": {
+        "optimal": 445,
+        "readable_nonoptimal": 45,
+        "unresolved": 22,
+        "wilson95": [
+          0.8371591247862454,
+          0.8956241626683451
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "All trials remain in the denominator, including unresolved readouts.",
+    "Either unit can support success; each trial counts only once.",
+    "95% intervals are pointwise, not a simultaneous confidence band.",
+    "Steps within a trial are correlated, not additional independent trials.",
+    "No first-hit or cumulative-ever curve is inferred from these samples."
+  ],
+  "provenance": {
+    "readout_summary_sha256": "9cb137577e60978cb33375af2f603bf01759f412972b1231199dd497ee71801b",
+    "event_times_sha256": "e1d05dfee344ecd07201488c4d078de65f0ecba75c58f3fc4e9f836d5b8c2aba",
+    "script_sha256": "433926baf33def6f34f42d7dc0add30c8c8e067901eab4bc2960045d88380303"
+  }
+}

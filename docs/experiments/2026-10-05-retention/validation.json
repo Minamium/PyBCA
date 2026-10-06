@@ -1,0 +1,50 @@
+{
+  "tests": 17,
+  "failures": 0,
+  "test_modules": [
+    "test_retention_curve",
+    "test_fsm_output_readout",
+    "test_short_fsm_stability"
+  ],
+  "endpoint_checks": [
+    {
+      "step": 3000000,
+      "minimum_duration": 10000,
+      "optimal": 425,
+      "trial_ids_exact_match": true
+    },
+    {
+      "step": 3000000,
+      "minimum_duration": 100000,
+      "optimal": 423,
+      "trial_ids_exact_match": true
+    },
+    {
+      "step": 6000000,
+      "minimum_duration": 10000,
+      "optimal": 446,
+      "trial_ids_exact_match": true
+    },
+    {
+      "step": 6000000,
+      "minimum_duration": 100000,
+      "optimal": 445,
+      "trial_ids_exact_match": true
+    }
+  ],
+  "trial_denominator_fixed_at_512": true,
+  "source_code_matches_recorded_hash": true,
+  "figure_visually_checked": true,
+  "paper": {
+    "name": "shukunami2026BCAIP_revised_v3.pdf",
+    "sha256": "6da0a1021e9562fd781fa875b25c8c5bc9d6f0fff5e41b38ac1070a3cc45e0fe",
+    "pages_reviewed": [
+      14,
+      15,
+      18,
+      19
+    ],
+    "parameter_N": "W_i = N*(c_max-c_i)+1"
+  },
+  "existing_user_plot_edit_unchanged": true
+}
