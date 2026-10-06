@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-10-06T15:48:33.384032+00:00",
+  "jobs": {
+    "238946.rokko1": {
+      "Job_Name": "pybca_variants_check",
+      "job_state": "Q",
+      "queue": "G",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "stime": null,
+      "Hold_Types": "n",
+      "depend": "beforeok:238947.rokko1@rokko1:238948.rokko1@rokko1:238949.rokko1@rokko1",
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "02:00:00"
+      },
+      "comment": "Not Running: Insufficient amount of resource: ngpus (R: 8 A: 0 T: 8)",
+      "workdir": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+      "variant": null
+    },
+    "238947.rokko1": {
+      "Job_Name": "bca_c1n1_3m",
+      "job_state": "H",
+      "queue": "G",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "stime": null,
+      "Hold_Types": "s",
+      "depend": "afterok:238946.rokko1@rokko1,beforeany:238948.rokko1@rokko1",
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "comment": null,
+      "workdir": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+      "variant": "condition1_N1"
+    },
+    "238948.rokko1": {
+      "Job_Name": "bca_c1n2_3m",
+      "job_state": "H",
+      "queue": "G",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "stime": null,
+      "Hold_Types": "s",
+      "depend": "afterok:238946.rokko1@rokko1,afterany:238947.rokko1@rokko1,beforeany:238949.rokko1@rokko1",
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "comment": null,
+      "workdir": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+      "variant": "condition1_N2"
+    },
+    "238949.rokko1": {
+      "Job_Name": "bca_c2n2_3m",
+      "job_state": "H",
+      "queue": "G",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "stime": null,
+      "Hold_Types": "s",
+      "depend": "afterok:238946.rokko1@rokko1,afterany:238948.rokko1@rokko1",
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "comment": null,
+      "workdir": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+      "variant": "condition2_N2"
+    }
+  }
+}

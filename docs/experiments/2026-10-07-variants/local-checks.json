@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-06T15:49:16.264280+00:00",
+  "local_tests": [
+    {
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_cellspace_variants.py tests/test_retention_curve.py -q",
+      "passed": 15,
+      "failed": 0
+    },
+    {
+      "command": "PYTHONPATH=src python3 -m pytest tests/test_variant_jobs.py -q",
+      "passed": 9,
+      "failed": 0
+    }
+  ],
+  "shell_syntax": "bash -n passed for variants-env.sh and both PBS files",
+  "inputs": "All 15 variant artifact SHA256SUMS entries verified locally; deployed archive SHA-256 and input map/rules/events hashes verified on rokko before qsub.",
+  "simulation_core_unchanged_from": "30859e4b16beb70489b5379ade36d5f6634d0458",
+  "core_api_diff": "",
+  "gpu_validation_status": "Queued as 238946.rokko1; not yet passed. All three production jobs require its successful exit.",
+  "production_completion_status": "Not started at submission; no optimization results from these new runs yet."
+}

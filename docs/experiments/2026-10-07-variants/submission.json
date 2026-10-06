@@ -1,4 +1,98 @@
 {
-  "submitted": false,
-  "status": "Awaiting deployment of this commit and PBS submission."
+  "submitted_at": "2026-10-06T15:47:34.830060+00:00",
+  "deployment": {
+    "commit": "7d0457d939e5165b2e117e8932a12e54c6f46213",
+    "branch": "codex/bca-ip-three-condition-3m",
+    "repository": "https://github.com/Minamium/PyBCA.git",
+    "archive_sha256": "1950ff15cc63bb0c641caddbb593aa64d83af6b538fa8938d2c39194efeadda6",
+    "archive_bytes": 12874405,
+    "created_at": "2026-10-06T15:45:50.085255+00:00"
+  },
+  "workspace": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+  "jobs": [
+    {
+      "label": "preflight",
+      "job_id": "238946.rokko1",
+      "command": [
+        "qsub",
+        "scripts/rokko/bca-ip-variants-preflight.pbs"
+      ],
+      "qsub_stderr": "sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)"
+    },
+    {
+      "label": "condition1_N1",
+      "job_id": "238947.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c1n1_3m",
+        "-v",
+        "VARIANT=condition1_N1",
+        "-W",
+        "depend=afterok:238946.rokko1",
+        "scripts/rokko/bca-ip-variant-3m.pbs"
+      ],
+      "qsub_stderr": ""
+    },
+    {
+      "label": "condition1_N2",
+      "job_id": "238948.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c1n2_3m",
+        "-v",
+        "VARIANT=condition1_N2",
+        "-W",
+        "depend=afterok:238946.rokko1,afterany:238947.rokko1",
+        "scripts/rokko/bca-ip-variant-3m.pbs"
+      ],
+      "qsub_stderr": ""
+    },
+    {
+      "label": "condition2_N2",
+      "job_id": "238949.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c2n2_3m",
+        "-v",
+        "VARIANT=condition2_N2",
+        "-W",
+        "depend=afterok:238946.rokko1,afterany:238948.rokko1",
+        "scripts/rokko/bca-ip-variant-3m.pbs"
+      ],
+      "qsub_stderr": ""
+    }
+  ],
+  "submitted": true,
+  "conditions": [
+    {
+      "variant": "condition1_N1",
+      "job_id": "238947.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N1"
+    },
+    {
+      "variant": "condition1_N2",
+      "job_id": "238948.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N2"
+    },
+    {
+      "variant": "condition2_N2",
+      "job_id": "238949.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition2_N2"
+    }
+  ]
 }
