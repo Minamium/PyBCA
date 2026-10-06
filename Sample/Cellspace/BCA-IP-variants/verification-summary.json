@@ -1,0 +1,54 @@
+{
+  "completed_on": "2026-10-07 JST",
+  "pytest": {
+    "command": "python -m pytest tests/test_cellspace_variants.py -q",
+    "passed": 11,
+    "failed": 0,
+    "test_sha256": "4dd1bc87edf14951bb47d2f18fa122864b5016281fdc1ebd6c1f91370b1bcb79"
+  },
+  "reset_Amp": {
+    "gains": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      7,
+      9
+    ],
+    "positive_pulses": 63,
+    "all_expected_counts_observed": true
+  },
+  "C5_Weight_return": {
+    "gains": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      7,
+      9
+    ],
+    "positive_resets": 28,
+    "all_expected_counts_observed": true,
+    "no_reset_Weights_retained_in_Post_Pool_or_C5_input": true
+  },
+  "integrated_smoke": {
+    "maps": 3,
+    "steps_per_map": 128,
+    "device": "cpu",
+    "all_passed": true
+  },
+  "production_search_certified": false,
+  "historical_base_unchanged_sha256": "8c7e7e3e438ea67bcc0961a51580deed3e66902478fd1ace0b051ce1ed5bd69b",
+  "regeneration": {
+    "byte_identical_files": [
+      "BCA-IP_condition1_N2.yaml",
+      "BCA-IP_condition2_N2.yaml",
+      "manifest.json",
+      "BCA-IP_wide_events.py",
+      "BCA-IP_condition1_N1.yaml"
+    ],
+    "passed": true
+  }
+}

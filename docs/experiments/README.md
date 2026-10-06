@@ -4,6 +4,9 @@
 
 | 実験・解析 | レポート |
 | --- | --- |
+| 3条件×512試行・300万ステップのrokko実験 | [実行条件](2026-10-07-variants/protocol.json)・[投入記録](2026-10-07-variants/submission.json) |
+| 条件1のN=1/N=2、条件2のN=2セル空間 | [ファイル・対応イベント・reset検証](../../Sample/Cellspace/BCA-IP-variants/README.md) |
+| 最適解の安定出力率の時系列とN=1/2/5の比較計画 | [時系列図とNの役割](2026-10-05-retention/report.md) |
 | 600万ステップの到達率と300万からの変化 | [結果と全試行データ](2026-10-01-production-p05-6m/report.md) |
 | 600万でも未到達の55試行と次の実験 | [停滞・リセット・段間流量の調査](2026-10-01-production-p05-6m/nonhit-diagnosis.md) |
 | 300万ステップの完走・履歴監査 | [実行結果](2026-09-28-production-p05/report.md) |

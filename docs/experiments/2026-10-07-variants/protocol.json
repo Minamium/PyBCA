@@ -1,0 +1,77 @@
+{
+  "schema": "pybca-three-variant-experiment-v1",
+  "created_on": "2026-10-07 JST",
+  "conditions": [
+    {
+      "variant": "condition1_N1",
+      "condition": 1,
+      "N": 1,
+      "instance": "Sample/Cellspace/BCA-IP-variants/condition1.json"
+    },
+    {
+      "variant": "condition1_N2",
+      "condition": 1,
+      "N": 2,
+      "instance": "Sample/Cellspace/BCA-IP-variants/condition1.json"
+    },
+    {
+      "variant": "condition2_N2",
+      "condition": 2,
+      "N": 2,
+      "instance": "Sample/Cellspace/BCA-IP-variants/condition2.json"
+    }
+  ],
+  "production": {
+    "trials_per_condition": 512,
+    "trial_ids": [
+      0,
+      511
+    ],
+    "steps_per_trial": 3000000,
+    "seed": 20261007,
+    "global_prob": 0.5,
+    "rng_mode": "independent",
+    "execution_mode": "cuda",
+    "gpus_per_job": 8,
+    "trials_per_gpu": 64,
+    "walltime_per_job": "24:00:00",
+    "flush_interval_steps": 1000,
+    "checkpoint_interval_steps": 10000,
+    "candidate_capacity": 4096,
+    "start": "fresh initial cellspace, not continuation of the historical condition2 N1 run"
+  },
+  "coupling": "Within each condition, all 512 trial IDs use independent counter RNG streams. Conditions deliberately share seed and trial IDs for paired comparisons; do not pool them as 1536 independent repetitions of one problem.",
+  "preflight": {
+    "walltime": "02:00:00",
+    "gpus": 8,
+    "all_rules": 76,
+    "integrated_cpu_cuda_steps": 128,
+    "integrated_cpu_cuda_trial_ids": [
+      31,
+      511
+    ],
+    "all_event_predicates": 44,
+    "pilot_steps": 20000,
+    "pilot_seed": 20261008,
+    "pilot_trials_per_condition": 512,
+    "activity_required": [
+      "TD",
+      "FSM",
+      "Amp",
+      "F"
+    ],
+    "reset_event_required": false,
+    "optimization_success_certified": false,
+    "time_projection": "Slowest 8-GPU pilot rank elapsed/20000 x 3000000, with a separate 10% margin estimate. A short pilot is not a 24h completion guarantee."
+  },
+  "schedule": "All production jobs depend on successful preflight. condition1_N2 also waits for condition1_N1 to end; condition2_N2 waits for condition1_N2 to end. No more than 8 GPUs run at a time. If one production condition times out, independent later conditions may still run. Incomplete jobs fail the completion check and retain restart checkpoints.",
+  "output_root": "results/variants-20261007",
+  "events": "Sample/Cellspace/BCA-IP-variants/BCA-IP_wide_events.py",
+  "scientific_limitations": [
+    "Short GPU activity/parity tests do not certify long-run solution search or full FSM recovery.",
+    "Read solutions from stable FSM x1..x6 output; a reset or F output is not an optimality declaration.",
+    "The historical condition2 N1 map has initial Weights [4,4,5,1,1,1] but reset gains [4,3,2,1,5,5]. It is not a matched control for the corrected condition2 N2 map."
+  ],
+  "submission_command": "/home/IM25D029/PyBCA_workspcace/venv/bin/python scripts/rokko/submit_variants.py",
+  "readout_command_template": "PYTHONPATH=src python scripts/read_bca_ip_fsm_outputs.py results/variants-20261007/<variant> --instance Sample/Cellspace/BCA-IP-variants/condition<1-or-2>.json --horizon 3000000 --expected-trials 512 --output results/variants-20261007/<variant>-fsm-readout"
+}

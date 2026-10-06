@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "base_sha256": "8c7e7e3e438ea67bcc0961a51580deed3e66902478fd1ace0b051ce1ed5bd69b",
+  "condition1_archive_sha256": "2db2873b9991c9be8fa6aed34bc4cc53c440f74ba39bef85844d1ad0c031bfd9",
+  "condition1_patch_sha256": "a88555bc0d3856819e047e6e4d0bfd407f82843548472e33b65a59a59721d9c3",
+  "width_added": 48,
+  "global_prob": 0.5,
+  "events": "BCA-IP_wide_events.py",
+  "events_sha256": "12d176563153f5461cebcd85c6f871c965afba26fa3ccc3ab1544218f481cb08",
+  "rules": "Sample/rule/base-rule.yaml",
+  "rules_sha256": "8bad523582d9b7abb79559d69d42d9c5a22ea3af9999cfef5dacc42295bbacca",
+  "layout": "48-column corridor in every map; within condition 1, only initial Weights and reset Amp ladders differ with N.",
+  "validation": "See validation.json; generation alone is not dynamic certification.",
+  "variants": [
+    {
+      "file": "BCA-IP_condition1_N1.yaml",
+      "condition": 1,
+      "N": 1,
+      "a": [
+        1,
+        1,
+        2,
+        2,
+        4,
+        4
+      ],
+      "b": 6,
+      "c": [
+        2,
+        3,
+        4,
+        5,
+        1,
+        1
+      ],
+      "weights": [
+        4,
+        3,
+        2,
+        1,
+        5,
+        5
+      ],
+      "reset_gains": [
+        4,
+        3,
+        2,
+        1,
+        5,
+        5
+      ],
+      "bounds": [
+        -321,
+        -16,
+        459,
+        894
+      ],
+      "nonzero_cells": 118426,
+      "tokens": 2123,
+      "sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879"
+    },
+    {
+      "file": "BCA-IP_condition1_N2.yaml",
+      "condition": 1,
+      "N": 2,
+      "a": [
+        1,
+        1,
+        2,
+        2,
+        4,
+        4
+      ],
+      "b": 6,
+      "c": [
+        2,
+        3,
+        4,
+        5,
+        1,
+        1
+      ],
+      "weights": [
+        7,
+        5,
+        3,
+        1,
+        9,
+        9
+      ],
+      "reset_gains": [
+        7,
+        5,
+        3,
+        1,
+        9,
+        9
+      ],
+      "bounds": [
+        -321,
+        -16,
+        459,
+        894
+      ],
+      "nonzero_cells": 119562,
+      "tokens": 2207,
+      "sha256": "10be9ed334fe5621f151a8a6111e961692dd688d61b99549aa11c2dede128ea8"
+    },
+    {
+      "file": "BCA-IP_condition2_N2.yaml",
+      "condition": 2,
+      "N": 2,
+      "a": [
+        1,
+        1,
+        2,
+        2,
+        4,
+        4
+      ],
+      "b": 8,
+      "c": [
+        2,
+        2,
+        1,
+        5,
+        5,
+        5
+      ],
+      "weights": [
+        7,
+        7,
+        9,
+        1,
+        1,
+        1
+      ],
+      "reset_gains": [
+        7,
+        7,
+        9,
+        1,
+        1,
+        1
+      ],
+      "bounds": [
+        -323,
+        -16,
+        459,
+        894
+      ],
+      "nonzero_cells": 118950,
+      "tokens": 2271,
+      "sha256": "761ad0314da639c8b662bb38ee6c02aebc27598aa25a94ff286336815a252878"
+    }
+  ]
+}

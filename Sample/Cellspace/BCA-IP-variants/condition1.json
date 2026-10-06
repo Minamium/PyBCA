@@ -1,0 +1,34 @@
+{
+  "a": [
+    1,
+    1,
+    2,
+    2,
+    4,
+    4
+  ],
+  "b": 6,
+  "c": [
+    2,
+    3,
+    4,
+    5,
+    1,
+    1
+  ],
+  "label": "BCA-IP paper condition 1",
+  "optimum_value": 14,
+  "optimal_vectors": [
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "optimal_bitstrings": [
+    "111100"
+  ]
+}

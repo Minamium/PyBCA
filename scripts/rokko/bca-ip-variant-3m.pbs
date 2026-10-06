@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -N pybca_variant_3m
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+#PBS -l place=free
+#PBS -l walltime=24:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+case "${VARIANT:-}" in
+    condition1_N1|condition1_N2|condition2_N2) ;;
+    *) echo 'Set VARIANT to condition1_N1, condition1_N2 or condition2_N2' >&2; exit 2 ;;
+esac
+mkdir -p results/logs
+exec > >(tee "results/logs/${VARIANT}-3m-${PBS_JOBID}.log") 2>&1
+source scripts/rokko/variants-env.sh
+python scripts/check_bca_ip_variants.py gate --root "$VARIANT_ROOT/preflight"
+run_variant "$VARIANT" "$VARIANT_ROOT/$VARIANT" 3000000 20261007
+# A caught scheduler signal can leave the runner with exit code zero. Never
+# call an incomplete 3M cohort successful; retain its checkpoint for resuming.
+python scripts/check_bca_ip_variants.py completed --variant "$VARIANT" --root "$VARIANT_ROOT/$VARIANT"

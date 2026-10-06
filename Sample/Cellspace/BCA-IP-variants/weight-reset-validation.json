@@ -1,0 +1,761 @@
+{
+  "schema_version": 1,
+  "script_sha256": "a3c110dab722d27a4b72e539128df0860358da15237f9f48ccd9ee70a729fcc1",
+  "definition": "Generated reset Amp + native C5 + Post-Pool; absorbing Pre-Pool entrance.",
+  "limits": "This verifies Weight return through C5, not full FSM Key/Ans/TD recovery or long-run search.",
+  "probes": [
+    {
+      "gain": 1,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 4,
+      "source_sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "fixture_sha256": "74625d0e4cb58c3e4ed645d68cef9a40816751027ae50db5ba09d5ac171e4450",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        2,
+        2,
+        0
+      ],
+      "returned_Weight_observed": [
+        2,
+        2,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        1
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1402,
+          7004
+        ],
+        [
+          1886,
+          7203
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            1,
+            1,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 43.39822170883417
+    },
+    {
+      "gain": 2,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 3,
+      "source_sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "fixture_sha256": "b7b88420fc27dc1a5ef29111afa8c81e39c3c681c1b0e7c5f5101c5840aa0d6e",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        4,
+        4,
+        0
+      ],
+      "returned_Weight_observed": [
+        4,
+        4,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        2
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1763,
+          6713,
+          7552
+        ],
+        [
+          658,
+          1886,
+          6970,
+          7298
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            2,
+            2,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 44.8922358751297
+    },
+    {
+      "gain": 3,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 2,
+      "source_sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "fixture_sha256": "55bf7a5af04b9865a6ea6a9473902a91c8d6b85ea9d31be274289e54ace6b016",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ],
+        [
+          -25,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        6,
+        6,
+        0
+      ],
+      "returned_Weight_observed": [
+        6,
+        6,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        3
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1171,
+          1763,
+          6744,
+          7431,
+          8121
+        ],
+        [
+          658,
+          1190,
+          1886,
+          6970,
+          7262,
+          8586
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            3,
+            3,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 47.71554808388464
+    },
+    {
+      "gain": 4,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 1,
+      "source_sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "fixture_sha256": "747cc03dd07ef8f1ce6b8b7893e2fe359a9199230acbc2ccf31ed20ded209d53",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ],
+        [
+          -25,
+          37
+        ],
+        [
+          -23,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        8,
+        8,
+        0
+      ],
+      "returned_Weight_observed": [
+        8,
+        8,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        4
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1171,
+          1319,
+          2048,
+          6744,
+          7281,
+          7431,
+          8121
+        ],
+        [
+          658,
+          804,
+          1190,
+          1965,
+          6970,
+          7262,
+          7816,
+          8910
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            4,
+            4,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 48.821957792155445
+    },
+    {
+      "gain": 5,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 5,
+      "source_sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "fixture_sha256": "66e3b5ab576eb224805aad91ed2690dc82dc782e74afdcde461c47c6b47cf60a",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ],
+        [
+          -25,
+          37
+        ],
+        [
+          -23,
+          37
+        ],
+        [
+          -21,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        10,
+        10,
+        0
+      ],
+      "returned_Weight_observed": [
+        10,
+        10,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        5
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1171,
+          1319,
+          1402,
+          1763,
+          6744,
+          7281,
+          7431,
+          7862,
+          8121
+        ],
+        [
+          658,
+          804,
+          914,
+          1029,
+          1886,
+          6970,
+          7262,
+          7462,
+          7816,
+          8586
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            5,
+            5,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 49.33179016713984
+    },
+    {
+      "gain": 7,
+      "source_file": "BCA-IP_condition1_N2.yaml",
+      "source_core": 1,
+      "source_sha256": "10be9ed334fe5621f151a8a6111e961692dd688d61b99549aa11c2dede128ea8",
+      "fixture_sha256": "ecd1fdb0cf1141d59ba5c06c38e7d5dc964be1ec224ab03cbedbb2a6290f3830",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ],
+        [
+          -25,
+          37
+        ],
+        [
+          -23,
+          37
+        ],
+        [
+          -21,
+          37
+        ],
+        [
+          -19,
+          37
+        ],
+        [
+          -17,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        14,
+        14,
+        0
+      ],
+      "returned_Weight_observed": [
+        14,
+        14,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        7
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1171,
+          1319,
+          1402,
+          1515,
+          1626,
+          1763,
+          6744,
+          7281,
+          7431,
+          7526,
+          7862,
+          7939,
+          8121
+        ],
+        [
+          658,
+          804,
+          914,
+          1029,
+          1120,
+          1330,
+          2942,
+          6970,
+          7262,
+          7462,
+          7816,
+          7910,
+          8210,
+          8586
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            7,
+            7,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 51.19751304201782
+    },
+    {
+      "gain": 9,
+      "source_file": "BCA-IP_condition1_N2.yaml",
+      "source_core": 5,
+      "source_sha256": "10be9ed334fe5621f151a8a6111e961692dd688d61b99549aa11c2dede128ea8",
+      "fixture_sha256": "fa7df1e4da077656b0eb895701317f736280f1aed02a4f66000095a58721c575",
+      "post_pool_initial_positions": [
+        [
+          -29,
+          37
+        ],
+        [
+          -27,
+          37
+        ],
+        [
+          -25,
+          37
+        ],
+        [
+          -23,
+          37
+        ],
+        [
+          -21,
+          37
+        ],
+        [
+          -19,
+          37
+        ],
+        [
+          -17,
+          37
+        ],
+        [
+          -15,
+          37
+        ],
+        [
+          -13,
+          37
+        ]
+      ],
+      "positive_trials": 2,
+      "no_reset_controls": 1,
+      "pulses_per_positive_trial": 2,
+      "pulse_interval": 6000,
+      "steps": 12000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "returned_Weight_expected": [
+        18,
+        18,
+        0
+      ],
+      "returned_Weight_observed": [
+        18,
+        18,
+        0
+      ],
+      "lower_Post_Pool_tokens": [
+        0,
+        0,
+        0
+      ],
+      "remaining_Weights_in_Post_Pool_and_C5_input": [
+        0,
+        0,
+        9
+      ],
+      "waiting_region": {
+        "bounds_inclusive": [
+          -36,
+          29,
+          8,
+          45
+        ],
+        "ratchet_keys_subtracted": 1
+      },
+      "pre_pool_return_steps": [
+        [
+          1017,
+          1171,
+          1319,
+          1402,
+          1478,
+          1626,
+          1866,
+          2033,
+          2164,
+          6744,
+          7281,
+          7431,
+          7526,
+          7552,
+          7862,
+          7927,
+          8037,
+          8121
+        ],
+        [
+          658,
+          804,
+          914,
+          1029,
+          1120,
+          1330,
+          1526,
+          1588,
+          2942,
+          6970,
+          7262,
+          7462,
+          7816,
+          7910,
+          8016,
+          8210,
+          8262,
+          8586
+        ],
+        []
+      ],
+      "between_pulses": [
+        {
+          "step": 0,
+          "returned_before_reload": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "step": 6000,
+          "returned_before_reload": [
+            9,
+            9,
+            0
+          ]
+        }
+      ],
+      "passed": true,
+      "elapsed_sec": 52.820595416938886
+    }
+  ],
+  "passed": true
+}

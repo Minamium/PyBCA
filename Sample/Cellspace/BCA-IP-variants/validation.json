@@ -1,0 +1,681 @@
+{
+  "variants": [
+    {
+      "file": "BCA-IP_condition1_N1.yaml",
+      "sha256": "a7be87be4996801feef8fb82cade8537f2dc0bab9df3c2f00bd8253a3a2b5879",
+      "weight_counts_A_B": [
+        4,
+        3,
+        2,
+        1,
+        5,
+        5,
+        4,
+        3,
+        2,
+        1,
+        5,
+        5
+      ],
+      "TD_capacity_A_B": [
+        6,
+        6
+      ],
+      "changed_cells_inside_allowed_regions": 5816,
+      "outside_allowed_regions_changed": 0,
+      "event_coordinates_valid": true
+    },
+    {
+      "file": "BCA-IP_condition1_N2.yaml",
+      "sha256": "10be9ed334fe5621f151a8a6111e961692dd688d61b99549aa11c2dede128ea8",
+      "weight_counts_A_B": [
+        7,
+        5,
+        3,
+        1,
+        9,
+        9,
+        7,
+        5,
+        3,
+        1,
+        9,
+        9
+      ],
+      "TD_capacity_A_B": [
+        6,
+        6
+      ],
+      "changed_cells_inside_allowed_regions": 6932,
+      "outside_allowed_regions_changed": 0,
+      "event_coordinates_valid": true
+    },
+    {
+      "file": "BCA-IP_condition2_N2.yaml",
+      "sha256": "761ad0314da639c8b662bb38ee6c02aebc27598aa25a94ff286336815a252878",
+      "weight_counts_A_B": [
+        7,
+        7,
+        9,
+        1,
+        1,
+        1,
+        7,
+        7,
+        9,
+        1,
+        1,
+        1
+      ],
+      "TD_capacity_A_B": [
+        8,
+        8
+      ],
+      "changed_cells_inside_allowed_regions": 6486,
+      "outside_allowed_regions_changed": 0,
+      "event_coordinates_valid": true
+    }
+  ],
+  "matched_N1_N2_changed_cells": 1460,
+  "legacy_condition2_initial_weights": [
+    4,
+    4,
+    5,
+    1,
+    1,
+    1
+  ],
+  "legacy_reset_ladder_gains_by_stage_count": [
+    4,
+    3,
+    2,
+    1,
+    5,
+    5
+  ],
+  "schema_version": 1,
+  "script_sha256": "dd960eb8bc85b536928ec4d6004c1b5f00820270afd203fb4e9957775b000a66",
+  "generator_sha256": "be5a4382b6f5ceb5a03f5146f93ca300b47f5fa031d6c1beac8dd5ac5be0c0f1",
+  "limits": [
+    "Reset Amp counts are measured with an absorbing output port.",
+    "Whole-FSM Weight/Key/Ans restoration and long-run optimization remain unverified.",
+    "These maps have a wider layout than the historical 512-trial run."
+  ],
+  "dynamic_reset_probes": [
+    {
+      "gain": 1,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 4,
+      "fixture_sha256": "6a84d81f4806f19281a23ba771757004dd0ff852bb4b02b3d9de03dc1918bf46",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "observed_output_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "output_steps": [
+        [
+          661,
+          5607,
+          10814
+        ],
+        [
+          695,
+          6215,
+          11488
+        ],
+        [
+          639,
+          5756,
+          10627
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 42.42084712488577
+    },
+    {
+      "gain": 2,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 3,
+      "fixture_sha256": "14685c4dfd454b52b5f962f8c149e045891b181ed5325425fcd5643be4e9ae47",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        6,
+        6,
+        6,
+        0
+      ],
+      "observed_output_counts": [
+        6,
+        6,
+        6,
+        0
+      ],
+      "output_steps": [
+        [
+          490,
+          758,
+          5880,
+          6007,
+          10632,
+          10667
+        ],
+        [
+          670,
+          723,
+          6015,
+          6160,
+          11300,
+          11457
+        ],
+        [
+          493,
+          610,
+          5718,
+          6818,
+          10614,
+          10672
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 54.321206792024896
+    },
+    {
+      "gain": 3,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 2,
+      "fixture_sha256": "8322343736eeaf6c110cf71a3e487d2ee5e14d829ff37819988ae7484a6cd589",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        9,
+        9,
+        9,
+        0
+      ],
+      "observed_output_counts": [
+        9,
+        9,
+        9,
+        0
+      ],
+      "output_steps": [
+        [
+          606,
+          758,
+          774,
+          5962,
+          6730,
+          6778,
+          10632,
+          10869,
+          11370
+        ],
+        [
+          652,
+          982,
+          1050,
+          6015,
+          6025,
+          6641,
+          11300,
+          11457,
+          11962
+        ],
+        [
+          493,
+          778,
+          1034,
+          5718,
+          5824,
+          5890,
+          10589,
+          10614,
+          10672
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 56.60259145894088
+    },
+    {
+      "gain": 4,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 1,
+      "fixture_sha256": "152dcce1827937897a17fb7acfe5bd6b6ba135caaf82d45511c17167548d42b2",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        12,
+        12,
+        12,
+        0
+      ],
+      "observed_output_counts": [
+        12,
+        12,
+        12,
+        0
+      ],
+      "output_steps": [
+        [
+          606,
+          758,
+          1071,
+          1126,
+          5962,
+          6730,
+          6794,
+          8040,
+          10632,
+          10821,
+          10869,
+          11531
+        ],
+        [
+          652,
+          1046,
+          1050,
+          1556,
+          6015,
+          6025,
+          6152,
+          6737,
+          11300,
+          11457,
+          11705,
+          11775
+        ],
+        [
+          493,
+          778,
+          806,
+          897,
+          5718,
+          5824,
+          6291,
+          6316,
+          10589,
+          10614,
+          10827,
+          11496
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 52.94661670783535
+    },
+    {
+      "gain": 5,
+      "source_file": "BCA-IP_condition1_N1.yaml",
+      "source_core": 5,
+      "fixture_sha256": "e76b250e020540d7d6993d63057198dde2b4478c160fa01411f3a24f00a70904",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        15,
+        15,
+        15,
+        0
+      ],
+      "observed_output_counts": [
+        15,
+        15,
+        15,
+        0
+      ],
+      "output_steps": [
+        [
+          606,
+          758,
+          1071,
+          1303,
+          1447,
+          5962,
+          6612,
+          6730,
+          6778,
+          6794,
+          10632,
+          10821,
+          10869,
+          11267,
+          11637
+        ],
+        [
+          652,
+          982,
+          1046,
+          1050,
+          1556,
+          6015,
+          6025,
+          6152,
+          6361,
+          7438,
+          11300,
+          11446,
+          11457,
+          11705,
+          11962
+        ],
+        [
+          493,
+          778,
+          1034,
+          1215,
+          2379,
+          5718,
+          5824,
+          6057,
+          6274,
+          6291,
+          10589,
+          10614,
+          10827,
+          10957,
+          11802
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 58.45809133304283
+    },
+    {
+      "gain": 7,
+      "source_file": "BCA-IP_condition1_N2.yaml",
+      "source_core": 1,
+      "fixture_sha256": "5fb1e008819a9724ce7a13f8808fc20e86061f1216ea73b4126dbe45095461e6",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        21,
+        21,
+        21,
+        0
+      ],
+      "observed_output_counts": [
+        21,
+        21,
+        21,
+        0
+      ],
+      "output_steps": [
+        [
+          606,
+          758,
+          774,
+          796,
+          1071,
+          1303,
+          1447,
+          5962,
+          6612,
+          6730,
+          6778,
+          6794,
+          6970,
+          7229,
+          10632,
+          10821,
+          10869,
+          10959,
+          10987,
+          11637,
+          11880
+        ],
+        [
+          652,
+          982,
+          1046,
+          1050,
+          1247,
+          1556,
+          2265,
+          6015,
+          6025,
+          6152,
+          6361,
+          6590,
+          6737,
+          7438,
+          11300,
+          11446,
+          11457,
+          11705,
+          11962,
+          12198,
+          12627
+        ],
+        [
+          493,
+          778,
+          1034,
+          1215,
+          1423,
+          1500,
+          2379,
+          5718,
+          5824,
+          6069,
+          6234,
+          6291,
+          6408,
+          6516,
+          10589,
+          10614,
+          10827,
+          10957,
+          11139,
+          11142,
+          11802
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 99.84447191702202
+    },
+    {
+      "gain": 9,
+      "source_file": "BCA-IP_condition1_N2.yaml",
+      "source_core": 5,
+      "fixture_sha256": "66cf46fe04f0653a107eab28a2b14bb4db88efa15a71a856a585d86f2f8aeb80",
+      "steps": 16000,
+      "independent_positive_trials": 3,
+      "no_input_trials": 1,
+      "pulses_per_positive_trial": 3,
+      "pulse_interval": 5000,
+      "seed": 20261006,
+      "global_prob": 0.5,
+      "injection_counts": [
+        3,
+        3,
+        3,
+        0
+      ],
+      "expected_output_counts": [
+        27,
+        27,
+        27,
+        0
+      ],
+      "observed_output_counts": [
+        27,
+        27,
+        27,
+        0
+      ],
+      "output_steps": [
+        [
+          606,
+          758,
+          774,
+          796,
+          1071,
+          1126,
+          1303,
+          1447,
+          1548,
+          5962,
+          6612,
+          6730,
+          6778,
+          6794,
+          6970,
+          7229,
+          7302,
+          8158,
+          10632,
+          10821,
+          10869,
+          10987,
+          11370,
+          11464,
+          11637,
+          12056,
+          12378
+        ],
+        [
+          652,
+          982,
+          1046,
+          1050,
+          1221,
+          1228,
+          1556,
+          1710,
+          2265,
+          6015,
+          6025,
+          6152,
+          6361,
+          6737,
+          6818,
+          6972,
+          7155,
+          7438,
+          11300,
+          11446,
+          11457,
+          11705,
+          11962,
+          12198,
+          12392,
+          12627,
+          12895
+        ],
+        [
+          493,
+          778,
+          1034,
+          1215,
+          1423,
+          1500,
+          1742,
+          2379,
+          2580,
+          5718,
+          5824,
+          6069,
+          6234,
+          6291,
+          6316,
+          6408,
+          6516,
+          7327,
+          10589,
+          10614,
+          10827,
+          10834,
+          10957,
+          10967,
+          11140,
+          11496,
+          11802
+        ],
+        []
+      ],
+      "passed": true,
+      "elapsed_sec": 115.84728362504393
+    }
+  ],
+  "passed": true,
+  "dynamic_validation_executed": true
+}

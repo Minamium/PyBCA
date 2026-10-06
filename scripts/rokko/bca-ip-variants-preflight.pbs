@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N pybca_variants_check
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+#PBS -l place=free
+#PBS -l walltime=02:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+mkdir -p results/logs
+exec > >(tee "results/logs/variants-preflight-${PBS_JOBID}.log") 2>&1
+source scripts/rokko/variants-env.sh
+mkdir -p "$VARIANT_ROOT/preflight"
+python tests/test_rule_equivalence.py --device cuda --output "$VARIANT_ROOT/preflight/rules-cuda.json"
+PYBCA_TEST_DEVICE=cuda python -m unittest discover -s tests -p test_core_runtime.py
+python scripts/check_bca_ip_variants.py parity --root "$VARIANT_ROOT/preflight"
+for variant in condition1_N1 condition1_N2 condition2_N2; do
+    run_variant "$variant" "$VARIANT_ROOT/preflight/$variant" 20000 20261008
+done
+python scripts/check_bca_ip_variants.py pilot --root "$VARIANT_ROOT/preflight"
