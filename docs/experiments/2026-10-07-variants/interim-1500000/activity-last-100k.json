@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-07T06:10:13.320786+00:00",
+  "completed_step_interval": [
+    1400000,
+    1500000
+  ],
+  "events_by_family": {
+    "FSM": 56940,
+    "F": 166411,
+    "Amp": 168981,
+    "other": 19891,
+    "TD": 882,
+    "reset": 28
+  },
+  "trials_by_family": {
+    "FSM": 512,
+    "F": 512,
+    "Amp": 512,
+    "other": 507,
+    "TD": 353,
+    "reset": 27
+  },
+  "first_event_by_family": {
+    "FSM": 1400001,
+    "F": 1400001,
+    "Amp": 1400001,
+    "other": 1400021,
+    "TD": 1400167,
+    "reset": 1404033
+  },
+  "last_event_by_family": {
+    "FSM": 1499999,
+    "F": 1500000,
+    "Amp": 1500000,
+    "other": 1499999,
+    "TD": 1499680,
+    "reset": 1496079
+  },
+  "all_rank_input_and_rng_identities_match": true
+}

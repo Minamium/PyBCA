@@ -1,0 +1,64 @@
+{
+  "captured_at": "2026-10-07T06:06:17.191569+00:00",
+  "source_run": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N1",
+  "horizon": 1500000,
+  "purpose": "Immutable history prefix for interim readout; not a resumable simulation checkpoint.",
+  "ranks": [
+    {
+      "rank": 0,
+      "source_next_step": 1532000,
+      "source_manifest_sha256": "de5aeefe2d9a36e57fe36196229bc565965b48bfbb7dd2090515050c1f1d39e2",
+      "history_chunks": 1500,
+      "raw_records": 566878
+    },
+    {
+      "rank": 1,
+      "source_next_step": 1531000,
+      "source_manifest_sha256": "1eb5f3ebc7f9a1e1e62f51e027902426eeecbcd61d3da071210177bb5defd1a9",
+      "history_chunks": 1500,
+      "raw_records": 579756
+    },
+    {
+      "rank": 2,
+      "source_next_step": 1531000,
+      "source_manifest_sha256": "b20fa4d2e43eeb760a791595af6683a86517df113c8a77b213aaff2c40323f17",
+      "history_chunks": 1500,
+      "raw_records": 570298
+    },
+    {
+      "rank": 3,
+      "source_next_step": 1531000,
+      "source_manifest_sha256": "97bfff1cec6a05e0d527183ae689b993455369212d526e1de6caa2efc06170f4",
+      "history_chunks": 1500,
+      "raw_records": 581743
+    },
+    {
+      "rank": 4,
+      "source_next_step": 1536000,
+      "source_manifest_sha256": "57d9109da69d43cfb40ecd9e1c3bb5c6083a06004fa7dcaa08b5346457a7c14d",
+      "history_chunks": 1500,
+      "raw_records": 573426
+    },
+    {
+      "rank": 5,
+      "source_next_step": 1536000,
+      "source_manifest_sha256": "07890deccd90b683e746579fa01faf571468f0c1f1c1af0a32dc998a25bb0678",
+      "history_chunks": 1500,
+      "raw_records": 570199
+    },
+    {
+      "rank": 6,
+      "source_next_step": 1529000,
+      "source_manifest_sha256": "a40228362fed675c080b77e33e1a0c39884de719f21f1458fe4b469d328e1fc4",
+      "history_chunks": 1500,
+      "raw_records": 559013
+    },
+    {
+      "rank": 7,
+      "source_next_step": 1531000,
+      "source_manifest_sha256": "3391e5161b6709bbca9c057bb6bb75f22e931f3d63d583038d1022a5b9caff1a",
+      "history_chunks": 1500,
+      "raw_records": 554837
+    }
+  ]
+}

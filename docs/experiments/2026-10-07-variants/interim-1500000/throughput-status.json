@@ -1,0 +1,261 @@
+{
+  "checked_at": "2026-10-07T06:07:44.413025+00:00",
+  "jobs": {
+    "238946.rokko1": {
+      "Job_Name": "pybca_variants_check",
+      "job_state": "F",
+      "Exit_status": 0,
+      "stime": "Wed Oct  7 03:01:04 2026",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "resources_used": {
+        "cpupercent": 563,
+        "cput": "03:54:39",
+        "mem": "3691772kb",
+        "ncpus": 8,
+        "vmem": "43026920kb",
+        "walltime": "00:41:26"
+      },
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "02:00:00"
+      },
+      "depend": "beforeok:238947.rokko1@rokko1:238948.rokko1@rokko1:238949.rokko1@rokko1",
+      "comment": "Job run at Wed Oct 07 at 03:01 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4) and finished"
+    },
+    "238947.rokko1": {
+      "Job_Name": "bca_c1n1_3m",
+      "job_state": "R",
+      "Exit_status": null,
+      "stime": "Wed Oct  7 03:42:33 2026",
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "resources_used": {
+        "cpupercent": 793,
+        "cput": "90:26:20",
+        "mem": "353408kb",
+        "ncpus": 8,
+        "vmem": "4214060kb",
+        "walltime": "11:23:45"
+      },
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "beforeany:238948.rokko1@rokko1",
+      "comment": "Job run at Wed Oct 07 at 03:42 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4)"
+    },
+    "238948.rokko1": {
+      "Job_Name": "bca_c1n2_3m",
+      "job_state": "H",
+      "Exit_status": null,
+      "stime": null,
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "resources_used": null,
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "afterany:238947.rokko1@rokko1,beforeany:238949.rokko1@rokko1",
+      "comment": null
+    },
+    "238949.rokko1": {
+      "Job_Name": "bca_c2n2_3m",
+      "job_state": "H",
+      "Exit_status": null,
+      "stime": null,
+      "qtime": "Wed Oct  7 00:47:34 2026",
+      "resources_used": null,
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "afterany:238948.rokko1@rokko1",
+      "comment": null
+    }
+  },
+  "current_ranks": [
+    {
+      "rank": 0,
+      "committed_step": 1535000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40935.8,
+      "seconds_per_step_recent": 0.0268,
+      "remaining_hours_from_checkpoint": 10.943333333333333,
+      "projected_simulation_hours": 22.31438888888889,
+      "last_chunk": {
+        "start_step": 1534000,
+        "next_step": 1535000,
+        "records": 528,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1271181312
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:05:14+00:00"
+    },
+    {
+      "rank": 1,
+      "committed_step": 1535000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40951.0,
+      "seconds_per_step_recent": 0.02678800000000003,
+      "remaining_hours_from_checkpoint": 10.938433333333345,
+      "projected_simulation_hours": 22.31371111111112,
+      "last_chunk": {
+        "start_step": 1534000,
+        "next_step": 1535000,
+        "records": 534,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1270439936
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:05:30+00:00"
+    },
+    {
+      "rank": 2,
+      "committed_step": 1535000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40946.3,
+      "seconds_per_step_recent": 0.026774000000000013,
+      "remaining_hours_from_checkpoint": 10.932716666666673,
+      "projected_simulation_hours": 22.306688888888893,
+      "last_chunk": {
+        "start_step": 1534000,
+        "next_step": 1535000,
+        "records": 561,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1269514240
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:05:25+00:00"
+    },
+    {
+      "rank": 3,
+      "committed_step": 1535000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40946.7,
+      "seconds_per_step_recent": 0.026758999999999943,
+      "remaining_hours_from_checkpoint": 10.926591666666644,
+      "projected_simulation_hours": 22.300674999999973,
+      "last_chunk": {
+        "start_step": 1534000,
+        "next_step": 1535000,
+        "records": 501,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1270849536
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:05:25+00:00"
+    },
+    {
+      "rank": 4,
+      "committed_step": 1539000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40838.7,
+      "seconds_per_step_recent": 0.026700999999999985,
+      "remaining_hours_from_checkpoint": 10.902908333333327,
+      "projected_simulation_hours": 22.246991666666663,
+      "last_chunk": {
+        "start_step": 1538000,
+        "next_step": 1539000,
+        "records": 493,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1267175424
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:03:37+00:00"
+    },
+    {
+      "rank": 5,
+      "committed_step": 1539000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40825.4,
+      "seconds_per_step_recent": 0.026689000000000015,
+      "remaining_hours_from_checkpoint": 10.89800833333334,
+      "projected_simulation_hours": 22.23839722222223,
+      "last_chunk": {
+        "start_step": 1538000,
+        "next_step": 1539000,
+        "records": 477,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1266102272
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:03:24+00:00"
+    },
+    {
+      "rank": 6,
+      "committed_step": 1533000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 41002.6,
+      "seconds_per_step_recent": 0.02681,
+      "remaining_hours_from_checkpoint": 10.947416666666667,
+      "projected_simulation_hours": 22.337027777777777,
+      "last_chunk": {
+        "start_step": 1532000,
+        "next_step": 1533000,
+        "records": 476,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1266143232
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:06:21+00:00"
+    },
+    {
+      "rank": 7,
+      "committed_step": 1535000,
+      "last_checkpoint_step": 1530000,
+      "last_checkpoint_elapsed_sec": 40948.3,
+      "seconds_per_step_recent": 0.026759000000000015,
+      "remaining_hours_from_checkpoint": 10.926591666666674,
+      "projected_simulation_hours": 22.301119444444453,
+      "last_chunk": {
+        "start_step": 1534000,
+        "next_step": 1535000,
+        "records": 543,
+        "memory": {
+          "cuda_allocated_bytes": 1492573184,
+          "cuda_peak_allocated_bytes": 1492573696,
+          "host_peak_rss_bytes": 1271017472
+        }
+      },
+      "checkpoint_mtime": "2026-10-07T06:05:27+00:00"
+    }
+  ]
+}

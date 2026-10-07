@@ -1,0 +1,394 @@
+{
+  "passed": true,
+  "source": {
+    "implementation": {
+      "api/__init__.py": "cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d",
+      "api/config.py": "a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40",
+      "api/distributed.py": "f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4",
+      "api/engine.py": "c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc",
+      "api/logging_utils.py": "bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9",
+      "api/result.py": "3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d",
+      "api/streaming.py": "472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5",
+      "core/__init__.py": "07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea",
+      "core/cuda_backend.py": "8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b",
+      "core/io.py": "3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274",
+      "core/kernels.cu": "7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d",
+      "core/optimized.py": "b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0",
+      "core/random.py": "bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee",
+      "core/schemes/__init__.py": "be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e",
+      "core/schemes/bca_default.py": "8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4",
+      "core/schemes/registry.py": "61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d",
+      "core/simulator.py": "4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe",
+      "core/states/__init__.py": "204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3",
+      "core/states/registry.py": "9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8",
+      "core/states/state_bca.py": "5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332"
+    },
+    "rng_version": "philox4x32-10-v1",
+    "input_manifest_sha256": "eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d",
+    "checker_sha256": "c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35",
+    "runner_sha256": "f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45"
+  },
+  "variants": [
+    {
+      "variant": "condition1_N1",
+      "steps": 20000,
+      "seed": 20261008,
+      "trials": 512,
+      "ranks": [
+        {
+          "rank": 0,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.8837966024876,
+          "checkpoint_sha256": "1bd9ff5aff92a58d261b12d972e40672f0fcbaa9dce30d610028a24ba78585f6",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 1,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.7906383611262,
+          "checkpoint_sha256": "777443ba491bd516a88a6b4d27e0a906a58083f8e2e00fd5db5fbff624a06164",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 2,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.8965771570802,
+          "checkpoint_sha256": "44c5401ad2180a75006648472958bb8894e607c543d35eb5b4fc074ee5e18d84",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 3,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.9165529534221,
+          "checkpoint_sha256": "11d13c6f615bfde5a918ef9add6be3a54e57703812969378f7251c8f15973450",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 4,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.7035407871008,
+          "checkpoint_sha256": "70184fdeaa38ee57d4108a5eb5af06b776722ba1e55dab231a12f1d8059de1cc",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 5,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.7913830019534,
+          "checkpoint_sha256": "9c32e98f4ebf37b635b1ea1d172bfd727bdb9f5365b46b6a6a68ad2be3edd005",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 6,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.7712885886431,
+          "checkpoint_sha256": "33f2b85ab1b139cf6d1a52b99340c6043e05814014227763af68fb61fb1ed877",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 7,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 536.9280412085354,
+          "checkpoint_sha256": "05124338d1db0bd664fec937cf00134092a6801752bc0a8c0ee67c011b316591",
+          "peak_cuda_bytes": 1492573696
+        }
+      ],
+      "events_by_family": {
+        "TD": 1161,
+        "FSM": 36,
+        "Amp": 115,
+        "F": 104
+      },
+      "first_event_steps": {
+        "TD": 1580,
+        "FSM": 3606,
+        "Amp": 4219,
+        "F": 5167
+      },
+      "passed": true,
+      "source": {
+        "implementation": {
+          "api/__init__.py": "cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d",
+          "api/config.py": "a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40",
+          "api/distributed.py": "f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4",
+          "api/engine.py": "c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc",
+          "api/logging_utils.py": "bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9",
+          "api/result.py": "3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d",
+          "api/streaming.py": "472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5",
+          "core/__init__.py": "07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea",
+          "core/cuda_backend.py": "8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b",
+          "core/io.py": "3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274",
+          "core/kernels.cu": "7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d",
+          "core/optimized.py": "b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0",
+          "core/random.py": "bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee",
+          "core/schemes/__init__.py": "be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e",
+          "core/schemes/bca_default.py": "8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4",
+          "core/schemes/registry.py": "61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d",
+          "core/simulator.py": "4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe",
+          "core/states/__init__.py": "204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3",
+          "core/states/registry.py": "9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8",
+          "core/states/state_bca.py": "5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332"
+        },
+        "rng_version": "philox4x32-10-v1",
+        "input_manifest_sha256": "eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d",
+        "checker_sha256": "c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35",
+        "runner_sha256": "f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45"
+      },
+      "checked_at": "2026-10-06T18:42:04.415353+00:00",
+      "projection": {
+        "seconds_per_step": 0.026846402060426773,
+        "hours_for_3m": 22.37200171702231,
+        "hours_for_3m_with_10pct_margin": 24.60920188872454,
+        "projection_only": true
+      }
+    },
+    {
+      "variant": "condition1_N2",
+      "steps": 20000,
+      "seed": 20261008,
+      "trials": 512,
+      "ranks": [
+        {
+          "rank": 0,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.2604132480919,
+          "checkpoint_sha256": "4e63ff61206a23e0e17744de5ee9a03893c6a3429c0862f4e3e0c32200eb88b4",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 1,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.3199838213623,
+          "checkpoint_sha256": "e5c4c79f18cba1b0a4c307bd7d8897a80eb84f2ce564177bb1fa0e986d8296b3",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 2,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.108807772398,
+          "checkpoint_sha256": "0d4a0a8be9368fe7bfafc3053ea3425a4227bd2ca09d8b10654f4bee6aa35044",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 3,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.30787018314,
+          "checkpoint_sha256": "8257588c81da540efa06b780e1e0535039dba7a92024015dc5fe9327884bddd2",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 4,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.2240205742419,
+          "checkpoint_sha256": "1f894af45d501dcd7a8ef6017ec565b69a38ffa41b55065a59ff9af8961149b2",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 5,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.0833325758576,
+          "checkpoint_sha256": "9ab47caea5b8b9a236140278ad74a6567754012783cbb91309691c178fe9bfa9",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 6,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.0018061921,
+          "checkpoint_sha256": "2f4cf9a0f3563fb1f488d561b874325368ec346170446aa83a5ed0256f9bb39d",
+          "peak_cuda_bytes": 1492573696
+        },
+        {
+          "rank": 7,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 538.1086453124881,
+          "checkpoint_sha256": "ccbc74ec81584ed56af7adb64d307dda017e62ff7d4873be8dd702fc5f94bea6",
+          "peak_cuda_bytes": 1492573696
+        }
+      ],
+      "events_by_family": {
+        "TD": 1162,
+        "FSM": 36,
+        "Amp": 115,
+        "F": 104
+      },
+      "first_event_steps": {
+        "TD": 1580,
+        "FSM": 3606,
+        "Amp": 4219,
+        "F": 5167
+      },
+      "passed": true,
+      "source": {
+        "implementation": {
+          "api/__init__.py": "cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d",
+          "api/config.py": "a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40",
+          "api/distributed.py": "f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4",
+          "api/engine.py": "c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc",
+          "api/logging_utils.py": "bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9",
+          "api/result.py": "3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d",
+          "api/streaming.py": "472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5",
+          "core/__init__.py": "07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea",
+          "core/cuda_backend.py": "8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b",
+          "core/io.py": "3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274",
+          "core/kernels.cu": "7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d",
+          "core/optimized.py": "b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0",
+          "core/random.py": "bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee",
+          "core/schemes/__init__.py": "be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e",
+          "core/schemes/bca_default.py": "8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4",
+          "core/schemes/registry.py": "61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d",
+          "core/simulator.py": "4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe",
+          "core/states/__init__.py": "204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3",
+          "core/states/registry.py": "9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8",
+          "core/states/state_bca.py": "5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332"
+        },
+        "rng_version": "philox4x32-10-v1",
+        "input_manifest_sha256": "eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d",
+        "checker_sha256": "c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35",
+        "runner_sha256": "f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45"
+      },
+      "checked_at": "2026-10-06T18:42:16.203033+00:00",
+      "projection": {
+        "seconds_per_step": 0.026915999191068112,
+        "hours_for_3m": 22.429999325890094,
+        "hours_for_3m_with_10pct_margin": 24.672999258479102,
+        "projection_only": true
+      }
+    },
+    {
+      "variant": "condition2_N2",
+      "steps": 20000,
+      "seed": 20261008,
+      "trials": 512,
+      "ranks": [
+        {
+          "rank": 0,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.9530402570963,
+          "checkpoint_sha256": "21bf6fd386266727de627ed5b5b70ff69e8e2df23829383fdf6bb505cbae1e63",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 1,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.950612757355,
+          "checkpoint_sha256": "f41470715ba7070a708b4c801136b4fa5e68d256d28be460252f4c27a74559e4",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 2,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.9461338408291,
+          "checkpoint_sha256": "dc7c6f38b67c66fd4bcc2d351ecdaef124fd57e3e443c24cb1df9b6b5a5494fd",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 3,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.8403551615775,
+          "checkpoint_sha256": "b658181ed3d6f4012c4d0620de08d2566973252f2a11be7822b0c224b6399a46",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 4,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.9530902393162,
+          "checkpoint_sha256": "6cc1832d45d5d0514ab327aac58fc1afe686a666be5e8a92ee0408bfd10d6aea",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 5,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.8259462378919,
+          "checkpoint_sha256": "98e3ab97c334b441a6ed8df65becaf745e63b00dd9ca7481e9fe27034fbe0e26",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 6,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.9663633741438,
+          "checkpoint_sha256": "13de611d2e6ca2415c3ff304fd63ccd50958b0b5fbc862b656915cd100d6f125",
+          "peak_cuda_bytes": 1496770048
+        },
+        {
+          "rank": 7,
+          "step": 20000,
+          "trials": 64,
+          "elapsed_sec": 548.8277673833072,
+          "checkpoint_sha256": "423977136c0ad0149569ddf12bfcc277ae2bd0e693c7d7fb955b30af8be3b9a2",
+          "peak_cuda_bytes": 1496770048
+        }
+      ],
+      "events_by_family": {
+        "TD": 1553,
+        "FSM": 53,
+        "Amp": 171,
+        "F": 155
+      },
+      "first_event_steps": {
+        "TD": 2050,
+        "FSM": 4159,
+        "Amp": 4658,
+        "F": 5173
+      },
+      "passed": true,
+      "source": {
+        "implementation": {
+          "api/__init__.py": "cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d",
+          "api/config.py": "a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40",
+          "api/distributed.py": "f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4",
+          "api/engine.py": "c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc",
+          "api/logging_utils.py": "bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9",
+          "api/result.py": "3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d",
+          "api/streaming.py": "472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5",
+          "core/__init__.py": "07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea",
+          "core/cuda_backend.py": "8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b",
+          "core/io.py": "3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274",
+          "core/kernels.cu": "7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d",
+          "core/optimized.py": "b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0",
+          "core/random.py": "bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee",
+          "core/schemes/__init__.py": "be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e",
+          "core/schemes/bca_default.py": "8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4",
+          "core/schemes/registry.py": "61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d",
+          "core/simulator.py": "4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe",
+          "core/states/__init__.py": "204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3",
+          "core/states/registry.py": "9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8",
+          "core/states/state_bca.py": "5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332"
+        },
+        "rng_version": "philox4x32-10-v1",
+        "input_manifest_sha256": "eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d",
+        "checker_sha256": "c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35",
+        "runner_sha256": "f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45"
+      },
+      "checked_at": "2026-10-06T18:42:29.941715+00:00",
+      "projection": {
+        "seconds_per_step": 0.027448318168707193,
+        "hours_for_3m": 22.87359847392266,
+        "hours_for_3m_with_10pct_margin": 25.16095832131493,
+        "projection_only": true
+      }
+    }
+  ],
+  "scope": "Short 8-GPU activity, throughput, checkpoint integrity and finite parity; not optimization statistics."
+}

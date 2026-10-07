@@ -1,0 +1,154 @@
+{
+  "checked_at": "2026-10-07T06:12:21.348885+00:00",
+  "variant": "condition1_N1",
+  "job_id": "238947.rokko1",
+  "analysis_horizon": 1500000,
+  "target_steps": 3000000,
+  "trials": 512,
+  "current_status_checked_at": "2026-10-07T06:11:30.188171+00:00",
+  "current_saved_steps_range": [
+    1541000,
+    1548000
+  ],
+  "optimal_vector": "111100",
+  "optimum_value": 14,
+  "readout": "Decode FSM x1..x6 from the last joint flow-rate regime; either unit may support the trial. Score feasibility/optimality only after decoding.",
+  "short_minimum_duration_steps": 10000,
+  "currently_optimal_short": 314,
+  "currently_optimal_short_percent": 61.328125,
+  "currently_nonoptimal_short": 178,
+  "unresolved_short": 20,
+  "currently_optimal_minimum_100k": 306,
+  "currently_optimal_minimum_100k_percent": 59.765625,
+  "ever_supported_optimum_short": 315,
+  "ever_supported_but_not_current": [
+    174
+  ],
+  "ever_supported_note": "Retrospective segment evidence up to 1.5M; not a precise first-hit time or a guarantee of future retention.",
+  "total_FSM_events": 618315,
+  "trials_with_FSM_events": 512,
+  "total_reset_set_events": 311,
+  "trials_with_reset_set_events": 236,
+  "recent_activity": {
+    "checked_at": "2026-10-07T06:10:13.320786+00:00",
+    "completed_step_interval": [
+      1400000,
+      1500000
+    ],
+    "events_by_family": {
+      "FSM": 56940,
+      "F": 166411,
+      "Amp": 168981,
+      "other": 19891,
+      "TD": 882,
+      "reset": 28
+    },
+    "trials_by_family": {
+      "FSM": 512,
+      "F": 512,
+      "Amp": 512,
+      "other": 507,
+      "TD": 353,
+      "reset": 27
+    },
+    "first_event_by_family": {
+      "FSM": 1400001,
+      "F": 1400001,
+      "Amp": 1400001,
+      "other": 1400021,
+      "TD": 1400167,
+      "reset": 1404033
+    },
+    "last_event_by_family": {
+      "FSM": 1499999,
+      "F": 1500000,
+      "Amp": 1500000,
+      "other": 1499999,
+      "TD": 1499680,
+      "reset": 1496079
+    },
+    "all_rank_input_and_rng_identities_match": true
+  },
+  "stable_infeasible_units_100k": 0,
+  "example": {
+    "trial_id": 0,
+    "unit": "B",
+    "vector": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "last_rate_change": 410000,
+    "regime_duration": 1090000,
+    "readout_start": 1200000,
+    "readout_end": 1500000,
+    "counts": [
+      41,
+      33,
+      60,
+      49,
+      0,
+      0
+    ],
+    "quarter_counts": [
+      [
+        10,
+        12,
+        8,
+        11
+      ],
+      [
+        8,
+        9,
+        8,
+        8
+      ],
+      [
+        13,
+        20,
+        15,
+        12
+      ],
+      [
+        8,
+        17,
+        13,
+        11
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "objective_value": 14,
+    "constraint_value": 6
+  },
+  "history_integrity": {
+    "checked_chunks": 12000,
+    "raw_records": 4556150,
+    "fsm_events": 618315,
+    "reset_set_events": 311
+  },
+  "verification": {
+    "all_512_trial_ids_present": true,
+    "short_result_identical_with_finer_segmentation": true,
+    "optimal_vectors_rechecked_by_enumeration": true,
+    "source_hashes_match": true
+  },
+  "remaining_jobs": {
+    "condition1_N2": "238948.rokko1, held pending condition1_N1 completion",
+    "condition2_N2": "238949.rokko1, held pending condition1_N2 completion"
+  },
+  "scope": "Interim result; the experiment is still running. Nonoptimal or unresolved trials are not final failures."
+}

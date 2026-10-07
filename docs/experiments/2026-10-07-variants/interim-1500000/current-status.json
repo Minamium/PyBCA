@@ -1,0 +1,153 @@
+{
+  "checked_at": "2026-10-07T06:11:30.188171+00:00",
+  "jobs": {
+    "238946.rokko1": {
+      "Job_Name": "pybca_variants_check",
+      "job_state": "F",
+      "Exit_status": 0,
+      "stime": "Wed Oct  7 03:01:04 2026",
+      "resources_used": {
+        "cpupercent": 563,
+        "cput": "03:54:39",
+        "mem": "3691772kb",
+        "ncpus": 8,
+        "vmem": "43026920kb",
+        "walltime": "00:41:26"
+      },
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "02:00:00"
+      },
+      "depend": "beforeok:238947.rokko1@rokko1:238948.rokko1@rokko1:238949.rokko1@rokko1",
+      "comment": "Job run at Wed Oct 07 at 03:01 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4) and finished"
+    },
+    "238947.rokko1": {
+      "Job_Name": "bca_c1n1_3m",
+      "job_state": "R",
+      "Exit_status": null,
+      "stime": "Wed Oct  7 03:42:33 2026",
+      "resources_used": {
+        "cpupercent": 793,
+        "cput": "90:58:38",
+        "mem": "353408kb",
+        "ncpus": 8,
+        "vmem": "4214060kb",
+        "walltime": "11:27:45"
+      },
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "beforeany:238948.rokko1@rokko1",
+      "comment": "Job run at Wed Oct 07 at 03:42 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4)"
+    },
+    "238948.rokko1": {
+      "Job_Name": "bca_c1n2_3m",
+      "job_state": "H",
+      "Exit_status": null,
+      "stime": null,
+      "resources_used": null,
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "afterany:238947.rokko1@rokko1,beforeany:238949.rokko1@rokko1",
+      "comment": null
+    },
+    "238949.rokko1": {
+      "Job_Name": "bca_c2n2_3m",
+      "job_state": "H",
+      "Exit_status": null,
+      "stime": null,
+      "resources_used": null,
+      "Resource_List": {
+        "mem": "64gb",
+        "mpiprocs": 8,
+        "ncpus": 8,
+        "ngpus": 8,
+        "nodect": 1,
+        "place": "free",
+        "select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+        "walltime": "24:00:00"
+      },
+      "depend": "afterany:238948.rokko1@rokko1",
+      "comment": null
+    }
+  },
+  "current_ranks": [
+    {
+      "rank": 0,
+      "committed_step": 1544000,
+      "trials": 64,
+      "last_chunk_records": 520,
+      "checkpoint_updated": "2026-10-07T06:09:42+00:00"
+    },
+    {
+      "rank": 1,
+      "committed_step": 1543000,
+      "trials": 64,
+      "last_chunk_records": 562,
+      "checkpoint_updated": "2026-10-07T06:09:57+00:00"
+    },
+    {
+      "rank": 2,
+      "committed_step": 1543000,
+      "trials": 64,
+      "last_chunk_records": 456,
+      "checkpoint_updated": "2026-10-07T06:09:53+00:00"
+    },
+    {
+      "rank": 3,
+      "committed_step": 1543000,
+      "trials": 64,
+      "last_chunk_records": 574,
+      "checkpoint_updated": "2026-10-07T06:09:53+00:00"
+    },
+    {
+      "rank": 4,
+      "committed_step": 1547000,
+      "trials": 64,
+      "last_chunk_records": 488,
+      "checkpoint_updated": "2026-10-07T06:08:04+00:00"
+    },
+    {
+      "rank": 5,
+      "committed_step": 1548000,
+      "trials": 64,
+      "last_chunk_records": 510,
+      "checkpoint_updated": "2026-10-07T06:07:51+00:00"
+    },
+    {
+      "rank": 6,
+      "committed_step": 1541000,
+      "trials": 64,
+      "last_chunk_records": 480,
+      "checkpoint_updated": "2026-10-07T06:10:49+00:00"
+    },
+    {
+      "rank": 7,
+      "committed_step": 1543000,
+      "trials": 64,
+      "last_chunk_records": 535,
+      "checkpoint_updated": "2026-10-07T06:09:55+00:00"
+    }
+  ]
+}
