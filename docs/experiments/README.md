@@ -1,6 +1,45 @@
 # BCA-IP 実験結果
 
-従来セル空間を512独立試行、global_prob=0.5で実行した。600万ステップまでのFSM持続出力による最適解到達観測は457/512（89.26%）、終了時の確認は446/512（87.11%）。判定条件・感度・各試行の解は以下のレポートとJSONに保存している。
+## 最終まで10万ステップ以上、同じ最適解が続く割合（2026-10-08）
+
+最新の判定は、**A/Bどちらか一方のユニットが、同一の最適解ベクトルを最終ステップTまで10万ステップ以上出力し続けた試行 / 全512試行**。終端につながる最後の連続区間だけを数える。途中で失った最適解は数えず、非最適・判読不能・別の最適解ベクトルへの変化で区間を切る。流量だけが変化し、同じ最適解の信号が続いていれば区間をつなぐ。ユニットを切り替えて継続期間を補うことはしない。A/B両方が条件を満たす場合は1試行と数え、早い方の開始時刻を使う。
+
+| 条件 | 最終ステップT | 10万以上継続 | 割合 | 最適解だが10万未満 | 終端で最適解を確認できない |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 条件1・N=1 | 3,000,000 | 480/512 | **93.75%** | 1 | 31 |
+| 条件2・既存N=1 | 3,000,000 | 422/512 | **82.42%** | 2 | 88 |
+| 条件2・既存N=1 | 6,000,000 | 446/512 | **87.11%** | 0 | 66 |
+
+各行はglobal_prob=0.5、512試行。条件2の300万と600万は同じ試行の継続であり、別の独立標本ではない。「確認できない」には判読不能も含まれ、内部状態が非最適だと確定した失敗率ではない。**条件2の既存回路は初期Weight `[4,4,5,1,1,1]` に対してreset倍率が `[4,3,2,1,5,5]` の不一致を含む。** この図は既存回路の観測結果であり、修正済み条件2・N=2とNだけを変えた比較には使えない。
+
+![条件1・2の最終まで続く最適解出力](2026-10-08-terminal-retention/terminal-retention-conditions-3m.png)
+
+横軸tは、終了まで続く最後の最適解区間の開始ステップ。縦軸は、その開始がt以前で、かつTまで10万以上継続した試行の割合である。式では `F_T(t) = #{trial: s ≤ t, T−s ≥ 100000} / 512`（sは上記の継続開始時刻）。終了後の履歴を使う**事後的な曲線**であり、オンラインの初到達率や、その時点までのログだけで確認できた保持率とは区別する。定義により単調増加し、最後の10万ステップの灰色部分では増えない。帯は各時点の95% Wilson区間で、曲線全体の同時信頼帯ではない。
+
+- 300万比較図: [PNG](2026-10-08-terminal-retention/terminal-retention-conditions-3m.png)・[PDF](2026-10-08-terminal-retention/terminal-retention-conditions-3m.pdf)・[SVG](2026-10-08-terminal-retention/terminal-retention-conditions-3m.svg)
+- 条件2の600万図: [PNG](2026-10-08-terminal-retention/terminal-retention-condition2-6m.png)・[PDF](2026-10-08-terminal-retention/terminal-retention-condition2-6m.pdf)・[SVG](2026-10-08-terminal-retention/terminal-retention-condition2-6m.svg)
+- 条件1のN=1/N=2、同じ80万までの途中比較: [図](2026-10-08-terminal-retention/terminal-retention-N2-interim.png)。それぞれ94/512（18.36%）、22/512（4.30%）。80万時点をTとする判定で、300万までの継続は未確認。条件2・N=2の実行結果はまだ含まない。
+- [全条件の集計と判定規則](2026-10-08-terminal-retention/summary.json)・[検証記録](2026-10-08-terminal-retention/validation.json)・[ファイルSHA-256](2026-10-08-terminal-retention/SHA256SUMS)。各 `*-trials.jsonl` に512試行の継続開始・継続長・ユニット、`*-regimes.jsonl` に各流量区間の信号数と解を保存。
+
+信号読取りは最適性を参照せず、6線の流量変化を1万刻み、最短3ビン（3万）、罰則20の既存手法で検出する。各流量区間**全体**を4分割し、合計4イベント以上かつ3分割以上に出力があればON、合計2以下ならOFF、それ以外は不明とする。その後、制約と目的値を採点する。条件1の最適解は `111100`、条件2は `110101` または `110110`、いずれも目的値14。区間全体を調べるため、以前の末尾30万に窓を制限する判定とは一致しない場合がある。出力は離散的なので、ここでいう継続は信号からの推定であり、各CAステップでの内部状態の証明や厳密な初到達時刻ではない。
+
+従来の最小10万判定との差は条件2の2試行で確認した。300万ではtrial 369を除外（423→422）：Bの最後の31万区間でx4は4イベントだが4分割の出力数が `[0,3,0,1]` で、持続ONを確認できない。600万ではtrial 236を追加（445→446）：Aは57万から600万まで4つの流量区間すべてで `110101` を出力し、最後の流量変化から8万という理由だけで除外する必要がなくなった。条件1の300万は試行ID集合も従来の10万判定と同じ。
+
+全5データセットの26,238流量区間を、FSMイベント時刻から別計算で再検証した。区間の4分割カウント、解、最適性、継続長、512試行の分母、曲線の全点が一致。関連24テストも成功。80万のN=1比較は80万以後のイベントを除いて変化点から再計算している。再現コマンド（リポジトリ直下、既存のFSM読取りデータを使用）：
+
+```sh
+PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 scripts/plot_bca_ip_terminal_retention.py \
+  --config docs/experiments/2026-10-08-terminal-retention/config.json \
+  --output docs/experiments/2026-10-08-terminal-retention
+
+PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest \
+  tests/test_terminal_retention.py tests/test_fsm_output_readout.py \
+  tests/test_short_fsm_stability.py -q
+```
+
+## これまでの判定・ジョブ記録
+
+従来セル空間を512独立試行、global_prob=0.5で実行した。以前の判定による600万ステップまでのFSM持続出力の累積到達観測は457/512（89.26%）、終了時の短期確認（最小1万）は446/512（87.11%）。判定条件・感度・各試行の解は以下のレポートとJSONに保存している。
 
 2026-10-08 08:33 JST時点、新しい条件1・N=1は全512試行・300万ステップを正常完走し、保存履歴・最終状態の監査も成功した。条件1・N=2は約86万/300万ステップまで進行中で、条件2・N=2は順番待ち。全3条件のGPU事前検証は成功済み。
 
@@ -10,6 +49,7 @@
 
 | 実験・解析 | レポート |
 | --- | --- |
+| 最終まで同じ最適解が10万以上続く割合（条件1・2） | [曲線・全条件の集計](2026-10-08-terminal-retention/summary.json)・[検証](2026-10-08-terminal-retention/validation.json) |
 | 条件1・N=1の300万ステップ最終結果 | [集計](2026-10-07-variants/status-20261008/condition1_N1-3m/summary.json)・[全試行の短期判定](2026-10-07-variants/status-20261008/condition1_N1-3m/trials-duration10000.jsonl)・[検証](2026-10-07-variants/status-20261008/validation.json) |
 | N=1の正常完了とN=2の途中経過（10/8） | [同じ80万ステップでの比較](2026-10-07-variants/status-20261008/matched-800k-comparison.json)・[N=1完了監査](2026-10-07-variants/status-20261008/condition1_N1-completion-audit.json)・[ジョブ状態](2026-10-07-variants/status-20261008/job-status.json) |
 | 条件1・N=1の150万ステップ途中結果 | [集計・活動・検証](2026-10-07-variants/interim-1500000/report.json)・[全試行のFSM読取](2026-10-07-variants/interim-1500000/readout/trials.jsonl)・[短期判定](2026-10-07-variants/interim-1500000/stability/summary.json) |

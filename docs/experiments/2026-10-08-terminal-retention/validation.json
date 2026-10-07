@@ -1,0 +1,127 @@
+{
+  "created_at": "2026-10-07T23:49:49.196237+00:00",
+  "scope": "Independent recomputation of each recorded FSM regime from exact event timestamps, without calling the new analysis or decoder functions. Raw chunk completeness was audited in the source reports; that simulation audit is not repeated here.",
+  "cases": [
+    {
+      "case": "condition1-N1-3m",
+      "passed": true,
+      "source_fsm_events": 1506603,
+      "unit_histories_checked": 1024,
+      "rate_regimes_redecoded": 4898,
+      "trials_checked": 512,
+      "qualified_trials": 480,
+      "checks": [
+        "source SHA-256 values and decoder provenance match",
+        "trial IDs and units are unique and complete",
+        "events sorted, no duplicates, all timestamps within horizon",
+        "all quarter counts, decoded vectors and optimum scores independently recomputed",
+        "every retained interval uses one unit and one identical optimum through T",
+        "unreadable/nonoptimal/different-vector regimes break continuity",
+        "duration cutoff is >=100000, with all 512 trials in denominator",
+        "all plotted counts recomputed from individual trial starts; endpoint agrees",
+        "no curve increase after T-100000"
+      ]
+    },
+    {
+      "case": "condition2-legacy-N1-3m",
+      "passed": true,
+      "source_fsm_events": 1363691,
+      "unit_histories_checked": 1024,
+      "rate_regimes_redecoded": 6003,
+      "trials_checked": 512,
+      "qualified_trials": 422,
+      "checks": [
+        "source SHA-256 values and decoder provenance match",
+        "trial IDs and units are unique and complete",
+        "events sorted, no duplicates, all timestamps within horizon",
+        "all quarter counts, decoded vectors and optimum scores independently recomputed",
+        "every retained interval uses one unit and one identical optimum through T",
+        "unreadable/nonoptimal/different-vector regimes break continuity",
+        "duration cutoff is >=100000, with all 512 trials in denominator",
+        "all plotted counts recomputed from individual trial starts; endpoint agrees",
+        "no curve increase after T-100000"
+      ]
+    },
+    {
+      "case": "condition2-legacy-N1-6m",
+      "passed": true,
+      "source_fsm_events": 2929367,
+      "unit_histories_checked": 1024,
+      "rate_regimes_redecoded": 10060,
+      "trials_checked": 512,
+      "qualified_trials": 446,
+      "checks": [
+        "source SHA-256 values and decoder provenance match",
+        "trial IDs and units are unique and complete",
+        "events sorted, no duplicates, all timestamps within horizon",
+        "all quarter counts, decoded vectors and optimum scores independently recomputed",
+        "every retained interval uses one unit and one identical optimum through T",
+        "unreadable/nonoptimal/different-vector regimes break continuity",
+        "duration cutoff is >=100000, with all 512 trials in denominator",
+        "all plotted counts recomputed from individual trial starts; endpoint agrees",
+        "no curve increase after T-100000"
+      ]
+    },
+    {
+      "case": "condition1-N1-800k",
+      "passed": true,
+      "source_fsm_events": 237503,
+      "unit_histories_checked": 1024,
+      "rate_regimes_redecoded": 2809,
+      "trials_checked": 512,
+      "qualified_trials": 94,
+      "checks": [
+        "source SHA-256 values and decoder provenance match",
+        "trial IDs and units are unique and complete",
+        "events sorted, no duplicates, all timestamps within horizon",
+        "all quarter counts, decoded vectors and optimum scores independently recomputed",
+        "every retained interval uses one unit and one identical optimum through T",
+        "unreadable/nonoptimal/different-vector regimes break continuity",
+        "duration cutoff is >=100000, with all 512 trials in denominator",
+        "all plotted counts recomputed from individual trial starts; endpoint agrees",
+        "no curve increase after T-100000"
+      ]
+    },
+    {
+      "case": "condition1-N2-800k",
+      "passed": true,
+      "source_fsm_events": 166716,
+      "unit_histories_checked": 1024,
+      "rate_regimes_redecoded": 2468,
+      "trials_checked": 512,
+      "qualified_trials": 22,
+      "checks": [
+        "source SHA-256 values and decoder provenance match",
+        "trial IDs and units are unique and complete",
+        "events sorted, no duplicates, all timestamps within horizon",
+        "all quarter counts, decoded vectors and optimum scores independently recomputed",
+        "every retained interval uses one unit and one identical optimum through T",
+        "unreadable/nonoptimal/different-vector regimes break continuity",
+        "duration cutoff is >=100000, with all 512 trials in denominator",
+        "all plotted counts recomputed from individual trial starts; endpoint agrees",
+        "no curve increase after T-100000"
+      ]
+    }
+  ],
+  "policy_regressions": {
+    "3m_trial_369_excluded": true,
+    "6m_trial_236_included": true
+  },
+  "tests": {
+    "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest tests/test_terminal_retention.py tests/test_fsm_output_readout.py tests/test_short_fsm_stability.py -q",
+    "passed": 24,
+    "failed": 0
+  },
+  "figure_review": {
+    "all_three_pngs_visually_inspected": true,
+    "N2_legend_relocated_to_avoid_curve_overlap": true,
+    "PNG_PDF_SVG_generated": true,
+    "generated_SVG_trailing_whitespace_removed_after_rendering": true
+  },
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "all_checks_passed": true,
+  "matched_800k_previous_100k_trial_ids_identical": {
+    "N1": true,
+    "N2": true
+  }
+}

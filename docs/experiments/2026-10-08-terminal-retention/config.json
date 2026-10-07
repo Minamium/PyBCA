@@ -1,0 +1,74 @@
+{
+  "minimum_duration": 100000,
+  "cases": [
+    {
+      "id": "condition1-N1-3m",
+      "label": "Condition 1, N=1",
+      "condition": 1,
+      "N": 1,
+      "readout": "docs/experiments/2026-10-07-variants/status-20261008/condition1_N1-3m/readout"
+    },
+    {
+      "id": "condition2-legacy-N1-3m",
+      "label": "Condition 2, N=1 (legacy)",
+      "condition": 2,
+      "N": 1,
+      "readout": "results/production-p05-20260928/fsm-readout",
+      "legacy_reset_mismatch": true
+    },
+    {
+      "id": "condition2-legacy-N1-6m",
+      "label": "Condition 2, N=1 (legacy)",
+      "condition": 2,
+      "N": 1,
+      "readout": "results/production-p05-6m-20261001/fsm-readout",
+      "legacy_reset_mismatch": true
+    },
+    {
+      "id": "condition1-N1-800k",
+      "label": "N=1, prefix at 0.8M",
+      "condition": 1,
+      "N": 1,
+      "readout": "docs/experiments/2026-10-07-variants/status-20261008/condition1_N1-3m/readout",
+      "horizon": 800000,
+      "interim": true
+    },
+    {
+      "id": "condition1-N2-800k",
+      "label": "N=2, interim at 0.8M",
+      "condition": 1,
+      "N": 2,
+      "readout": "docs/experiments/2026-10-07-variants/status-20261008/condition1_N2-800k/readout",
+      "interim": true
+    }
+  ],
+  "plots": [
+    {
+      "file": "terminal-retention-conditions-3m",
+      "title": "Optimal output retained through T = 3.0 million steps",
+      "cases": [
+        "condition1-N1-3m",
+        "condition2-legacy-N1-3m"
+      ],
+      "legacy_note": true
+    },
+    {
+      "file": "terminal-retention-condition2-6m",
+      "title": "Condition 2: optimal output retained through T = 6.0 million steps",
+      "cases": [
+        "condition2-legacy-N1-6m"
+      ],
+      "legacy_note": true
+    },
+    {
+      "file": "terminal-retention-N2-interim",
+      "title": "Condition 1: interim comparison through T = 0.8 million steps",
+      "cases": [
+        "condition1-N1-800k",
+        "condition1-N2-800k"
+      ],
+      "ymax": 30,
+      "legend_location": "upper left"
+    }
+  ]
+}
