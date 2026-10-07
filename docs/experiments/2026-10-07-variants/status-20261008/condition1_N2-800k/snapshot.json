@@ -1,0 +1,72 @@
+{
+  "captured_at": "2026-10-07T23:24:38.757979+00:00",
+  "source_run": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N2",
+  "horizon": 800000,
+  "purpose": "Immutable history prefix for analysis, not a restart checkpoint.",
+  "ranks": [
+    {
+      "rank": 0,
+      "source_next_step": 836000,
+      "source_manifest_sha256": "e1fa52de19f8cebe04a81fc4cb97dbdcfb4ad227606d9e9413c2a0ea825767be",
+      "history_chunks": 800,
+      "raw_records": 166200,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 1,
+      "source_next_step": 836000,
+      "source_manifest_sha256": "c4f385aefed4e34c0f48fe5a298153f3917b925026e9ddccd4615c7d13a1ba37",
+      "history_chunks": 800,
+      "raw_records": 167085,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 2,
+      "source_next_step": 836000,
+      "source_manifest_sha256": "9dbb7a05b1208538a08c6ff0c8fe32796c110a821242e57b7a30f257b78db518",
+      "history_chunks": 800,
+      "raw_records": 164695,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 3,
+      "source_next_step": 836000,
+      "source_manifest_sha256": "6ce4e116732803459ae96c8e152cedf3650778293aa35f230ea52403c8446c4f",
+      "history_chunks": 800,
+      "raw_records": 173154,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 4,
+      "source_next_step": 838000,
+      "source_manifest_sha256": "894684596de842b81f2d78a06494b85288d3a188c013584a8e202d608a608081",
+      "history_chunks": 800,
+      "raw_records": 166089,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 5,
+      "source_next_step": 838000,
+      "source_manifest_sha256": "9828a850397c49ad19fa64e1a4f1494158428a0efc45cfabde043aff0015dfcc",
+      "history_chunks": 800,
+      "raw_records": 174645,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 6,
+      "source_next_step": 835000,
+      "source_manifest_sha256": "02eb9da8bea32494445cf51c33a4de2adeccb8f457327b8f3040fd851b879932",
+      "history_chunks": 800,
+      "raw_records": 167782,
+      "input_identity_verified": true
+    },
+    {
+      "rank": 7,
+      "source_next_step": 836000,
+      "source_manifest_sha256": "c7771f71a5c577a742b82c70afc69b0f65134ffc507d025771f2759c50e3e70e",
+      "history_chunks": 800,
+      "raw_records": 159445,
+      "input_identity_verified": true
+    }
+  ]
+}

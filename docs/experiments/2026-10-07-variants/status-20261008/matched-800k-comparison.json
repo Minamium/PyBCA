@@ -1,0 +1,81 @@
+{
+  "horizon": 800000,
+  "trials_per_condition": 512,
+  "same_master_seed": 20261007,
+  "same_trial_ids": [
+    0,
+    511
+  ],
+  "policy": "Last six-wire rate change, minimum specified duration; at most 300000 steps used to classify each signal. Score the decoded vector after reading it.",
+  "rows": [
+    {
+      "minimum_regime_duration": 10000,
+      "N1_optimal": 101,
+      "N1_percent": 19.7265625,
+      "N2_optimal": 24,
+      "N2_percent": 4.6875,
+      "same_trial_ids": {
+        "both": 7,
+        "N1_only": 94,
+        "N2_only": 17,
+        "neither": 394
+      }
+    },
+    {
+      "minimum_regime_duration": 100000,
+      "N1_optimal": 94,
+      "N1_percent": 18.359375,
+      "N2_optimal": 22,
+      "N2_percent": 4.296875,
+      "same_trial_ids": {
+        "both": 7,
+        "N1_only": 87,
+        "N2_only": 15,
+        "neither": 403
+      }
+    }
+  ],
+  "N2_source": {
+    "manifest_sha256": {
+      "rank_0000": "ca63a277c8d90fd04736924443e6ffe72609e551b282928c06766141e1919a32",
+      "rank_0001": "aea3630d40e317d0fdbc8f7fe00e003ecc854d575624818c11849b34ba5e55d5",
+      "rank_0002": "5fb89252dc7ca69c2809f2fc6e449901bf8097cd3cbb46d8b8a7966b12001244",
+      "rank_0003": "2563dad08a4145ac6a3df0ba450bb21621127b1599bbc46bdd796bc7937ac4fe",
+      "rank_0004": "b4614b9dc71180fb306f241f5edc6c280acf452c0d6db48dab802d48983d5131",
+      "rank_0005": "7a51435bcd9efdc4b395bb220d65a0ba770ddb77979c86ca4ba792c0b97c0d92",
+      "rank_0006": "ec127ef5645f05236e5f435909db0abbb4bbc76e36ae286ee571fd8f5f260ff8",
+      "rank_0007": "d22f6e14717a6fc09b7318010f9ab79488f804e0f8040b8b42d97f79cdda38fc"
+    },
+    "checked_chunks": 6400,
+    "raw_records": 1339095,
+    "fsm_events": 166716,
+    "reset_set_events": 134,
+    "time_convention": "completed CA updates; raw step + 1",
+    "run": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/status-20261008/condition1_N2-800k/snapshot",
+    "decoder_sha256": "680932af4d84f4c16cebda603d4cdac57c49702545b9a794b3115ddf97b9d3ad",
+    "instance_sha256": "696081ffec194da0b546fcc28b3253d1bff800f1e1dab52d4021d71ea60151cf"
+  },
+  "N1_source": {
+    "source": "docs/experiments/2026-10-07-variants/interim-1500000/readout",
+    "events_sha256": "d0f584a7f6cc7cb5a104cb9a01218fb03f8637c525573c888ab21302a39628cd",
+    "event_filter": "completed_steps <= 800000; segmentation refitted using only that prefix",
+    "decoder_sha256": "680932af4d84f4c16cebda603d4cdac57c49702545b9a794b3115ddf97b9d3ad"
+  },
+  "N2_activity": {
+    "FSM_events": 166716,
+    "FSM_active_trials": 512,
+    "reset_events": 134,
+    "reset_active_trials": 122,
+    "last_100k_FSM_events": 37999,
+    "last_100k_FSM_active_trials": 512,
+    "last_100k_reset_events": 22,
+    "last_100k_reset_active_trials": 22
+  },
+  "checks": {
+    "matching_problem_and_policy": true,
+    "both_datasets_cover_512_ids": true,
+    "every_reported_optimum_vector_and_value_verified": true,
+    "N2_short_result_unchanged_under_finer_segmentation": true
+  },
+  "scope": "Interim comparison; these data do not establish final performance at 3000000 steps."
+}

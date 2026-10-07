@@ -1,0 +1,131 @@
+{
+  "checked_at": "2026-10-08T08:33:16.884991+09:00",
+  "condition1_N1": {
+    "job_id": "238947.rokko1",
+    "state": "completed",
+    "steps": 3000000,
+    "trials": 512,
+    "duration_sensitivity": [
+      {
+        "minimum_duration": 100000,
+        "terminal_optimal_trials": 480,
+        "terminal_optimal_fraction": 0.9375,
+        "terminal_nonoptimal_trials": 27,
+        "terminal_unresolved_trials": 5,
+        "ever_supported_optimum_trials": 482,
+        "ever_supported_optimum_fraction": 0.94140625
+      },
+      {
+        "minimum_duration": 10000,
+        "terminal_optimal_trials": 481,
+        "terminal_optimal_fraction": 0.939453125,
+        "terminal_nonoptimal_trials": 28,
+        "terminal_unresolved_trials": 3,
+        "ever_supported_optimum_trials": 484,
+        "ever_supported_optimum_fraction": 0.9453125
+      }
+    ],
+    "activity": {
+      "FSM_events": 1506603,
+      "FSM_active_trials": 512,
+      "reset_events": 712,
+      "reset_active_trials": 384
+    }
+  },
+  "condition1_N2": {
+    "job_id": "238948.rokko1",
+    "state": "running",
+    "saved_step_range": [
+      854000,
+      857000
+    ],
+    "target_steps": 3000000,
+    "interim_horizon": 800000,
+    "trials": 512,
+    "duration_sensitivity": [
+      {
+        "minimum_duration": 100000,
+        "terminal_optimal_trials": 22,
+        "terminal_optimal_fraction": 0.04296875,
+        "terminal_nonoptimal_trials": 324,
+        "terminal_unresolved_trials": 166,
+        "ever_supported_optimum_trials": 22,
+        "ever_supported_optimum_fraction": 0.04296875
+      },
+      {
+        "minimum_duration": 10000,
+        "terminal_optimal_trials": 24,
+        "terminal_optimal_fraction": 0.046875,
+        "terminal_nonoptimal_trials": 374,
+        "terminal_unresolved_trials": 114,
+        "ever_supported_optimum_trials": 24,
+        "ever_supported_optimum_fraction": 0.046875
+      }
+    ],
+    "activity": {
+      "FSM_events": 166716,
+      "FSM_active_trials": 512,
+      "reset_events": 134,
+      "reset_active_trials": 122,
+      "last_100k_FSM_events": 37999,
+      "last_100k_FSM_active_trials": 512,
+      "last_100k_reset_events": 22,
+      "last_100k_reset_active_trials": 22
+    }
+  },
+  "condition2_N2": {
+    "job_id": "238949.rokko1",
+    "state": "held",
+    "reason": "afterany:238948.rokko1; resources must also be available"
+  },
+  "matched_800k": [
+    {
+      "minimum_regime_duration": 10000,
+      "N1_optimal": 101,
+      "N1_percent": 19.7265625,
+      "N2_optimal": 24,
+      "N2_percent": 4.6875,
+      "same_trial_ids": {
+        "both": 7,
+        "N1_only": 94,
+        "N2_only": 17,
+        "neither": 394
+      }
+    },
+    {
+      "minimum_regime_duration": 100000,
+      "N1_optimal": 94,
+      "N1_percent": 18.359375,
+      "N2_optimal": 22,
+      "N2_percent": 4.296875,
+      "same_trial_ids": {
+        "both": 7,
+        "N1_only": 87,
+        "N2_only": 15,
+        "neither": 403
+      }
+    }
+  ],
+  "optimum_vector": "111100",
+  "optimum_objective": 14,
+  "interpretation": [
+    "Minimum persistence duration is evaluated after the last detected flow change, using up to 300000 steps to classify each FSM output.",
+    "Ever-supported counts refer to retrospectively decoded intervals; they are not exact first-hit measurements or a guarantee of future retention.",
+    "N2 is behind N1 at 800000 steps in this experiment. N2 final performance at 3000000 steps remains unmeasured.",
+    "The comparison uses the same master seed and trial IDs, so matched conditions are paired rather than independent samples."
+  ],
+  "raw_data": {
+    "source": "rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/status-20261008/exports/bca-ip-condition1-N1-512-3m.tar.gz",
+    "filename": "bca-ip-condition1-N1-512-3m.tar.gz",
+    "sha256": "705de5a24f35c2fac6cf1d29005d00c7794b25333c867eff83ab5b6dcfa16b76",
+    "bytes": 132217403,
+    "all_rank_manifests_at_step": 3000000,
+    "trials": 512,
+    "checkpoint_count": 8,
+    "history_chunks": 24000,
+    "local_sha256_matches_rokko": true,
+    "simulation_commit": "7d0457d939e5165b2e117e8932a12e54c6f46213",
+    "top_level_directory": "condition1_N1",
+    "contents": "All immutable event-history chunks, eight checkpoints containing all 512 final cell states, manifests, rank configs, summaries and completion audit."
+  }
+}

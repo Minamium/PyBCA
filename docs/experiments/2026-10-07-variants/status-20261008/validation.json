@@ -1,0 +1,12 @@
+{
+  "all_512_completed_3000000_steps": true,
+  "PBS_exit_status": 0,
+  "completion_audit_passed": true,
+  "final_fsm_and_reset_counts_match_completion_audit": true,
+  "prior_1500000_FSM_and_reset_events_identical_to_final_prefix": true,
+  "all_decoded_optima_have_vector_111100_value14_weight6": true,
+  "history_chunks_reverified": 24000,
+  "history_raw_records": 10980064,
+  "source_decoder_sha256": "680932af4d84f4c16cebda603d4cdac57c49702545b9a794b3115ddf97b9d3ad",
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071"
+}

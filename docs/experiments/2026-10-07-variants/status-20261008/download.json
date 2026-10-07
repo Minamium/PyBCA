@@ -1,0 +1,14 @@
+{
+  "source": "rokko1:/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/status-20261008/exports/bca-ip-condition1-N1-512-3m.tar.gz",
+  "filename": "bca-ip-condition1-N1-512-3m.tar.gz",
+  "sha256": "705de5a24f35c2fac6cf1d29005d00c7794b25333c867eff83ab5b6dcfa16b76",
+  "bytes": 132217403,
+  "all_rank_manifests_at_step": 3000000,
+  "trials": 512,
+  "checkpoint_count": 8,
+  "history_chunks": 24000,
+  "local_sha256_matches_rokko": true,
+  "simulation_commit": "7d0457d939e5165b2e117e8932a12e54c6f46213",
+  "top_level_directory": "condition1_N1",
+  "contents": "All immutable event-history chunks, eight checkpoints containing all 512 final cell states, manifests, rank configs, summaries and completion audit."
+}

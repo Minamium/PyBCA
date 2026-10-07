@@ -1,0 +1,85 @@
+{
+  "checked_at": "2026-10-08T08:33:16.884991+09:00",
+  "jobs": {
+    "238947.rokko1": {
+      "Job_Name": "bca_c1n1_3m",
+      "job_state": "F",
+      "Exit_status": 0,
+      "stime": "Wed Oct  7 03:42:33 2026",
+      "resources_used": {
+        "cpupercent": 790,
+        "cput": "177:40:13",
+        "mem": "805640kb",
+        "ncpus": 8,
+        "vmem": "4464628kb",
+        "walltime": "22:27:55"
+      },
+      "depend": "beforeany:238948.rokko1@rokko1"
+    },
+    "238948.rokko1": {
+      "Job_Name": "bca_c1n2_3m",
+      "job_state": "R",
+      "Exit_status": null,
+      "stime": "Thu Oct  8 02:10:32 2026",
+      "resources_used": {
+        "cpupercent": 794,
+        "cput": "50:35:05",
+        "mem": "358368kb",
+        "ncpus": 8,
+        "vmem": "4214060kb",
+        "walltime": "06:21:53"
+      },
+      "depend": "beforeany:238949.rokko1@rokko1"
+    },
+    "238949.rokko1": {
+      "Job_Name": "bca_c2n2_3m",
+      "job_state": "H",
+      "Exit_status": null,
+      "stime": null,
+      "resources_used": null,
+      "depend": "afterany:238948.rokko1@rokko1"
+    }
+  },
+  "condition1_N2": [
+    {
+      "rank": 0,
+      "steps": 856000,
+      "trials": 64
+    },
+    {
+      "rank": 1,
+      "steps": 856000,
+      "trials": 64
+    },
+    {
+      "rank": 2,
+      "steps": 855000,
+      "trials": 64
+    },
+    {
+      "rank": 3,
+      "steps": 855000,
+      "trials": 64
+    },
+    {
+      "rank": 4,
+      "steps": 857000,
+      "trials": 64
+    },
+    {
+      "rank": 5,
+      "steps": 857000,
+      "trials": 64
+    },
+    {
+      "rank": 6,
+      "steps": 854000,
+      "trials": 64
+    },
+    {
+      "rank": 7,
+      "steps": 856000,
+      "trials": 64
+    }
+  ]
+}
