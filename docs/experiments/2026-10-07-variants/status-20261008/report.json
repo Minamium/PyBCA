@@ -126,6 +126,8 @@
     "local_sha256_matches_rokko": true,
     "simulation_commit": "7d0457d939e5165b2e117e8932a12e54c6f46213",
     "top_level_directory": "condition1_N1",
-    "contents": "All immutable event-history chunks, eight checkpoints containing all 512 final cell states, manifests, rank configs, summaries and completion audit."
+    "contents": "All immutable event-history chunks, eight checkpoints containing all 512 final cell states, manifests, rank configs, summaries and completion audit.",
+    "local_archive": "results/bca-ip-variants-20261008/bca-ip-condition1-N1-512-3m.tar.gz",
+    "publication_status": "Saved on rokko and downloaded locally; no public Release asset has been published."
   }
 }
