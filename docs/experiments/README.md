@@ -1,5 +1,43 @@
 # BCA-IP 実験結果
 
+## 3条件の300万ステップ実験は完了（2026-10-11）
+
+条件1・N=1、条件1・N=2、条件2・N=2は、いずれも全512試行が300万ステップを完走した。PBS終了コードはすべて0で、ジョブ末尾の履歴・最終チェックポイント・セル形状の監査も成功している。global_prob=0.5、独立試行、各8台のV100で実行し、条件間ではseed=20261007とtrial IDを共有した。各条件の試行を一つの問題の独立な1536試行として合算しない。
+
+条件1・N=2は10月9日00:39 JST、条件2・N=2は10月11日00:50 JSTに終了。実行時間は条件1・N=1が22:27:55、条件1・N=2が22:28:27、条件2・N=2が23:00:38。[完了状態](2026-10-11-final-3m/readout-source/job-status.json)と各条件の `*-completion-audit.json` に記録している。
+
+最適解判定には、以下で定めた**最終まで同じユニットの同じ最適解が10万ステップ以上続く**基準をそのまま使った。旧N=1の曲線と試行IDは前回の集計と完全一致した。
+
+| 条件 | 最終まで10万以上継続 | 割合 | 最適解だが10万未満 | 両ユニットとも判読可能な非最適 | 判読不能を含む未確認 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 条件1・N=1 | 480/512 | **93.75%** | 1 | 27 | 4 |
+| 条件1・N=2 | 445/512 | **86.91%** | 1 | 58 | 8 |
+| 条件2・N=2 | 423/512 | **82.62%** | 6 | 78 | 5 |
+| 条件2・既存N=1（参考） | 422/512 | **82.42%** | 2 | 71 | 17 |
+
+「未確認」には短すぎる最適解区間と判読不能を含むので、内部状態が非最適だと確定した失敗率とは区別する。全条件の終了ステップは300万。判定はFSMのx1〜x6出力から行い、resetやF値出力を最適性の宣言とはみなさない。
+
+![完了した3条件の最適解継続率](2026-10-11-final-3m/terminal-retention-three-conditions.png)
+
+横軸tは終了まで続いた最適解区間の開始ステップ、縦軸は「t以前に継続が始まり、終了まで維持した試行 / 全512試行」。最終の履歴を使う事後評価であり、オンラインの初到達率ではない。灰色の最後10万部分では新しい該当試行が増えない。帯は各時点の95% Wilson区間。
+
+条件1では、N=2の終端継続率はN=1より6.84ポイント低かった。同じseed・trial IDの対応表では、両方で該当427、N=1だけ53、N=2だけ18、両方で未確認14。これは300万という有限の観測長での結果であり、さらに長い実行での順位を確定するものではない。
+
+条件2の旧N=1は初期Weight `[4,4,5,1,1,1]` とreset倍率 `[4,3,2,1,5,5]` が一致しない。新しいN=2は初期・resetとも `[7,7,9,1,1,1]` に揃えている。このため、条件2の比較図では旧回路を破線の参考値として示し、差をNだけの効果とは解釈しない。
+
+- 3条件の図: [PNG](2026-10-11-final-3m/terminal-retention-three-conditions.png)・[PDF](2026-10-11-final-3m/terminal-retention-three-conditions.pdf)・[SVG](2026-10-11-final-3m/terminal-retention-three-conditions.svg)
+- 条件1のN比較: [PNG](2026-10-11-final-3m/terminal-retention-condition1.png)・[PDF](2026-10-11-final-3m/terminal-retention-condition1.pdf)・[SVG](2026-10-11-final-3m/terminal-retention-condition1.svg)
+- 条件2の新N=2と旧N=1: [PNG](2026-10-11-final-3m/terminal-retention-condition2.png)・[PDF](2026-10-11-final-3m/terminal-retention-condition2.pdf)・[SVG](2026-10-11-final-3m/terminal-retention-condition2.svg)
+- [比較表・継続区間開始時刻の統計・終了付近の活動](2026-10-11-final-3m/comparison.json)・[全条件と判定規則](2026-10-11-final-3m/summary.json)・[検証](2026-10-11-final-3m/validation.json)・[SHA-256](2026-10-11-final-3m/SHA256SUMS)。各 `*-trials.jsonl` に全512試行、`*-regimes.jsonl` に各流量区間の読取りを保存。平均・中央値の開始時刻は該当試行に条件付けた事後推定であり、無条件の平均初到達時間ではない。
+
+N=2の新しい全48,000チャンクをSHA-256照合し、全4ケースの20,245流量区間をイベント時刻から別計算で再検証した。ビット判定・最適性・継続区間・曲線の全点が一致。条件1・N=2の80万までのFSM出力166,716件とreset 134件も以前の途中記録と完全一致した。関連24テスト成功。シミュレーションコアと解判定アルゴリズムは変更していない。
+
+```sh
+PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 scripts/plot_bca_ip_terminal_retention.py \
+  --config docs/experiments/2026-10-11-final-3m/config.json \
+  --output docs/experiments/2026-10-11-final-3m
+```
+
 ## 最終まで10万ステップ以上、同じ最適解が続く割合（2026-10-08）
 
 最新の判定は、**A/Bどちらか一方のユニットが、同一の最適解ベクトルを最終ステップTまで10万ステップ以上出力し続けた試行 / 全512試行**。終端につながる最後の連続区間だけを数える。途中で失った最適解は数えず、非最適・判読不能・別の最適解ベクトルへの変化で区間を切る。流量だけが変化し、同じ最適解の信号が続いていれば区間をつなぐ。ユニットを切り替えて継続期間を補うことはしない。A/B両方が条件を満たす場合は1試行と数え、早い方の開始時刻を使う。
@@ -49,6 +87,7 @@ PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest \
 
 | 実験・解析 | レポート |
 | --- | --- |
+| 全3条件・各512試行・300万ステップの最終集計（10/11） | [最終比較](2026-10-11-final-3m/comparison.json)・[図](2026-10-11-final-3m/terminal-retention-three-conditions.png)・[検証](2026-10-11-final-3m/validation.json) |
 | 最終まで同じ最適解が10万以上続く割合（条件1・2） | [曲線・全条件の集計](2026-10-08-terminal-retention/summary.json)・[検証](2026-10-08-terminal-retention/validation.json) |
 | 条件1・N=1の300万ステップ最終結果 | [集計](2026-10-07-variants/status-20261008/condition1_N1-3m/summary.json)・[全試行の短期判定](2026-10-07-variants/status-20261008/condition1_N1-3m/trials-duration10000.jsonl)・[検証](2026-10-07-variants/status-20261008/validation.json) |
 | N=1の正常完了とN=2の途中経過（10/8） | [同じ80万ステップでの比較](2026-10-07-variants/status-20261008/matched-800k-comparison.json)・[N=1完了監査](2026-10-07-variants/status-20261008/condition1_N1-completion-audit.json)・[ジョブ状態](2026-10-07-variants/status-20261008/job-status.json) |

@@ -1,0 +1,44 @@
+{
+  "queried_at": "2026-10-10T16:35:13.215195+00:00",
+  "jobs": {
+    "condition1_N1": {
+      "Job_Name": "bca_c1n1_3m",
+      "resources_used.ncpus": "8",
+      "resources_used.walltime": "22:27:55",
+      "job_state": "F",
+      "queue": "G",
+      "mtime": "Thu Oct  8 02:10:30 2026",
+      "Resource_List.ngpus": "8",
+      "stime": "Wed Oct  7 03:42:33 2026",
+      "Exit_status": "0",
+      "variant": "condition1_N1",
+      "job_id": "238947.rokko1"
+    },
+    "condition1_N2": {
+      "Job_Name": "bca_c1n2_3m",
+      "resources_used.ncpus": "8",
+      "resources_used.walltime": "22:28:27",
+      "job_state": "F",
+      "queue": "G",
+      "mtime": "Fri Oct  9 00:39:03 2026",
+      "Resource_List.ngpus": "8",
+      "stime": "Thu Oct  8 02:10:32 2026",
+      "Exit_status": "0",
+      "variant": "condition1_N2",
+      "job_id": "238948.rokko1"
+    },
+    "condition2_N2": {
+      "Job_Name": "bca_c2n2_3m",
+      "resources_used.ncpus": "8",
+      "resources_used.walltime": "23:00:38",
+      "job_state": "F",
+      "queue": "G",
+      "mtime": "Sun Oct 11 00:50:57 2026",
+      "Resource_List.ngpus": "8",
+      "stime": "Sat Oct 10 01:50:17 2026",
+      "Exit_status": "0",
+      "variant": "condition2_N2",
+      "job_id": "238949.rokko1"
+    }
+  }
+}

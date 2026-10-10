@@ -1,0 +1,62 @@
+{
+  "minimum_duration": 100000,
+  "cases": [
+    {
+      "id": "condition1-N1-3m",
+      "label": "Condition 1, N=1",
+      "condition": 1,
+      "N": 1,
+      "readout": "docs/experiments/2026-10-07-variants/status-20261008/condition1_N1-3m/readout"
+    },
+    {
+      "id": "condition1-N2-3m",
+      "label": "Condition 1, N=2",
+      "condition": 1,
+      "N": 2,
+      "readout": "docs/experiments/2026-10-11-final-3m/readout-source/condition1_N2/readout"
+    },
+    {
+      "id": "condition2-N2-3m",
+      "label": "Condition 2, N=2",
+      "condition": 2,
+      "N": 2,
+      "readout": "docs/experiments/2026-10-11-final-3m/readout-source/condition2_N2/readout"
+    },
+    {
+      "id": "condition2-legacy-N1-3m",
+      "label": "Condition 2, N=1 (legacy)",
+      "condition": 2,
+      "N": 1,
+      "readout": "results/production-p05-20260928/fsm-readout",
+      "legacy_reset_mismatch": true
+    }
+  ],
+  "plots": [
+    {
+      "file": "terminal-retention-three-conditions",
+      "title": "Three completed experiments: optimum retained through T = 3.0M",
+      "cases": [
+        "condition1-N1-3m",
+        "condition1-N2-3m",
+        "condition2-N2-3m"
+      ]
+    },
+    {
+      "file": "terminal-retention-condition1",
+      "title": "Condition 1: optimum retained through T = 3.0 million steps",
+      "cases": [
+        "condition1-N1-3m",
+        "condition1-N2-3m"
+      ]
+    },
+    {
+      "file": "terminal-retention-condition2",
+      "title": "Condition 2: corrected N=2 and historical N=1 at T = 3.0M",
+      "cases": [
+        "condition2-legacy-N1-3m",
+        "condition2-N2-3m"
+      ],
+      "legacy_note": true
+    }
+  ]
+}

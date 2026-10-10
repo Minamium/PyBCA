@@ -1,0 +1,15 @@
+{
+  "snapshot_date_JST": "2026-10-11",
+  "main_endpoint": 3000000,
+  "minimum_terminal_duration": 100000,
+  "trials_per_experiment": 512,
+  "criterion": "At least one fixed unit must output one unchanged optimal six-bit vector throughout its final uninterrupted episode of at least 100000 completed CA updates, ending at T=3000000. Rate changes alone do not terminate an episode. Unreadable, nonoptimal or different-optimum regimes do. Each trial counts once.",
+  "curve": "Retrospective F_T(t): proportion of all 512 trials whose qualifying final episode starts at or before t and lasts through T. Not an online hit-time curve.",
+  "independent_trials": true,
+  "pool_conditions_as_independent_repetitions": false,
+  "paired_comparison": "Condition 1 N=1 versus N=2 uses the same seed and trial IDs. Report paired terminal classification counts; do not treat the two conditions as independent groups.",
+  "condition2_comparison": "Historical condition 2 N=1 has reset gains [4,3,2,1,5,5] despite initial Weights [4,4,5,1,1,1]. Corrected condition 2 N=2 therefore differs in more than N. Show the historical series as a reference, not an N-only control.",
+  "reproduction_command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 scripts/plot_bca_ip_terminal_retention.py --config docs/experiments/2026-10-11-final-3m/config.json --output docs/experiments/2026-10-11-final-3m",
+  "raw_data_publication": "No raw checkpoint or full simulation-history archive is uploaded by this aggregation.",
+  "new_production_conditions_share_seed_and_trial_ids": true
+}

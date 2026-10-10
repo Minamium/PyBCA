@@ -1,0 +1,65 @@
+{
+  "checked_at": "2026-10-10T16:48:38.345967+00:00",
+  "cases": [
+    {
+      "case": "condition1-N1-3m",
+      "trials_checked": 512,
+      "units_checked": 1024,
+      "regimes_checked": 4898,
+      "FSM_events_checked": 1506603,
+      "qualified_trials": 480,
+      "passed": true
+    },
+    {
+      "case": "condition1-N2-3m",
+      "trials_checked": 512,
+      "units_checked": 1024,
+      "regimes_checked": 4907,
+      "FSM_events_checked": 1297115,
+      "qualified_trials": 445,
+      "passed": true
+    },
+    {
+      "case": "condition2-N2-3m",
+      "trials_checked": 512,
+      "units_checked": 1024,
+      "regimes_checked": 4437,
+      "FSM_events_checked": 1339821,
+      "qualified_trials": 423,
+      "passed": true
+    },
+    {
+      "case": "condition2-legacy-N1-3m",
+      "trials_checked": 512,
+      "units_checked": 1024,
+      "regimes_checked": 6003,
+      "FSM_events_checked": 1363691,
+      "qualified_trials": 422,
+      "passed": true
+    }
+  ],
+  "prior_N1_curves_and_trial_ids_identical": true,
+  "N2_800k_FSM_and_reset_prefix_identical_to_previous_snapshot": true,
+  "all_production_completion_audits_match_local_simulation_source": true,
+  "new_readouts_match_completed_FSM_and_reset_totals": true,
+  "new_N2_history_chunks_SHA256_reverified": 48000,
+  "tests": {
+    "passed": 24,
+    "failed": 0,
+    "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest tests/test_terminal_retention.py tests/test_fsm_output_readout.py tests/test_short_fsm_stability.py -q"
+  },
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "checks": [
+    "source file and decoder SHA-256 values match",
+    "unique complete trial IDs and unit roster",
+    "independent event-time recomputation of every regime quarter, bit vector and optimum score",
+    "independent terminal episode and curve reconstruction with all 512 trials in denominator",
+    "nonoptimal, unknown and changed-optimum regimes break continuity; no cross-unit bridging",
+    "same predicate for old N1 and newly completed N2, with prior N1 outputs identical"
+  ],
+  "all_checks_passed": true,
+  "classification_and_curve_algorithms_AST_identical_to_previous_commit": true,
+  "all_three_PNG_figures_visually_checked": true,
+  "all_14_downloaded_artifacts_match_remote_SHA256": true,
+  "no_new_GPU_jobs_submitted": true
+}

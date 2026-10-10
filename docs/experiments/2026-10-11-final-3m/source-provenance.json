@@ -1,0 +1,50 @@
+{
+  "simulation_deployment": {
+    "commit": "7d0457d939e5165b2e117e8932a12e54c6f46213",
+    "branch": "codex/bca-ip-three-condition-3m",
+    "repository": "https://github.com/Minamium/PyBCA.git",
+    "archive_sha256": "1950ff15cc63bb0c641caddbb593aa64d83af6b538fa8938d2c39194efeadda6",
+    "archive_bytes": 12874405,
+    "created_at": "2026-10-06T15:45:50.085255+00:00"
+  },
+  "workspace_on_rokko": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+  "jobs": [
+    {
+      "variant": "condition1_N1",
+      "job_id": "238947.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N1"
+    },
+    {
+      "variant": "condition1_N2",
+      "job_id": "238948.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition1_N2"
+    },
+    {
+      "variant": "condition2_N2",
+      "job_id": "238949.rokko1",
+      "trials": 512,
+      "steps": 3000000,
+      "seed": 20261007,
+      "global_prob": 0.5,
+      "output_directory": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-20261007/condition2_N2"
+    }
+  ],
+  "local_files_sha256": {
+    "scripts/read_bca_ip_fsm_outputs.py": "680932af4d84f4c16cebda603d4cdac57c49702545b9a794b3115ddf97b9d3ad",
+    "scripts/plot_bca_ip_terminal_retention.py": "9c8eca5289b51adb449482d5a22f9603344cf31589690d57600e603c24d786f0",
+    "scripts/check_bca_ip_variants.py": "c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35",
+    "Sample/Cellspace/BCA-IP-variants/manifest.json": "eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d",
+    "Sample/Cellspace/BCA-IP-variants/condition1.json": "696081ffec194da0b546fcc28b3253d1bff800f1e1dab52d4021d71ea60151cf",
+    "Sample/Cellspace/BCA-IP-variants/condition2.json": "370cbee497f3a8dbd4812bb874670736323734b1be577f3fd9e8b28ef3260b39"
+  },
+  "historic_condition2_N1_source": "results/production-p05-20260928/fsm-readout",
+  "source_of_historic_data": "https://github.com/Minamium/PyBCA/releases/tag/bca-ip-results-2026-10-01"
+}

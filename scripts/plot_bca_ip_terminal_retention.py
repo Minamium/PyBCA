@@ -160,7 +160,7 @@ def plot_cases(results, keys, output, *, title, ymax=100, legacy_note=False,
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     plt.rcParams.update({"font.size": 11, "axes.spines.top": False, "axes.spines.right": False})
-    colors = ("#0072b2", "#d55e00", "#009e73")
+    colors = ("#0072b2", "#d55e00", "#009e73", "#cc79a7")
     fig, ax = plt.subplots(figsize=(10.5, 6.3))
     fig.subplots_adjust(left=.095, right=.98, top=.84, bottom=.24)
     max_t = max(results[key]["horizon"] for key in keys)
@@ -171,9 +171,11 @@ def plot_cases(results, keys, output, *, title, ymax=100, legacy_note=False,
         y = np.array([r["fraction"] for r in curve]) * 100
         interval = np.array([r["wilson95"] for r in curve]) * 100
         label = f"{case['label']}: {case['qualified_trials']}/{case['trials']} ({y[-1]:.2f}%)"
-        ax.step(x, y, where="post", label=label, color=colors[i], lw=2)
-        ax.fill_between(x, interval[:, 0], interval[:, 1], step="post", color=colors[i], alpha=.10)
-        ax.scatter(x[-1], y[-1], s=24, color=colors[i], zorder=3)
+        color = colors[i % len(colors)]
+        style = "--" if case["legacy_reset_mismatch"] else "-"
+        ax.step(x, y, where="post", label=label, color=color, ls=style, lw=2)
+        ax.fill_between(x, interval[:, 0], interval[:, 1], step="post", color=color, alpha=.10)
+        ax.scatter(x[-1], y[-1], s=24, color=color, zorder=3)
     if len({results[k]["horizon"] for k in keys}) == 1:
         t = results[keys[0]]["horizon"]
         cutoff = t - results[keys[0]]["minimum_duration"]
@@ -185,14 +187,21 @@ def plot_cases(results, keys, output, *, title, ymax=100, legacy_note=False,
     ax.grid(alpha=.20)
     ax.legend(loc=legend_location, frameon=False, fontsize=10)
     fig.suptitle(title, fontsize=15, y=.96)
-    fig.text(.5, .895, "Minimum terminal duration: 100,000 steps   |   512 trials per condition", ha="center")
+    durations = sorted({results[key]["minimum_duration"] for key in keys})
+    trial_counts = sorted({results[key]["trials"] for key in keys})
+    subtitle = "Minimum terminal duration: " + "/".join(f"{d:,}" for d in durations) + " steps"
+    subtitle += "   |   " + "/".join(str(n) for n in trial_counts) + " trials per condition"
+    fig.text(.5, .895, subtitle, ha="center")
     note = "Retrospective curve: only intervals continuing through the fixed endpoint T count.\n"
     note += "The same unit and optimal vector must persist. Shading: pointwise 95% Wilson intervals."
     if legacy_note:
-        note += "\nCondition 2 uses the historical circuit with mismatched reset gains (see report)."
+        note += "\nDashed legacy N=1 has mismatched reset gains; this is not a comparison changing only N."
     fig.text(.095, .055, note, fontsize=9, va="bottom", color=".3")
     for extension in ("png", "svg", "pdf"):
-        fig.savefig(output.with_suffix("." + extension), dpi=200)
+        path = output.with_suffix("." + extension)
+        fig.savefig(path, dpi=200)
+        if extension == "svg":
+            path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
     plt.close(fig)
 
 
@@ -217,6 +226,12 @@ def main():
         plot_cases(results, chart["cases"], args.output / chart["file"], title=chart["title"],
                    ymax=chart.get("ymax", 100), legacy_note=chart.get("legacy_note", False),
                    legend_location=chart.get("legend_location", "lower right"))
+    limitations = ["Continuous output is inferred from sparse events and rate regimes, not observed at every CA step.",
+                   "Estimated episode starts are not exact internal first-hit times or causal confirmation times."]
+    if any(r["legacy_reset_mismatch"] for r in results.values()):
+        limitations.append("The historical condition-2 N=1 circuit has reset gains [4,3,2,1,5,5] despite initial Weights [4,4,5,1,1,1]; it is not a matched control for the new condition-2 N=2 circuit.")
+    if any(r["interim"] for r in results.values()):
+        limitations.append("An interim endpoint cannot establish persistence beyond its observation horizon.")
     aggregate = {"created_at": datetime.now(timezone.utc).isoformat(),
                  "schema": "pybca-terminal-uninterrupted-optimum-v1",
                  "minimum_duration": config["minimum_duration"],
@@ -228,10 +243,7 @@ def main():
                             "different_optimum_breaks_continuity": True,
                             "switching_units_to_bridge_a_gap": False,
                             "counts_require_final_horizon_information": True},
-                 "limitations": ["Continuous output is inferred from sparse events and rate regimes, not observed at every CA step.",
-                                 "Estimated episode starts are not exact internal first-hit times or causal confirmation times.",
-                                 "The historical condition-2 N=1 circuit has reset gains [4,3,2,1,5,5] despite initial Weights [4,4,5,1,1,1]; it is not a matched control for the new condition-2 N=2 circuit.",
-                                 "N=2 at 800k is an interim endpoint and cannot establish persistence to 3M."],
+                 "limitations": limitations,
                  "cases": [{k: r[k] for k in ("case", "label", "condition", "N", "horizon", "trials",
                                                "qualified_trials", "qualified_fraction", "interim",
                                                "legacy_reset_mismatch", "baseline_policy_difference")}

@@ -1,0 +1,163 @@
+Read and checked rank_0000
+Read and checked rank_0001
+Read and checked rank_0002
+Read and checked rank_0003
+Read and checked rank_0004
+Read and checked rank_0005
+Read and checked rank_0006
+Read and checked rank_0007
+{
+  "optimal_trials": 444,
+  "optimal_fraction": 0.8671875,
+  "stable_nonoptimal_trials": 52,
+  "unresolved_trials": 16,
+  "stable_infeasible_units": 0,
+  "optimal_A_only_trials": 164,
+  "optimal_B_only_trials": 172,
+  "both_units_optimal_trials": 108
+}
+[
+  {
+    "label": "primary",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 444,
+    "optimal_fraction": 0.8671875,
+    "stable_nonoptimal_trials": 52,
+    "unresolved_trials": 16
+  },
+  {
+    "label": "penalty_10",
+    "penalty": 10.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 438,
+    "optimal_fraction": 0.85546875,
+    "stable_nonoptimal_trials": 51,
+    "unresolved_trials": 23
+  },
+  {
+    "label": "penalty_30",
+    "penalty": 30.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 445,
+    "optimal_fraction": 0.869140625,
+    "stable_nonoptimal_trials": 53,
+    "unresolved_trials": 14
+  },
+  {
+    "label": "min_duration_50000",
+    "penalty": 20.0,
+    "min_duration": 50000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 445,
+    "optimal_fraction": 0.869140625,
+    "stable_nonoptimal_trials": 57,
+    "unresolved_trials": 10
+  },
+  {
+    "label": "min_duration_150000",
+    "penalty": 20.0,
+    "min_duration": 150000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 438,
+    "optimal_fraction": 0.85546875,
+    "stable_nonoptimal_trials": 50,
+    "unresolved_trials": 24
+  },
+  {
+    "label": "min_duration_200000",
+    "penalty": 20.0,
+    "min_duration": 200000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 434,
+    "optimal_fraction": 0.84765625,
+    "stable_nonoptimal_trials": 44,
+    "unresolved_trials": 34
+  },
+  {
+    "label": "max_window_200000",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 200000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 442,
+    "optimal_fraction": 0.86328125,
+    "stable_nonoptimal_trials": 52,
+    "unresolved_trials": 18
+  },
+  {
+    "label": "max_window_3000000",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 3000000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 444,
+    "optimal_fraction": 0.8671875,
+    "stable_nonoptimal_trials": 53,
+    "unresolved_trials": 15
+  },
+  {
+    "label": "off_events_0",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 0,
+    "occupied_quarters": 3,
+    "optimal_trials": 444,
+    "optimal_fraction": 0.8671875,
+    "stable_nonoptimal_trials": 48,
+    "unresolved_trials": 20
+  },
+  {
+    "label": "off_events_1",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 1,
+    "occupied_quarters": 3,
+    "optimal_trials": 444,
+    "optimal_fraction": 0.8671875,
+    "stable_nonoptimal_trials": 51,
+    "unresolved_trials": 17
+  },
+  {
+    "label": "all_four_quarters",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 4,
+    "optimal_trials": 440,
+    "optimal_fraction": 0.859375,
+    "stable_nonoptimal_trials": 48,
+    "unresolved_trials": 24
+  }
+]

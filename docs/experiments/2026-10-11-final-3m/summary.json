@@ -1,0 +1,101 @@
+{
+  "created_at": "2026-10-10T16:48:28.872326+00:00",
+  "schema": "pybca-terminal-uninterrupted-optimum-v1",
+  "minimum_duration": 100000,
+  "curve_definition": "F_T(t) = number of trials with s <= t and T-s >= minimum_duration, divided by all trials; s is the beginning of an uninterrupted same-vector optimum episode in one unit that ends at T.",
+  "policy": {
+    "bin_width": 10000,
+    "change_penalty": 20,
+    "min_segment_bins": 3,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "read_entire_rate_regime": true,
+    "merge_same_optimal_vector": true,
+    "unknown_or_nonoptimal_breaks_continuity": true,
+    "different_optimum_breaks_continuity": true,
+    "switching_units_to_bridge_a_gap": false,
+    "counts_require_final_horizon_information": true
+  },
+  "limitations": [
+    "Continuous output is inferred from sparse events and rate regimes, not observed at every CA step.",
+    "Estimated episode starts are not exact internal first-hit times or causal confirmation times.",
+    "The historical condition-2 N=1 circuit has reset gains [4,3,2,1,5,5] despite initial Weights [4,4,5,1,1,1]; it is not a matched control for the new condition-2 N=2 circuit."
+  ],
+  "cases": [
+    {
+      "case": "condition1-N1-3m",
+      "label": "Condition 1, N=1",
+      "condition": 1,
+      "N": 1,
+      "horizon": 3000000,
+      "trials": 512,
+      "qualified_trials": 480,
+      "qualified_fraction": 0.9375,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 480,
+        "included_now": [],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition1-N2-3m",
+      "label": "Condition 1, N=2",
+      "condition": 1,
+      "N": 2,
+      "horizon": 3000000,
+      "trials": 512,
+      "qualified_trials": 445,
+      "qualified_fraction": 0.869140625,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 444,
+        "included_now": [
+          83
+        ],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition2-N2-3m",
+      "label": "Condition 2, N=2",
+      "condition": 2,
+      "N": 2,
+      "horizon": 3000000,
+      "trials": 512,
+      "qualified_trials": 423,
+      "qualified_fraction": 0.826171875,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 423,
+        "included_now": [],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition2-legacy-N1-3m",
+      "label": "Condition 2, N=1 (legacy)",
+      "condition": 2,
+      "N": 1,
+      "horizon": 3000000,
+      "trials": 512,
+      "qualified_trials": 422,
+      "qualified_fraction": 0.82421875,
+      "interim": false,
+      "legacy_reset_mismatch": true,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 423,
+        "included_now": [],
+        "excluded_now": [
+          369
+        ]
+      }
+    }
+  ],
+  "config_sha256": "b02935f957f37cad1ce50e105db9dba06bec9e6e9e5ee69ed33e32bdb8441cb7",
+  "script_sha256": "9c8eca5289b51adb449482d5a22f9603344cf31589690d57600e603c24d786f0"
+}
