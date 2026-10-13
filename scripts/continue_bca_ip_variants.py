@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import copy
 from dataclasses import replace
 from datetime import datetime, timezone
@@ -49,10 +50,44 @@ def validate_restart(state, config, *, minimum=SOURCE_STEP, maximum=TARGET_STEP)
     return step
 
 
-def prepare(source, output):
+def copy_run(source, destination):
+    """Copy rank directories concurrently; verify every reused byte afterwards."""
+    destination.mkdir(exist_ok=True)
+
+    def copy_file(src, dst):
+        # This also resumes an interrupted preparation. Size is only a copy
+        # shortcut: checkpoint and history hashes are mandatory below.
+        if Path(dst).is_file() and Path(src).stat().st_size == Path(dst).stat().st_size:
+            return dst
+        return shutil.copy2(src, dst)
+
+    def copy_entry(entry):
+        dst = destination / entry.name
+        if entry.is_dir():
+            shutil.copytree(entry, dst, copy_function=copy_file, dirs_exist_ok=True)
+        else:
+            copy_file(entry, dst)
+        return entry.name
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(copy_entry, entry) for entry in source.iterdir()]
+        for future in as_completed(futures):
+            print(json.dumps({"copied": str(destination / future.result())}), flush=True)
+
+
+def prepare(source, output, *, resume_preparation=False):
     checks.gate(source / "preflight")
     # Exclusive creation prevents recopying over a continuation already running.
-    output.mkdir(parents=True, exist_ok=False)
+    if resume_preparation:
+        previous = json.loads((output / "continuation.json").read_text())
+        if (previous["passed"] or (output / "submission.json").exists() or
+                previous["source_root"] != str(source.resolve()) or
+                previous["output_root"] != str(output.resolve()) or
+                {k: v for k, v in previous["source"].items() if k != "continuation_script_sha256"}
+                != checks.source_stamp()):
+            raise ValueError("Only an unsubmitted, incomplete preparation of this source may resume")
+    else:
+        output.mkdir(parents=True, exist_ok=False)
     record = {"schema": "pybca-three-condition-continuation-v1", "passed": False,
               "created_at": datetime.now(timezone.utc).isoformat(), "source": stamp(),
               "source_root": str(source.resolve()), "output_root": str(output.resolve()),
@@ -69,7 +104,7 @@ def prepare(source, output):
         audit_ranks = {row["rank"]: row for row in audit["ranks"]}
         if set(audit_ranks) != set(range(8)):
             raise ValueError("Incomplete source audit rank roster")
-        shutil.copytree(src, dst, copy_function=shutil.copy2)
+        copy_run(src, dst)
         (dst / "completion-audit.json").rename(dst / "source-3m-completion-audit.json")
         rows = []
         for rank in range(8):
@@ -228,10 +263,11 @@ def main():
     parser.add_argument("--source", type=Path, default=SOURCE_ROOT)
     parser.add_argument("--output", type=Path, default=OUTPUT_ROOT)
     parser.add_argument("--variant", choices=checks.VARIANTS)
+    parser.add_argument("--resume-preparation", action="store_true")
     args = parser.parse_args()
     torch.set_num_threads(1)
     if args.command == "prepare":
-        prepare(args.source, args.output)
+        prepare(args.source, args.output, resume_preparation=args.resume_preparation)
     elif args.command == "parity":
         rank = int(os.environ["LOCAL_RANK"])
         if torch.cuda.device_count() != 8:

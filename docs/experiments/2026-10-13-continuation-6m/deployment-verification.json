@@ -1,0 +1,21 @@
+{
+  "verified_at": "2026-10-13T04:39:52.954831+00:00",
+  "remote_workspace": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+  "deployed_script_sha256": {
+    "scripts/continue_bca_ip_variants.py": "6fe9fa37ec8403790a200a3ecde28a21e49adf55040bd7306a4123dde2acba1b",
+    "scripts/rokko/bca-ip-continue-preflight.pbs": "0e6706e1e8e196a0522a1ab8d3de7a9f787039dbd0bff6d23db28ad6c7fd3099",
+    "scripts/rokko/bca-ip-variant-continue-6m.pbs": "30680a616a260c89bfc1185f1cd31f5df0e90a9c078ae6c2b8770c67640231c9",
+    "scripts/rokko/submit_variant_continuations.py": "da00ee29b9067cef9dd82c8837a261d9977886f2f4b0904f14fca0992f4038f2"
+  },
+  "matches_local_files": true,
+  "preparation_passed": true,
+  "ranks_verified": 24,
+  "history_chunks_verified": 72000,
+  "submission_matches_preparation": true,
+  "same_seed_and_trial_ids_retained": true,
+  "gpu_parity_result_available": false,
+  "source_step": 3000000,
+  "target_step": 6000000,
+  "trials_per_condition": 512,
+  "maximum_simultaneous_gpus": 8
+}

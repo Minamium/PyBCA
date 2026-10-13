@@ -1,0 +1,65 @@
+{
+  "observed_at": "2026-10-13T04:39:13.364826+00:00",
+  "source": "qstat -f 239927 239928 239929 239930 on rokko1",
+  "jobs": [
+    {
+      "job_id": "239927.rokko1",
+      "Job_Name": "bca_continue_check",
+      "job_state": "Q",
+      "queue": "G",
+      "ctime": "Tue Oct 13 13:38:17 2026",
+      "Resource_List.ngpus": "8",
+      "Resource_List.ncpus": "8",
+      "Resource_List.mem": "64gb",
+      "Resource_List.walltime": "00:30:00",
+      "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+      "depend": "beforeok:239928.rokko1@rokko1:239929.rokko1@rokko1:239930.rokko1@rokko1",
+      "Hold_Types": "n",
+      "comment": "Not Running: Insufficient amount of resource: ngpus (R: 8 A: 4 T:8)"
+    },
+    {
+      "job_id": "239928.rokko1",
+      "Job_Name": "bca_c1n1_6m",
+      "job_state": "H",
+      "queue": "G",
+      "ctime": "Tue Oct 13 13:38:17 2026",
+      "Resource_List.ngpus": "8",
+      "Resource_List.ncpus": "8",
+      "Resource_List.mem": "64gb",
+      "Resource_List.walltime": "24:00:00",
+      "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+      "depend": "afterok:239927.rokko1@rokko1,beforeany:239929.rokko1@rokko1",
+      "Hold_Types": "s"
+    },
+    {
+      "job_id": "239929.rokko1",
+      "Job_Name": "bca_c1n2_6m",
+      "job_state": "H",
+      "queue": "G",
+      "ctime": "Tue Oct 13 13:38:17 2026",
+      "Resource_List.ngpus": "8",
+      "Resource_List.ncpus": "8",
+      "Resource_List.mem": "64gb",
+      "Resource_List.walltime": "24:00:00",
+      "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+      "depend": "afterok:239927.rokko1@rokko1,afterany:239928.rokko1@rokko1,beforeany:239930.rokko1@rokko1",
+      "Hold_Types": "s"
+    },
+    {
+      "job_id": "239930.rokko1",
+      "Job_Name": "bca_c2n2_6m",
+      "job_state": "H",
+      "queue": "G",
+      "ctime": "Tue Oct 13 13:38:17 2026",
+      "Resource_List.ngpus": "8",
+      "Resource_List.ncpus": "8",
+      "Resource_List.mem": "64gb",
+      "Resource_List.walltime": "24:00:00",
+      "Resource_List.select": "1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb",
+      "depend": "afterok:239927.rokko1@rokko1,afterany:239929.rokko1@rokko1",
+      "Hold_Types": "s"
+    }
+  ],
+  "production_complete": false,
+  "gpu_restart_parity": "queued; no result yet"
+}

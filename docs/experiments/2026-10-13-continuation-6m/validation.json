@@ -1,0 +1,56 @@
+{
+  "local_tests": {
+    "passed": 34,
+    "skipped": 3,
+    "reason": "CUDA-only tests require an allocated GPU",
+    "command": "PYTHONPATH=src python3 -m pytest tests/test_variant_continuations.py tests/test_variant_jobs.py tests/test_core_runtime.py -q"
+  },
+  "restart_tests_after_copy_optimization": {
+    "passed": 8,
+    "failed": 0
+  },
+  "figures": {
+    "all_four_PNGs_visually_checked": true,
+    "source_aggregate_SHA256_verified": true,
+    "classification_unchanged": true,
+    "PDFs": [
+      {
+        "file": "instance1-3m.pdf",
+        "bytes": 35119,
+        "embedded_truetype_font": true,
+        "vector_paths": true
+      },
+      {
+        "file": "instance2-3m.pdf",
+        "bytes": 36286,
+        "embedded_truetype_font": true,
+        "vector_paths": true
+      },
+      {
+        "file": "instance2-legacy-6m.pdf",
+        "bytes": 34263,
+        "embedded_truetype_font": true,
+        "vector_paths": true
+      },
+      {
+        "file": "terminal-status-3m.pdf",
+        "bytes": 23162,
+        "embedded_truetype_font": true,
+        "vector_paths": true
+      }
+    ]
+  },
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "remote_preparation": {
+    "passed": true,
+    "ranks": 24,
+    "history_chunks": 72000,
+    "deployed_scripts_match_local": true
+  },
+  "gpu_restart_parity": {
+    "job_id": "239927.rokko1",
+    "status": "queued",
+    "passed": null,
+    "reason": "Waiting for eight GPUs; qstat reports four available."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "source_files": {
+    "docs/experiments/2026-10-11-final-3m/condition1-N1-3m.json": "2d35da693aac5ace38202d9364f99240c0740de9d2df0dd63f5e676a90c0096e",
+    "docs/experiments/2026-10-11-final-3m/condition1-N2-3m.json": "2f0ac20f8e8b2845e937bdd33b40f0316bfb5ac0e13c1265a81c14112b8f894a",
+    "docs/experiments/2026-10-11-final-3m/condition2-N2-3m.json": "cc256fe2031267acbb90df8d71ba7b862d7cd9b29abe749648d9936d6b51fbae",
+    "docs/experiments/2026-10-11-final-3m/condition2-legacy-N1-3m.json": "89ce255ab9e2d8328fc9ba3b0df3a1afd001c7c0eaae65661f0bdddce8929781",
+    "docs/experiments/2026-10-08-terminal-retention/condition2-legacy-N1-6m.json": "ff4f09412ab00f19c646bba3e432e1d84f53c0e2d09ebf63cd849fb908501e49",
+    "docs/experiments/2026-10-11-final-3m/comparison.json": "9ac253a102b5f38ffad0ae4b149bd73200d8bae8a133ed310b31b9ec0bbe8c9e"
+  },
+  "script_sha256": "ca5f25a05118260a7ca15fe3863047fa96a6eebafe916f39e5ae94cd04995b57",
+  "classification_changed": false,
+  "future_continuation_results_included": false,
+  "fixed_horizons_overlaid": false,
+  "status_counts": [
+    [
+      480,
+      1,
+      27,
+      4
+    ],
+    [
+      445,
+      1,
+      58,
+      8
+    ],
+    [
+      423,
+      6,
+      78,
+      5
+    ],
+    [
+      422,
+      2,
+      71,
+      17
+    ]
+  ],
+  "outputs": [
+    "instance1-3m",
+    "instance2-3m",
+    "instance2-legacy-6m",
+    "terminal-status-3m"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "submitted_at": "2026-10-13T04:38:17.436689+00:00",
+  "workspace": "/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007",
+  "jobs": [
+    {
+      "label": "preflight",
+      "job_id": "239927.rokko1",
+      "command": [
+        "qsub",
+        "scripts/rokko/bca-ip-continue-preflight.pbs"
+      ],
+      "qsub_stderr": "sh: warning: setlocale: LC_ALL: cannot change locale (C.UTF-8)"
+    },
+    {
+      "label": "condition1_N1",
+      "job_id": "239928.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c1n1_6m",
+        "-v",
+        "VARIANT=condition1_N1",
+        "-W",
+        "depend=afterok:239927.rokko1",
+        "scripts/rokko/bca-ip-variant-continue-6m.pbs"
+      ],
+      "qsub_stderr": ""
+    },
+    {
+      "label": "condition1_N2",
+      "job_id": "239929.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c1n2_6m",
+        "-v",
+        "VARIANT=condition1_N2",
+        "-W",
+        "depend=afterok:239927.rokko1,afterany:239928.rokko1",
+        "scripts/rokko/bca-ip-variant-continue-6m.pbs"
+      ],
+      "qsub_stderr": ""
+    },
+    {
+      "label": "condition2_N2",
+      "job_id": "239930.rokko1",
+      "command": [
+        "qsub",
+        "-N",
+        "bca_c2n2_6m",
+        "-v",
+        "VARIANT=condition2_N2",
+        "-W",
+        "depend=afterok:239927.rokko1,afterany:239929.rokko1",
+        "scripts/rokko/bca-ip-variant-continue-6m.pbs"
+      ],
+      "qsub_stderr": ""
+    }
+  ],
+  "pending": null,
+  "continuation_sha256": "d218126ccc7e1569e4e5cb377ca15e3a4e8d7a2f5db58f09480c1a9b3fb82c4e",
+  "maximum_simultaneous_gpus": 8
+}
