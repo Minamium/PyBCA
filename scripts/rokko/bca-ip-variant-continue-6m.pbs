@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N bca_variant_6m
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+#PBS -l place=free
+#PBS -l walltime=24:00:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+case "${VARIANT:-}" in
+    condition1_N1|condition1_N2|condition2_N2) ;;
+    *) echo 'A supported VARIANT is required' >&2; exit 2 ;;
+esac
+mkdir -p results/logs
+exec > >(tee "results/logs/${VARIANT}-continue-6m-${PBS_JOBID}.log") 2>&1
+source scripts/rokko/variants-env.sh
+python scripts/continue_bca_ip_variants.py gate --variant "$VARIANT"
+python -m torch.distributed.run --standalone --nproc-per-node=8 \
+    scripts/run_bca_ip.py \
+    --output-dir "$PWD/results/variants-6m-20261013/$VARIANT" \
+    --resume --steps 6000000 --trials 512 --seed 20261007 --global-prob 0.5 \
+    --trial-start 0 --device cuda --mode cuda --rng independent \
+    --flush-interval 1000 --checkpoint-interval 10000 --candidate-capacity 4096 \
+    --cellspace "$VARIANT_MAPS/BCA-IP_${VARIANT}.yaml" \
+    --events "$VARIANT_MAPS/BCA-IP_wide_events.py" --label "${VARIANT}-continued-6m"
+python scripts/continue_bca_ip_variants.py completed --variant "$VARIANT"

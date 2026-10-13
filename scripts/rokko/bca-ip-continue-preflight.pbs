@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N bca_continue_check
+#PBS -q G
+#PBS -l select=1:ngpus=8:ncpus=8:mpiprocs=8:mem=64gb
+#PBS -l place=free
+#PBS -l walltime=00:30:00
+#PBS -j oe
+set -euo pipefail
+cd "$PBS_O_WORKDIR"
+mkdir -p results/logs
+exec > >(tee "results/logs/continue-preflight-${PBS_JOBID}.log") 2>&1
+source scripts/rokko/variants-env.sh
+python scripts/check_bca_ip_variants.py gate --root "$VARIANT_ROOT/preflight"
+python -m torch.distributed.run --standalone --nproc-per-node=8 \
+    scripts/continue_bca_ip_variants.py parity
+python scripts/continue_bca_ip_variants.py parity-report
