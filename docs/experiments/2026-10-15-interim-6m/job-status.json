@@ -1,0 +1,56 @@
+{
+  "observed_at": "2026-10-15T01:44:02.280179+00:00",
+  "jobs": [
+    {
+      "job_id": "239927.rokko1",
+      "Job_Name": "bca_continue_check",
+      "job_state": "F",
+      "queue": "G",
+      "stime": "Tue Oct 13 18:24:02 2026",
+      "mtime": "Tue Oct 13 18:27:23 2026",
+      "Exit_status": "0",
+      "resources_used.walltime": "00:03:17",
+      "Resource_List.ngpus": "8",
+      "Resource_List.walltime": "00:30:00",
+      "depend": "beforeok:239928.rokko1@rokko1:239929.rokko1@rokko1:239930.rokko1@rokko1",
+      "comment": "Job run at Tue Oct 13 at 18:24 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4) and finished"
+    },
+    {
+      "job_id": "239928.rokko1",
+      "Job_Name": "bca_c1n1_6m",
+      "job_state": "F",
+      "queue": "G",
+      "stime": "Tue Oct 13 18:27:24 2026",
+      "mtime": "Wed Oct 14 17:05:04 2026",
+      "Exit_status": "0",
+      "resources_used.walltime": "22:37:38",
+      "Resource_List.ngpus": "8",
+      "Resource_List.walltime": "24:00:00",
+      "depend": "beforeany:239929.rokko1@rokko1",
+      "comment": "Job run at Tue Oct 13 at 18:27 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4) and finished"
+    },
+    {
+      "job_id": "239929.rokko1",
+      "Job_Name": "bca_c1n2_6m",
+      "job_state": "R",
+      "queue": "G",
+      "stime": "Wed Oct 14 17:05:06 2026",
+      "mtime": "Thu Oct 15 10:42:20 2026",
+      "resources_used.walltime": "17:37:14",
+      "Resource_List.ngpus": "8",
+      "Resource_List.walltime": "24:00:00",
+      "depend": "beforeany:239930.rokko1@rokko1",
+      "comment": "Job run at Wed Oct 14 at 17:05 on (nodeg01[1]:mem=67108864kb:ncpus=8:ngpus=4+nodeg01[0]:ngpus=4)"
+    },
+    {
+      "job_id": "239930.rokko1",
+      "Job_Name": "bca_c2n2_6m",
+      "job_state": "H",
+      "queue": "G",
+      "mtime": "Tue Oct 13 18:27:22 2026",
+      "Resource_List.ngpus": "8",
+      "Resource_List.walltime": "24:00:00",
+      "depend": "afterany:239929.rokko1@rokko1"
+    }
+  ]
+}

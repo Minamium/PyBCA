@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "case": "condition1-N1-6m",
+      "passed": true,
+      "trials": 512,
+      "regimes_checked": 7390,
+      "FSM_events_checked": 3311985,
+      "qualified_trials": 503,
+      "terminal_status_counts": {
+        "qualified": 503,
+        "includes_unresolved_readout": 4,
+        "both_readable_nonoptimal": 4,
+        "terminal_optimum_too_recent": 1
+      }
+    },
+    {
+      "case": "condition1-N1-5p3m",
+      "passed": true,
+      "trials": 512,
+      "regimes_checked": 6790,
+      "FSM_events_checked": 2891264,
+      "qualified_trials": 502,
+      "terminal_status_counts": {
+        "qualified": 502,
+        "includes_unresolved_readout": 2,
+        "both_readable_nonoptimal": 8
+      }
+    },
+    {
+      "case": "condition1-N2-5p3m",
+      "passed": true,
+      "trials": 512,
+      "regimes_checked": 6804,
+      "FSM_events_checked": 2543182,
+      "qualified_trials": 496,
+      "terminal_status_counts": {
+        "qualified": 496,
+        "both_readable_nonoptimal": 11,
+        "includes_unresolved_readout": 4,
+        "terminal_optimum_too_recent": 1
+      }
+    }
+  ],
+  "downloads_and_prefixes": [
+    {
+      "variant": "condition1_N1",
+      "passed": true,
+      "files_sha256_verified": 4,
+      "history_chunks_SHA256_verified": 48000,
+      "prior_3m_FSM_and_reset_prefix_exact": true
+    },
+    {
+      "variant": "condition1_N2",
+      "passed": true,
+      "files_sha256_verified": 4,
+      "history_chunks_SHA256_verified": 42400,
+      "prior_3m_FSM_and_reset_prefix_exact": true
+    }
+  ],
+  "script_sha256": "7312a6918a2a311f8779c4bf46fdcb5a8482ec6f3d2d5c43f1fd00ddcf9c13b7",
+  "same_policy_as_previous_results": true,
+  "future_events_used": false
+}

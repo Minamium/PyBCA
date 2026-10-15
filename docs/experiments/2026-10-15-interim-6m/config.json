@@ -1,0 +1,30 @@
+{
+  "minimum_duration": 100000,
+  "cases": [
+    {
+      "id": "condition1-N1-6m",
+      "label": "Condition 1, N=1 (completed)",
+      "condition": 1,
+      "N": 1,
+      "readout": "docs/experiments/2026-10-15-interim-6m/readout-source/condition1_N1/readout"
+    },
+    {
+      "id": "condition1-N1-5p3m",
+      "label": "Condition 1, N=1",
+      "condition": 1,
+      "N": 1,
+      "readout": "docs/experiments/2026-10-15-interim-6m/readout-source/condition1_N1/readout",
+      "horizon": 5300000,
+      "interim": true
+    },
+    {
+      "id": "condition1-N2-5p3m",
+      "label": "Condition 1, N=2 (interim)",
+      "condition": 1,
+      "N": 2,
+      "readout": "docs/experiments/2026-10-15-interim-6m/readout-source/condition1_N2/readout",
+      "interim": true
+    }
+  ],
+  "plots": []
+}

@@ -1,0 +1,76 @@
+{
+  "created_at": "2026-10-15T02:16:02.289357+00:00",
+  "schema": "pybca-terminal-uninterrupted-optimum-v1",
+  "minimum_duration": 100000,
+  "curve_definition": "F_T(t) = number of trials with s <= t and T-s >= minimum_duration, divided by all trials; s is the beginning of an uninterrupted same-vector optimum episode in one unit that ends at T.",
+  "policy": {
+    "bin_width": 10000,
+    "change_penalty": 20,
+    "min_segment_bins": 3,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "read_entire_rate_regime": true,
+    "merge_same_optimal_vector": true,
+    "unknown_or_nonoptimal_breaks_continuity": true,
+    "different_optimum_breaks_continuity": true,
+    "switching_units_to_bridge_a_gap": false,
+    "counts_require_final_horizon_information": true
+  },
+  "limitations": [
+    "Continuous output is inferred from sparse events and rate regimes, not observed at every CA step.",
+    "Estimated episode starts are not exact internal first-hit times or causal confirmation times.",
+    "An interim endpoint cannot establish persistence beyond its observation horizon."
+  ],
+  "cases": [
+    {
+      "case": "condition1-N1-6m",
+      "label": "Condition 1, N=1 (completed)",
+      "condition": 1,
+      "N": 1,
+      "horizon": 6000000,
+      "trials": 512,
+      "qualified_trials": 503,
+      "qualified_fraction": 0.982421875,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 503,
+        "included_now": [],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition1-N1-5p3m",
+      "label": "Condition 1, N=1",
+      "condition": 1,
+      "N": 1,
+      "horizon": 5300000,
+      "trials": 512,
+      "qualified_trials": 502,
+      "qualified_fraction": 0.98046875,
+      "interim": true,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": null
+    },
+    {
+      "case": "condition1-N2-5p3m",
+      "label": "Condition 1, N=2 (interim)",
+      "condition": 1,
+      "N": 2,
+      "horizon": 5300000,
+      "trials": 512,
+      "qualified_trials": 496,
+      "qualified_fraction": 0.96875,
+      "interim": true,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 496,
+        "included_now": [],
+        "excluded_now": []
+      }
+    }
+  ],
+  "config_sha256": "808882ab10052c6a80a0c0b19acbed63c16b08de2cdc72e73a65667c944e7cf8",
+  "script_sha256": "9c8eca5289b51adb449482d5a22f9603344cf31589690d57600e603c24d786f0"
+}

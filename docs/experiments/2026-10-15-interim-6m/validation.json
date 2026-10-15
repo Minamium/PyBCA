@@ -1,0 +1,42 @@
+{
+  "local_tests": {
+    "passed": 29,
+    "failed": 0,
+    "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest tests/test_readout_snapshot.py tests/test_terminal_retention.py tests/test_fsm_output_readout.py tests/test_short_fsm_stability.py -q"
+  },
+  "production_dynamics_changed": false,
+  "new_GPU_jobs_submitted": false,
+  "production_jobs_interrupted": false,
+  "analysis_endpoints": {
+    "condition1_N1_completed": 6000000,
+    "condition1_N1_matched": 5300000,
+    "condition1_N2_interim": 5300000,
+    "condition2_N2_unchanged": 3000000
+  },
+  "GPU_restart_checks": {
+    "passed": true,
+    "trials": 1536,
+    "cases_by_rank": 24
+  },
+  "N1_6m_completion_audit_passed": true,
+  "analysis_endpoints_have_equal_512_trial_denominators": true,
+  "figures_visually_checked": true,
+  "prior_3m_prefix_verification": "exact FSM and reset array equality for both conditions",
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "history_chunks_SHA256_verified": 90400,
+  "event_level_regimes_verified": 20984,
+  "event_level_validation_passed": true,
+  "downloaded_readout_files_SHA256_verified": 8,
+  "future_events_used": false,
+  "figures": [
+    "condition1-matched-5p3m",
+    "condition1-N1-completed-6m",
+    "condition2-unchanged-3m",
+    "condition2-legacy-6m"
+  ],
+  "formats": [
+    "png",
+    "pdf",
+    "svg"
+  ]
+}

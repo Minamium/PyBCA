@@ -1,0 +1,385 @@
+{
+  "observed_at": "2026-10-15T01:47:42.701590+00:00",
+  "cases": [
+    {
+      "variant": "condition1_N1",
+      "ranks": [
+        {
+          "rank": "rank_0000",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 560,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1271349248
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0001",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 577,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1271300096
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0002",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 539,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1266958336
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0003",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 613,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1269223424
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0004",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 590,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1271234560
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0005",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 508,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1271373824
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0006",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 520,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1271791616
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0007",
+          "next_step": 6000000,
+          "history_chunks": 6000,
+          "last_chunk_records": 543,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1266335744
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        }
+      ]
+    },
+    {
+      "variant": "condition1_N2",
+      "ranks": [
+        {
+          "rank": "rank_0000",
+          "next_step": 5371000,
+          "history_chunks": 5371,
+          "last_chunk_records": 462,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1273749504
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0001",
+          "next_step": 5372000,
+          "history_chunks": 5372,
+          "last_chunk_records": 470,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1270706176
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0002",
+          "next_step": 5372000,
+          "history_chunks": 5372,
+          "last_chunk_records": 532,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1275428864
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0003",
+          "next_step": 5371000,
+          "history_chunks": 5371,
+          "last_chunk_records": 514,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1270362112
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0004",
+          "next_step": 5378000,
+          "history_chunks": 5378,
+          "last_chunk_records": 483,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1275838464
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0005",
+          "next_step": 5377000,
+          "history_chunks": 5377,
+          "last_chunk_records": 588,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1275383808
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0006",
+          "next_step": 5368000,
+          "history_chunks": 5368,
+          "last_chunk_records": 512,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1275813888
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0007",
+          "next_step": 5371000,
+          "history_chunks": 5371,
+          "last_chunk_records": 487,
+          "memory": {
+            "cuda_allocated_bytes": 1492573184,
+            "cuda_peak_allocated_bytes": 1538710528,
+            "host_peak_rss_bytes": 1272459264
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        }
+      ]
+    },
+    {
+      "variant": "condition2_N2",
+      "ranks": [
+        {
+          "rank": "rank_0000",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 481,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1268514816
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0001",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 504,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1271586816
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0002",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 479,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1272901632
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0003",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 504,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1272475648
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0004",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 501,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1273040896
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0005",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 603,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1267740672
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0006",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 432,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1272991744
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        },
+        {
+          "rank": "rank_0007",
+          "next_step": 3000000,
+          "history_chunks": 3000,
+          "last_chunk_records": 528,
+          "memory": {
+            "cuda_allocated_bytes": 1496769536,
+            "cuda_peak_allocated_bytes": 1496770048,
+            "host_peak_rss_bytes": 1268043776
+          },
+          "seed": 20261007,
+          "global_prob": 0.5,
+          "trials": 64
+        }
+      ]
+    }
+  ],
+  "logs": [
+    {
+      "file": "results/logs/condition1_N1-continue-6m-239928.rokko1.log",
+      "errors": [],
+      "last_lines": [
+        "{\"label\": \"condition1_N1-continued-6m\", \"rank\": 5, \"current_step\": 6000000, \"target_step\": 6000000, \"elapsed_sec\": 80582.19794714078, \"stopped\": false, \"history\": \"/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-6m-20261013/condition1_N1/rank_0005/manifest.json\", \"active\": true, \"trial_ids\": [320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383], \"cellspace\": \"/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/Sample/Cellspace/BCA-IP-variants/BCA-IP_condition1_N1.yaml\", \"instance_certified\": false}",
+        "{\"variant\": \"condition1_N1\", \"restart_steps\": [6000000, 6000000, 6000000, 6000000, 6000000, 6000000, 6000000, 6000000], \"target_step\": 6000000}",
+        "{\"variant\": \"condition1_N1\", \"steps\": 6000000, \"seed\": 20261007, \"trials\": 512, \"ranks\": [{\"rank\": 0, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.2730724588, \"checkpoint_sha256\": \"22c742fdd80ebbd1600cfb482aa13d4524529f31412f4efec78d9232566e6ea1\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 1, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.27300007269, \"checkpoint_sha256\": \"e694afa6b207718fde3a2ed3bbdf7cc92a19b5139bee7d8d6d33ed025840942a\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 2, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.29679520428, \"checkpoint_sha256\": \"2fc951b0d27b248ef14e657aaca556f9c29d3ae34f92758aad9cb4fa93ac382f\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 3, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.30731221288, \"checkpoint_sha256\": \"93891d82aab0819c8b8fb9ce06b62289342e1f41420d8803fd5cdc08c1897575\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 4, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.07285247743, \"checkpoint_sha256\": \"40712f075b87fb234464c0af0bb1d9084e4524dc6f437794a3ef9b84d12c8a6b\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 5, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.19794714078, \"checkpoint_sha256\": \"3ab167bcf139fe133898a39250b92b42ee0043d7c8a96bfdf2c905072fa203fa\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 6, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.08888290077, \"checkpoint_sha256\": \"e90644fc3620c9baecbba98d20e8ffacf185d13df347e9b94ffe5bf297b15139\", \"peak_cuda_bytes\": 1538710528}, {\"rank\": 7, \"step\": 6000000, \"trials\": 64, \"elapsed_sec\": 80582.21586019918, \"checkpoint_sha256\": \"65d3da76d45353bc6582e0cf2f2e966ec80f809bd7ac4b8c415ff94ff23eba66\", \"peak_cuda_bytes\": 1538710528}], \"events_by_family\": {\"TD\": 53890, \"FSM\": 3311985, \"Amp\": 9935945, \"F\": 9833606, \"other\": 1231353, \"reset\": 1555}, \"first_event_steps\": {\"TD\": 1375, \"FSM\": 4217, \"Amp\": 4551, \"F\": 5141, \"other\": 26661, \"reset\": 120788}, \"passed\": true, \"source\": {\"implementation\": {\"api/__init__.py\": \"cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d\", \"api/config.py\": \"a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40\", \"api/distributed.py\": \"f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4\", \"api/engine.py\": \"c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc\", \"api/logging_utils.py\": \"bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9\", \"api/result.py\": \"3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d\", \"api/streaming.py\": \"472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5\", \"core/__init__.py\": \"07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea\", \"core/cuda_backend.py\": \"8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b\", \"core/io.py\": \"3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274\", \"core/kernels.cu\": \"7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d\", \"core/optimized.py\": \"b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0\", \"core/random.py\": \"bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee\", \"core/schemes/__init__.py\": \"be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e\", \"core/schemes/bca_default.py\": \"8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4\", \"core/schemes/registry.py\": \"61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d\", \"core/simulator.py\": \"4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe\", \"core/states/__init__.py\": \"204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3\", \"core/states/registry.py\": \"9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8\", \"core/states/state_bca.py\": \"5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332\"}, \"rng_version\": \"philox4x32-10-v1\", \"input_manifest_sha256\": \"eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d\", \"checker_sha256\": \"c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35\", \"runner_sha256\": \"f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45\"}, \"checked_at\": \"2026-10-14T08:05:02.488563+00:00\", \"continuation_sha256\": \"d218126ccc7e1569e4e5cb377ca15e3a4e8d7a2f5db58f09480c1a9b3fb82c4e\"}"
+      ]
+    },
+    {
+      "file": "results/logs/condition1_N2-continue-6m-239929.rokko1.log",
+      "errors": [],
+      "last_lines": [
+        "INFO : Checkpoint saved: step=5370000 target=6000000 elapsed_sec=63673.6 directory=/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-6m-20261013/condition1_N2/rank_0003",
+        "INFO : Checkpoint saved: step=5370000 target=6000000 elapsed_sec=63674.5 directory=/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-6m-20261013/condition1_N2/rank_0000",
+        "INFO : Checkpoint saved: step=5370000 target=6000000 elapsed_sec=63679.9 directory=/home/IM25D029/PyBCA_workspcace/bca-ip-three-conditions-20261007/results/variants-6m-20261013/condition1_N2/rank_0007"
+      ]
+    },
+    {
+      "file": "results/logs/continue-preflight-239927.rokko1.log",
+      "errors": [],
+      "last_lines": [
+        "{\"variant\": \"condition2_N2\", \"rank\": 3, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"4f4b3800c4c8656838457862cbd4631f71f3efbe53f347643afaa953e0df083d\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}",
+        "{\"variant\": \"condition2_N2\", \"rank\": 1, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"9f629a8338e29ea96d4f31f602bda24185c646c324a38c963f838e9a08962586\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}",
+        "{\"passed\": true, \"source\": {\"implementation\": {\"api/__init__.py\": \"cae000c7ee73e243b0ece0453685c60ceb7ac128ce28b8b32bbd64d867edc76d\", \"api/config.py\": \"a8a7c6c3ddd57324cb75aebf8cc366c6549ac6f55fef5c4ce7a357f94563cd40\", \"api/distributed.py\": \"f84a2bbb7731253299958697629cefbf0617b3d670b62116ed81c1cca46facb4\", \"api/engine.py\": \"c97bbd83de0f10a1bcf92e0003811d0ce4f1c348af91954fecc284c1e09f08fc\", \"api/logging_utils.py\": \"bdd06f21e4e9d3b1379db3c2e017176fff9be92dd5833b5ffb83f73bbfe907b9\", \"api/result.py\": \"3946a5737657e6e97559410961fe9fe101f282f0a0294d57c763d065c8105f2d\", \"api/streaming.py\": \"472507abb24d7038b66c09dc10f140a03d2aff031c55e71e86166f81c04bc4a5\", \"core/__init__.py\": \"07bbb046311da4c5f0bb9b422b0c62f63c3b7937a23b1179ad93a275526f3fea\", \"core/cuda_backend.py\": \"8739f4e836bf472f8b14ca49daae935ae7abd3e7521867f576b6e964dd4e462b\", \"core/io.py\": \"3be7091723a7e44e8d961ce485bcb843c6769304922e5c0dd2054f4fb195d274\", \"core/kernels.cu\": \"7881201a8930e0ee2638e61d72c1d7fb46e235b96830f27aefe46d983dac245d\", \"core/optimized.py\": \"b14ca92547a4472223fdf7dbe8edc5d9b9b205f5a605d87ce5d5397bb19016b0\", \"core/random.py\": \"bd31c58ed6924c98075066a453691c09a57f47468783d4342ca566f2887036ee\", \"core/schemes/__init__.py\": \"be754b07670ae4fcc4b74119c4043244061150af7e772037efd3ec23b05b644e\", \"core/schemes/bca_default.py\": \"8cf3594cec1e15bfccde11f97f667dffcd99374f78989b3ac0be7ebc04cf6cc4\", \"core/schemes/registry.py\": \"61230a9a639de7397929a007351cff9a0b5e45d56bbcd5e3e1d430a41f0a911d\", \"core/simulator.py\": \"4714daa201398a3ab51df627c315c1cdf80652c95f2be4749ff229f17ac4d5fe\", \"core/states/__init__.py\": \"204e7bf3ac24fcac896211ae8d4d55cdc7f38e8d20cb7ebfdd0db7f39f4042e3\", \"core/states/registry.py\": \"9c42b20ad95b1d2552997a2f97fe42277a98ee4e10a05bcd1cf688d2866a2be8\", \"core/states/state_bca.py\": \"5274fd3508eaf2fa41d3af895b7c9fab06fd279ace23b1626ab3cd0fbcf16332\"}, \"rng_version\": \"philox4x32-10-v1\", \"input_manifest_sha256\": \"eeaf8252543bb7e2e564847080d5c73e5490284763c42ed829f3f6e76f84709d\", \"checker_sha256\": \"c0e6fcdccd9dc58002af6ce2cb832faf1291bcf4e9632267e31e38b63186ae35\", \"runner_sha256\": \"f468ebbbf676452e10c5c3b90d4f48adee1383bb06cba4714969408df731fe45\", \"continuation_script_sha256\": \"6fe9fa37ec8403790a200a3ecde28a21e49adf55040bd7306a4123dde2acba1b\"}, \"runs\": [{\"variant\": \"condition1_N1\", \"rank\": 0, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"fe9f8d90793f75d57c6d45cb0c24039c683cbe46e8e1b43dbd8d80364f230683\", \"event_records\": 87, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 0, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"bd705ce6a431b3876b6238db0cad6911fcf2c9f8b9c326ba144926f5da0053e7\", \"event_records\": 79, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 0, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"c7db2de6e07219400a67a60f09daa5415ce8cd5576865b71c707bb73e71e79ed\", \"event_records\": 64, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 1, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"39db140c5b1413f3012173be22b2defc97556bf1a728bc5a3d6a91da8d69b803\", \"event_records\": 71, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 1, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"f389f41c39dc528d05a02dc59f23ffcc003bf100beaa12a56b04dfc3dc75e3c0\", \"event_records\": 53, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 1, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"9f629a8338e29ea96d4f31f602bda24185c646c324a38c963f838e9a08962586\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 2, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"0faaa36429c9d3617526f4cc88969530d36b96bbf7cfcc08aa95aaf78329e5ad\", \"event_records\": 83, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 2, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"d27155d17226243da6286e33fbd9502d93e2554ed8259c341e09c8a8d2c26623\", \"event_records\": 76, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 2, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"f79928c007d0d55c26bb2247639e714926362006e721b538d72581c34f80768d\", \"event_records\": 64, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 3, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"c355b430aaa6f10b46d9340c69cee1285da9ecd5b9cc64173d933bad64a512fc\", \"event_records\": 88, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 3, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"fdafc14b74cb743ab29a1609c8ef89f5bc1b3a3acf178caea4f5ec58908ff6c5\", \"event_records\": 77, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 3, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"4f4b3800c4c8656838457862cbd4631f71f3efbe53f347643afaa953e0df083d\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 4, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"227ead03e26d38e0591c610d104f0d492e2fbe432ca1b5ddccf69808b0943b19\", \"event_records\": 74, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 4, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"2855a472780e28b1159993e0768c547154ecdbcd041e172314e821e215cbb7ca\", \"event_records\": 77, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 4, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"daca0818d88c334e11aa426d7d84d02357b16f844668ac0081f81b7a909a6a51\", \"event_records\": 70, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 5, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"8f97af73195fb063714ffc9bebc7ba986996dba8dfc17fdc4187193aebbf1985\", \"event_records\": 71, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 5, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"df7b1d27b45236ebf7edf1ecfe5ae9081cad6f1ba51cd55c8ce64d677f398b2b\", \"event_records\": 55, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 5, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"e531b54642945f09500c9df7039f233e1c5f56d68b7971ce570c6f595f696eb4\", \"event_records\": 79, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 6, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"31c04c9157c591ef9eb06d8f7aa8e06e3d9e9b127c2fd79b8371b48f1ed4a82d\", \"event_records\": 74, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 6, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"d8f8c63539cbfaa8758b41522fbbf45a3acd4e151d78689d0cb200a4e4f3861a\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 6, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"a9dd6fb6c4c36ad8489c263d1521229a8750e515c8014a9fd4e1eb8ce83c0c3f\", \"event_records\": 65, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N1\", \"rank\": 7, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"3d07521aad7849ce85f4ae7707f8a52f703e812609fe022a9454a11dcd418d27\", \"event_records\": 76, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition1_N2\", \"rank\": 7, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"c5412386fb16ca607bb119307862e4f6530515f9fffdcd55e3f3d445e20295bd\", \"event_records\": 66, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}, {\"variant\": \"condition2_N2\", \"rank\": 7, \"trials\": 64, \"steps\": 128, \"source_checkpoint_sha256\": \"2cc025894d979f05a0cad418ae61d52086b62c81bc5c1d2f2d9186f8c45fcb34\", \"event_records\": 72, \"checks\": {\"cells\": true, \"rule_probs\": true, \"step\": true, \"offset\": true, \"events\": true, \"source_checkpoint_unchanged\": true}, \"passed\": true}], \"trials_checked\": 1536, \"scope\": \"Actual 3M cells, 128 uninterrupted vs 64+64 resumed GPU updates; isolated verification fixtures.\"}"
+      ]
+    }
+  ]
+}
