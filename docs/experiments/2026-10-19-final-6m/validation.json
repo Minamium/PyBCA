@@ -1,0 +1,39 @@
+{
+  "local_tests": {
+    "passed": 29,
+    "failed": 0,
+    "command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 python3 -m pytest tests/test_readout_snapshot.py tests/test_terminal_retention.py tests/test_fsm_output_readout.py tests/test_short_fsm_stability.py -q"
+  },
+  "production_dynamics_changed": false,
+  "new_GPU_jobs_submitted": false,
+  "production_jobs_interrupted": false,
+  "collection_agent_model": "gpt-6.1-sol",
+  "analysis_horizon": 6000000,
+  "trials_per_condition": 512,
+  "minimum_duration": 100000,
+  "previous_published_files_sha256_verified": {
+    "2026-10-08-terminal-retention": 27,
+    "2026-10-11-final-3m": 42,
+    "2026-10-15-interim-6m": 42
+  },
+  "existing_user_plots_sha256": "ecd3fde8b06a577e2eacf5c2dfd356d5588b5a0b6dfa1f47fa68fdf316433071",
+  "completion_audits_passed": true,
+  "event_level_validation_passed": true,
+  "figures_visually_checked": true,
+  "new_history_chunks_verified": 96000,
+  "total_source_history_chunks": 144000,
+  "event_level_regimes_verified": 21215,
+  "readout_files_downloaded_sha256_verified": 8,
+  "previous_condition1_N1_6m_aggregate_exact": true,
+  "previous_FSM_and_reset_prefixes_exact": true,
+  "figures": [
+    "condition1-6m",
+    "condition2-6m",
+    "terminal-status-6m"
+  ],
+  "formats": [
+    "png",
+    "pdf",
+    "svg"
+  ]
+}

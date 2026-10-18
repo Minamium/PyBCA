@@ -1,0 +1,150 @@
+{
+  "checked_at": "2026-10-18T17:31:15.134557+00:00",
+  "conditions": [
+    {
+      "variant": "condition1_N2",
+      "prefix_horizon": 5300000,
+      "old_source": "results/interim-readout-20261015/condition1_N2/snapshot",
+      "ranks": [
+        {
+          "rank": 0,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "52cce41dd457fdf365c69ab7ce2c443e89cd33fbf1c311757af0242eefe30af6",
+          "new_manifest_sha256": "0382b6ad63d6c81fda7387beb148dd8fd9b2be876e1b82ab1a0d26585d2ba325",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 1,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "2822f532e9364ebdea99a80421f5c8c430318be624d606733a0036e933c26b49",
+          "new_manifest_sha256": "547fc19aa831d336dea1b7e32e346b52b34b54db8771acddcc9d94fa935ba32d",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 2,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "6623685158ae86f0e04e4c40c459bf8c4c8043c72939b280c601f6a014a6b6a0",
+          "new_manifest_sha256": "4a4ecb8aee02515765a950ded630de5472a2dda26a03cbeda7974d0f2f81eefe",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 3,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "12ef2ab413ff8a906dbcf0720829c58077b61916170b2a4ac2f813d1bf3f7849",
+          "new_manifest_sha256": "af783907cda58bf9cdd9c85501b958763791a4fa985c925545237ca83c35f227",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 4,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "4b29bf8622536b619980957f18baf9dd562df7caf2f808da0fe528e38baaaa63",
+          "new_manifest_sha256": "92e7e5b582844e3f87a0714a0b2929c42ac61bf65b806eacf8b922376d1dee5a",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 5,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "8e416683f5df15e1d584a2327e0f9d54b1934a9a1ed2d5a46a38139a5dcd5adf",
+          "new_manifest_sha256": "1ab1f7f6434b7250bd642c9c0a71255127a7c8c09cbf07a6c81e6afe8d1b2e2d",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 6,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "920fd30d06c1deee344054ca089566fc1afce38aa82d92e8ef83f82d8237f260",
+          "new_manifest_sha256": "41f699a75db29bf4c98c3db1f03f7fbe6acfde11c1c5361e142cd125bc5dd193",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 7,
+          "prefix_chunks": 5300,
+          "old_manifest_sha256": "406c5185cb546cf074c0af1d9709bc40ec37699f5b30e84230fcd4f54b8f5f15",
+          "new_manifest_sha256": "d0ab58914d7518659e72788210d1c0f6571bbf9e468873019409f12df6296eed",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "variant": "condition2_N2",
+      "prefix_horizon": 3000000,
+      "old_source": "results/variants-20261007/condition2_N2",
+      "ranks": [
+        {
+          "rank": 0,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "07a47c68bf04b40bc35579eed51ee6eab2d3b6c54442e2bbc491a7981ea767b4",
+          "new_manifest_sha256": "55baf776ae247d288eed664f314c1cf68f4f74eeddf5eed0460105bb989f06d9",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 1,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "43acff582032a12ee26ec9b9fe54072b831f58e744cfb8be06deb47bc670a940",
+          "new_manifest_sha256": "7a2c8f10b525e31b00180ec1ee126c649685a2daf05340336966de03ffa34798",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 2,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "9e406c978f84dcb1ed2c9840cdf5ba7f9a924406d36a946a508f64005706f93f",
+          "new_manifest_sha256": "0ae2831c0215be44dc2d188847f994220ec49bea758b0d96eacdc0c96a705d72",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 3,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "8fad205ec09e378530af3b437e1a70a17c0f6dcd23ec78a54aa5f000259ba2c5",
+          "new_manifest_sha256": "9fcd3dbc59f5d26b81a54bca4c4e357f032e27814526ba66f9e3d84fd2490742",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 4,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "560beeac63efe0c3433a5777ff6fe0a5c9255d795a4dc57f2aa21cb5574c71ee",
+          "new_manifest_sha256": "02234b26687047b221b5decd86924e341490a27801ae2673dac2965d9608fca1",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 5,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "175896a3a9e678e3cc29bd7357fc35dfe33ac9359d58d47db8f59764cf882379",
+          "new_manifest_sha256": "7a7ed172ebad94d8904dba2d25e68a31048d29a3c97132625a364e7a231a8f8c",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 6,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "096a6a03c812f9744c5f83d6b34973ef42645ded493755ed455599dbe7f3b2fb",
+          "new_manifest_sha256": "aeb8ba2f35628f3167fc8c183ea411d8c3f04c6af772ff1baadc2be6db5e8d45",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        },
+        {
+          "rank": 7,
+          "prefix_chunks": 3000,
+          "old_manifest_sha256": "944539d2b5825955e8cedc0dcb958a53de6e72d0b53e55c53e855e5bcb696f89",
+          "new_manifest_sha256": "b274f83667efb2ffbfc5b4c78c2366810499746464ec0596cb43b57f14e91d67",
+          "prefix_chunk_descriptors_exact_equality": true,
+          "identity_and_trial_ids_equal": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true
+}

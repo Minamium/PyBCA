@@ -1,0 +1,164 @@
+Read and checked rank_0000
+Read and checked rank_0001
+Read and checked rank_0002
+Read and checked rank_0003
+Read and checked rank_0004
+Read and checked rank_0005
+Read and checked rank_0006
+Read and checked rank_0007
+{
+  "optimal_trials": 494,
+  "optimal_fraction": 0.96484375,
+  "stable_nonoptimal_trials": 13,
+  "unresolved_trials": 5,
+  "stable_infeasible_units": 0,
+  "optimal_A_only_trials": 204,
+  "optimal_B_only_trials": 190,
+  "both_units_optimal_trials": 100
+}
+[
+  {
+    "label": "primary",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 5
+  },
+  {
+    "label": "penalty_10",
+    "penalty": 10.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 487,
+    "optimal_fraction": 0.951171875,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 12
+  },
+  {
+    "label": "penalty_30",
+    "penalty": 30.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 495,
+    "optimal_fraction": 0.966796875,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 4
+  },
+  {
+    "label": "min_duration_50000",
+    "penalty": 20.0,
+    "min_duration": 50000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 14,
+    "unresolved_trials": 4
+  },
+  {
+    "label": "min_duration_150000",
+    "penalty": 20.0,
+    "min_duration": 150000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 12,
+    "unresolved_trials": 6
+  },
+  {
+    "label": "min_duration_200000",
+    "penalty": 20.0,
+    "min_duration": 200000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 493,
+    "optimal_fraction": 0.962890625,
+    "stable_nonoptimal_trials": 12,
+    "unresolved_trials": 7
+  },
+  {
+    "label": "max_window_200000",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 200000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 5
+  },
+  {
+    "label": "max_window_6000000",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 6000000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 5
+  },
+  {
+    "label": "off_events_0",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 0,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 12,
+    "unresolved_trials": 6
+  },
+  {
+    "label": "off_events_1",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 1,
+    "occupied_quarters": 3,
+    "optimal_trials": 494,
+    "optimal_fraction": 0.96484375,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 5
+  },
+  {
+    "label": "all_four_quarters",
+    "penalty": 20.0,
+    "min_duration": 100000,
+    "max_window": 300000,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 4,
+    "optimal_trials": 488,
+    "optimal_fraction": 0.953125,
+    "stable_nonoptimal_trials": 13,
+    "unresolved_trials": 11
+  }
+]
+{"snapshot_passed": true, "variant": "condition2_N2", "horizon": 6000000, "files": {"readout/fsm-event-times.npz": "88d57b036ed7b9fcfe24d66c21609bc38e4c14a19ab1c8b8b8800dd269d4cdaa", "readout/fsm-output-counts.npz": "93e4a853d98893bce37b0617644a230b39b1fc6fb9fb27775f30f3bde2b38b6f", "readout/summary.json": "03e3326315d4df84d7d562e377e14dea950468975fc903353cad8d6a71ac620b", "readout/trials.jsonl": "bb0168c17cedfe81cad0f70f11de13d051724842f6dc8284751c70aeda101f43"}}

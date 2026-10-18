@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-10-18T17:28:56.266251+00:00",
+  "passed": true,
+  "jobs": [
+    {
+      "variant": "condition1_N1",
+      "job_id": "239928.rokko1",
+      "Job_Name": "bca_c1n1_6m",
+      "job_state": "F",
+      "Exit_status": "0",
+      "resources_used.walltime": "22:37:38",
+      "stime": "Tue Oct 13 18:27:24 2026",
+      "mtime": "Wed Oct 14 17:05:04 2026",
+      "history_timestamp": "1791965104",
+      "run_count": "1"
+    },
+    {
+      "variant": "condition1_N2",
+      "job_id": "239929.rokko1",
+      "Job_Name": "bca_c1n2_6m",
+      "job_state": "F",
+      "Exit_status": "0",
+      "resources_used.walltime": "22:43:39",
+      "stime": "Wed Oct 14 17:05:06 2026",
+      "mtime": "Thu Oct 15 15:48:47 2026",
+      "history_timestamp": "1792046927",
+      "run_count": "1"
+    },
+    {
+      "variant": "condition2_N2",
+      "job_id": "239930.rokko1",
+      "Job_Name": "bca_c2n2_6m",
+      "job_state": "F",
+      "Exit_status": "0",
+      "resources_used.walltime": "23:02:26",
+      "stime": "Sat Oct 17 14:10:14 2026",
+      "mtime": "Sun Oct 18 13:12:45 2026",
+      "history_timestamp": "1792296765",
+      "run_count": "1"
+    }
+  ]
+}

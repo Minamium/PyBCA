@@ -1,0 +1,84 @@
+{
+  "schema": "pybca-final-6m-readout-validation-v1",
+  "checked_at": "2026-10-18T17:41:04.440981+00:00",
+  "conditions": [
+    {
+      "variant": "condition1_N2",
+      "passed": true,
+      "horizon": 6000000,
+      "trials": 512,
+      "checked_chunks": 48000,
+      "raw_records": 21556498,
+      "fsm_events": 2918628,
+      "reset_set_events": 1553,
+      "snapshot_sha256": "97902ba47afe8515c197f5d082cf2260bd1e2d0f944a39ab1cce785573110072",
+      "readout_file_sha256": {
+        "readout/fsm-event-times.npz": "2e1b670948bfb77aa092a088bf484e6ef4076aedcdf83c45c9d9494f988310f1",
+        "readout/fsm-output-counts.npz": "82078cab4e0515487b3d86e89cab94e2d650944d9a20872e000fafa778fa4a48",
+        "readout/summary.json": "d9809c4fdf45cb4ca7194f4966336d8f5574bec2c0f14a9611420b5e648b5139",
+        "readout/trials.jsonl": "f1b9da837aabc427621cb7242964bc34fc322d819c2ed400774bfb07df6e57c0"
+      },
+      "completion_event_counts_match": true,
+      "source_stamp_match": true,
+      "rank_source_manifest_sha256_match": true,
+      "prefix": {
+        "old_path": "docs/experiments/2026-10-15-interim-6m/readout-source/condition1_N2",
+        "horizon": 5300000,
+        "fsm_events": 2543182,
+        "reset_set_events": 1367,
+        "fsm_events_exact_array_equality": true,
+        "reset_times_exact_array_equality": true,
+        "binned_counts_exact_array_equality": true,
+        "counts_and_event_resets_equal": true,
+        "bin_width_equal": true,
+        "old_readout_sha256": {
+          "readout/fsm-event-times.npz": "d0f9585018ed125b9fa985b5d1c3f717e00a42884a8e921b5704d5b74aed848f",
+          "readout/fsm-output-counts.npz": "351429d07037e20ee50e9bd5330e552b4f2c07fcac4b626d965c72f1a3d763f8",
+          "readout/summary.json": "01ef17d00901cd19dffe0b39f829f694d58ef57026fb32b391a4995dd4463da4",
+          "readout/trials.jsonl": "85a2f8b5de4bfc77d72af8d59639e84dcfdbc2efc5b28401071cfba0aa908e0e"
+        },
+        "old_distribution_sha256_manifest_match": true
+      }
+    },
+    {
+      "variant": "condition2_N2",
+      "passed": true,
+      "horizon": 6000000,
+      "trials": 512,
+      "checked_chunks": 48000,
+      "raw_records": 22112414,
+      "fsm_events": 3016493,
+      "reset_set_events": 1565,
+      "snapshot_sha256": "1ddf37c6f0b1482e90e46c2abf4be4e3cc69031cdc8eabf6372528ca76823dd1",
+      "readout_file_sha256": {
+        "readout/fsm-event-times.npz": "88d57b036ed7b9fcfe24d66c21609bc38e4c14a19ab1c8b8b8800dd269d4cdaa",
+        "readout/fsm-output-counts.npz": "93e4a853d98893bce37b0617644a230b39b1fc6fb9fb27775f30f3bde2b38b6f",
+        "readout/summary.json": "03e3326315d4df84d7d562e377e14dea950468975fc903353cad8d6a71ac620b",
+        "readout/trials.jsonl": "bb0168c17cedfe81cad0f70f11de13d051724842f6dc8284751c70aeda101f43"
+      },
+      "completion_event_counts_match": true,
+      "source_stamp_match": true,
+      "rank_source_manifest_sha256_match": true,
+      "prefix": {
+        "old_path": "docs/experiments/2026-10-11-final-3m/readout-source/condition2_N2",
+        "horizon": 3000000,
+        "fsm_events": 1339821,
+        "reset_set_events": 745,
+        "fsm_events_exact_array_equality": true,
+        "reset_times_exact_array_equality": true,
+        "binned_counts_exact_array_equality": true,
+        "counts_and_event_resets_equal": true,
+        "bin_width_equal": true,
+        "old_readout_sha256": {
+          "readout/fsm-event-times.npz": "c755180f12e3031b7958b8a762b3f2ef941f8270b0a7e60e509dc3c3a912fdf9",
+          "readout/fsm-output-counts.npz": "5c8c0bc2eabd8f6f4d076b080c562139b1ab2ae1b2759eb0e998e4c79bbf47e2",
+          "readout/summary.json": "98f8e1c0d8e0b49ceb6fca8d70ba4c8b612370aef6a0ba0c7f23c7c72ec419fc",
+          "readout/trials.jsonl": "90f5bacdae4a20e9f5def281c7c1b697717f2cd6c49685c3c18baa25e2207e3c"
+        },
+        "old_distribution_sha256_manifest_match": true
+      }
+    }
+  ],
+  "local_20_core_source_hashes_match": true,
+  "passed": true
+}

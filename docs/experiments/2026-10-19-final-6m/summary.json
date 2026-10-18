@@ -1,0 +1,79 @@
+{
+  "created_at": "2026-10-18T17:41:15.737722+00:00",
+  "schema": "pybca-terminal-uninterrupted-optimum-v1",
+  "minimum_duration": 100000,
+  "curve_definition": "F_T(t) = number of trials with s <= t and T-s >= minimum_duration, divided by all trials; s is the beginning of an uninterrupted same-vector optimum episode in one unit that ends at T.",
+  "policy": {
+    "bin_width": 10000,
+    "change_penalty": 20,
+    "min_segment_bins": 3,
+    "active_events": 4,
+    "off_events": 2,
+    "occupied_quarters": 3,
+    "read_entire_rate_regime": true,
+    "merge_same_optimal_vector": true,
+    "unknown_or_nonoptimal_breaks_continuity": true,
+    "different_optimum_breaks_continuity": true,
+    "switching_units_to_bridge_a_gap": false,
+    "counts_require_final_horizon_information": true
+  },
+  "limitations": [
+    "Continuous output is inferred from sparse events and rate regimes, not observed at every CA step.",
+    "Estimated episode starts are not exact internal first-hit times or causal confirmation times."
+  ],
+  "cases": [
+    {
+      "case": "condition1-N1-6m",
+      "label": "Condition 1, N=1 (completed)",
+      "condition": 1,
+      "N": 1,
+      "horizon": 6000000,
+      "trials": 512,
+      "qualified_trials": 503,
+      "qualified_fraction": 0.982421875,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 503,
+        "included_now": [],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition1-N2-6m",
+      "label": "Condition 1, N=2",
+      "condition": 1,
+      "N": 2,
+      "horizon": 6000000,
+      "trials": 512,
+      "qualified_trials": 500,
+      "qualified_fraction": 0.9765625,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 500,
+        "included_now": [],
+        "excluded_now": []
+      }
+    },
+    {
+      "case": "condition2-N2-6m",
+      "label": "Condition 2, N=2",
+      "condition": 2,
+      "N": 2,
+      "horizon": 6000000,
+      "trials": 512,
+      "qualified_trials": 494,
+      "qualified_fraction": 0.96484375,
+      "interim": false,
+      "legacy_reset_mismatch": false,
+      "baseline_policy_difference": {
+        "previous_terminal_regime_minimum_100k": 494,
+        "included_now": [],
+        "excluded_now": []
+      }
+    }
+  ],
+  "config_sha256": "8ac00453920ac90de019aff060d0109d220f1dc3a3c12f69727ead2f4655f6e2",
+  "script_sha256": "9c8eca5289b51adb449482d5a22f9603344cf31589690d57600e603c24d786f0"
+}
